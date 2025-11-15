@@ -33,3 +33,7 @@ end
 Quando('eu acesso a página {string} usando o link antigo') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
+
+Quando('eu deixo o campo {string} em branco') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
