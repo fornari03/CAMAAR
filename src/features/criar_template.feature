@@ -32,3 +32,19 @@ Cenário: Admin tenta criar um template sem perguntas (Caminho Triste)
   E eu clico no botão "Salvar Template"
   Então eu devo permanecer na página "templates/new"
   E eu devo ver a mensagem de erro "Template deve ter pelo menos uma pergunta"
+
+Cenário: Admin tenta criar um template com uma pergunta sem texto (Caminho Triste)
+  Dado que eu estou na página "templates/new"
+  Quando eu preencho "Nome do Template" com "Template Teste"
+  E eu adiciono uma pergunta "" do tipo "texto"
+  E eu clico no botão "Salvar Template"
+  Então eu devo permanecer na página "templates/new"
+  E eu devo ver a mensagem de erro "O enunciado da pergunta não pode ficar vazio"
+
+Cenário: Admin tenta criar um template com alternativas vazias (Caminho Triste)
+  Dado que eu estou na página "templates/new"
+  Quando eu preencho "Nome do Template" com "Template Teste"
+  E eu adiciono uma pergunta "Qual sua cor favorita?" do tipo "múltipla escolha" com opções "Azul, , Vermelho"
+  E eu clico no botão "Salvar Template"
+  Então eu devo permanecer na página "templates/new"
+  E eu devo ver a mensagem de erro "Todas as alternativas devem ser preenchidas"
