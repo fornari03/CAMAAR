@@ -40,6 +40,15 @@ Funcionalidade: Importar novos dados do SIGAA
     E o usuário "Beltrano de Tal" deve estar matriculado na turma "ALGORITMOS E PROGRAMAÇÃO" (CIC0001)
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
+  Cenário: Importação sem duplicação de um usuário já existente
+    Dado que o sistema possui o usuário "Fulano de Tal" (150084006) cadastrado
+    E que o sigaa contém a turma "REDES DE COMPUTADORES" (CIC0003)
+    E esta turma contém o participante "Fulano de Tal" (150084006)
+    Quando eu clico no botão "Importar dados"
+    Então o usuário "Fulano de Tal" (150084006) não deve ser duplicado no sistema
+    E o usuário "Fulano de Tal" deve estar matriculado na turma "REDES DE COMPUTADORES" (CIC0003)
+    E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
+
   Cenário: Falha ao buscar os dados externos
     Dado que o sigaa está indisponível
     Quando eu clico no botão "Importar dados"

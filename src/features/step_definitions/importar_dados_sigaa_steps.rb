@@ -89,3 +89,16 @@ end
 Então('nenhum novo usuário deve ser cadastrado no sistema') do
   pending # Write code here that turns the phrase above into concrete actions
 end
+
+Dado('que o sigaa contém a turma {string} \(CIC0003)') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o usuário {string} \({int}) não deve ser duplicado no sistema') do |string, int|
+# Então('o usuário {string} \({float}) não deve ser duplicado no sistema') do |string, float|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o usuário {string} deve estar matriculado na turma {string} \(CIC0003)') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
