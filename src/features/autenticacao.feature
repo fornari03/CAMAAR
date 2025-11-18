@@ -46,3 +46,20 @@ Funcionalidade: Autenticação de Usuário
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
     E eu devo ver a mensagem "Login ou senha inválidos"
+
+  Cenário: Tentativa de login de usuário pré-cadastrado (pendente)
+    Dado que existe um usuário "José Novo" (111222) pré-cadastrado via SIGAA, mas com status "pendente"
+    E eu estou na página de login
+    Quando eu preencho o campo "Login" com "111222"
+    E eu preencho o campo "Senha" com "qualquercoisa"
+    E eu clico no botão "Entrar"
+    Então eu devo permanecer na página de login
+    E eu devo ver a mensagem "Sua conta está pendente. Por favor, redefina sua senha para ativar."
+
+  Cenário: Usuário pendente solicita redefinição de senha para ativar a conta
+    Dado que existe um usuário "José Novo" (111222) pré-cadastrado via SIGAA, mas com status "pendente"
+    E eu estou na página de "Esqueci minha senha"
+    Quando eu preencho "Email ou Matrícula" com "111222"
+    E eu clico no botão "Solicitar redefinição"
+    Então eu devo ver a mensagem "Um link de ativação foi enviado para o seu email."
+    E o status do usuário "111222" deve continuar "pendente"
