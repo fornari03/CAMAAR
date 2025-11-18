@@ -16,14 +16,23 @@ Cenário: Visualizar lista de formulários disponíveis (Caminho Feliz)
   Então eu devo ver "Avaliação Docente"
   E eu devo ver "Avaliação da Infraestrutura"
 
-Cenário: Visualizar resultados de um formulário específico (Caminho Feliz)
+Cenário: Baixar o CSV a partir da página do formulário com respostas disponíveis (Caminho Feliz)
   Dado que existe o formulário "Avaliação Docente"
   E ele possui 30 respostas
   Quando eu acesso a página "formularios/Avaliação Docente"
-  Então eu devo ver o relatório consolidado do formulário
+  Então eu devo ver um botão "Baixar CSV"
   E eu devo ver a mensagem "Total de respostas: 30"
+  Quando eu clico no botão "Baixar CSV"
+  Então o download do arquivo "avaliacao_docente.csv" deve iniciar
 
-Cenário: Admin tenta visualizar relatório de formulário inexistente (Caminho Triste)
+Cenário: Formulário existente, porém sem respostas cadastradas (Caminho Triste)
+  Dado que existe o formulário "Avaliação da Infraestrutura"
+  E ele possui 0 respostas
+  Quando eu acesso a página "formularios/Avaliação da Infraestrutura"
+  Então eu devo ver a mensagem "Nenhuma resposta registrada para este formulário"
+  E eu não devo ver o botão "Baixar CSV"
+
+Cenário: Admin tenta baixar o arquivo CSV com os resultados de formulário inexistente (Caminho Triste)
   Quando eu acesso a página "formularios/FormularioInexistente"
   Então eu devo ver a mensagem "Formulário não encontrado"
   E devo permanecer na página "formularios"
