@@ -8,7 +8,7 @@ Funcionalidade: Visualização dos templates criados
 
   Contexto:
     Dado que estou logado
-    E estou na página "Avaliações"
+    E estou na página "Gerenciamento"
 
   Cenário: Visualização com sucesso
     Dado que existe um template criado com o campo "nome_da_matéria" preenchido com "Engenharia de Software", e o campo "semestre" preenchido com "2025.1", e o campo "professor" preenchido com "Genaína"
