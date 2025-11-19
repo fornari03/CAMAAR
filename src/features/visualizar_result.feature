@@ -9,14 +9,16 @@ Funcionalidade: Visualização de resultados dos formulários
 Contexto:
   Dado que eu sou um "admin" logado no sistema
 
-Cenário: Visualizar lista de formulários disponíveis (Caminho Feliz)
+@happy_path
+Cenário: Visualizar lista de formulários disponíveis
   Dado que estou na página "dashboard"
   E existem os formulários "Avaliação Docente" e "Avaliação da Infraestrutura"
   Quando eu acesso a página "formularios"
   Então eu devo ver "Avaliação Docente"
   E eu devo ver "Avaliação da Infraestrutura"
 
-Cenário: Baixar o CSV a partir da página do formulário com respostas disponíveis (Caminho Feliz)
+@happy_path
+Cenário: Baixar o CSV a partir da página do formulário com respostas disponíveis
   Dado que existe o formulário "Avaliação Docente"
   E ele possui 30 respostas
   Quando eu acesso a página "formularios/Avaliação Docente"
@@ -25,19 +27,22 @@ Cenário: Baixar o CSV a partir da página do formulário com respostas disponí
   Quando eu clico no botão "Baixar CSV"
   Então o download do arquivo "avaliacao_docente.csv" deve iniciar
 
-Cenário: Formulário existente, porém sem respostas cadastradas (Caminho Triste)
+@sad_path
+Cenário: Formulário existente, porém sem respostas cadastradas
   Dado que existe o formulário "Avaliação da Infraestrutura"
   E ele possui 0 respostas
   Quando eu acesso a página "formularios/Avaliação da Infraestrutura"
   Então eu devo ver a mensagem "Nenhuma resposta registrada para este formulário"
   E eu não devo ver o botão "Baixar CSV"
 
-Cenário: Admin tenta baixar o arquivo CSV com os resultados de formulário inexistente (Caminho Triste)
+@sad_path
+Cenário: Admin tenta baixar o arquivo CSV com os resultados de formulário inexistente
   Quando eu acesso a página "formularios/FormularioInexistente"
   Então eu devo ver a mensagem "Formulário não encontrado"
   E devo permanecer na página "formularios"
 
-Cenário: Não há formulários cadastrados (Caminho Triste)
+@sad_path
+Cenário: Não há formulários cadastrados
   Dado que não existe nenhum formulário cadastrado
   Quando eu acesso a página "formularios"
   Então eu devo ver a mensagem "Nenhum formulário cadastrado"

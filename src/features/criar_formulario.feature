@@ -11,7 +11,8 @@ Contexto:
   E existe um template "Avaliação de Meio de Semestre"
   E existem as turmas "Engenharia de Software - TA" e "Banco de Dados - TB" importadas do SIGAA
 
-Cenário: Admin cria um formulário para múltiplas turmas (Caminho Feliz)
+@happy_path
+Cenário: Admin cria um formulário para múltiplas turmas
   Dado que eu estou na página "formularios/new"
   Quando eu seleciono o template "Avaliação de Meio de Semestre"
   E eu seleciono as turmas "Engenharia de Software - TA" e "Banco de Dados - TB"
@@ -20,14 +21,16 @@ Cenário: Admin cria um formulário para múltiplas turmas (Caminho Feliz)
   Então eu devo ser redirecionado para a página "formularios"
   E eu devo ver a mensagem "Formulário criado com sucesso e associado a 2 turma(s)"
 
-Cenário: Admin tenta criar um formulário sem selecionar um template (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um formulário sem selecionar um template
   Dado que eu estou na página "formularios/new"
   Quando eu seleciono as turmas "Engenharia de Software - TA"
   E eu clico no botão "Gerar Formulário"
   Então eu devo permanecer na página "formularios/new"
   E eu devo ver a mensagem de erro "É necessário selecionar um template"
 
-Cenário: Admin tenta criar um formulário sem selecionar turmas (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um formulário sem selecionar turmas
   Dado que eu estou na página "formularios/new"
   Quando eu seleciono o template "Avaliação de Meio de Semestre"
   E eu clico no botão "Gerar Formulário"

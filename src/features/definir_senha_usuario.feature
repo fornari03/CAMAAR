@@ -10,6 +10,7 @@ Funcionalidade: Sistema de definição de senha
     Dado que o usuário "fulano.novo@email.com" foi importado e está com o status "pendente"
     E um link de definição de senha válido foi enviado para "fulano.novo@email.com"
 
+  @happy_path
   Cenário: Definição de senha com sucesso
     Quando eu acesso a página "Defina sua Senha" usando o link válido
     E eu preencho o campo "Nova Senha" com "senhaForte123"
@@ -19,6 +20,7 @@ Funcionalidade: Sistema de definição de senha
     E eu devo ver a mensagem "Senha definida com sucesso! Você já pode fazer o login."
     E o status do usuário "fulano.novo@email.com" no sistema deve ser "ativo"
 
+  @sad_path
   Cenário: Senhas não conferem
     Quando eu acesso a página "Defina sua Senha" usando o link válido
     E eu preencho o campo "Nova Senha" com "senhaForte123"
@@ -27,12 +29,14 @@ Funcionalidade: Sistema de definição de senha
     Então eu devo permanecer na página "Defina sua Senha"
     E eu devo ver a mensagem de erro "As senhas não conferem."
 
+  @sad_path
   Cenário: Tentar usar o link de definição de senha quando já está ativo
     Dado que o usuário "fulano.ativo@gmail.com" já está ativo no sistema
     Quando eu acesso a página "Defina sua Senha" usando o link antigo
     Então eu devo ser redirecionado para a página de "Login"
     E eu devo ver a mensagem "Você já está ativo. Faça o login."
 
+  @sad_path
   Cenário: Campos em branco
     Quando eu acesso a página "Defina sua Senha" usando o link válido
     E eu deixo o campo "Nova Senha" em branco
@@ -41,6 +45,7 @@ Funcionalidade: Sistema de definição de senha
     Então eu devo permanecer na página "Defina sua Senha"
     E eu devo ver a mensagem de erro "Todos os campos devem ser preenchidos."
 
+  @sad_path
   Cenário: Campo "Senha" em branco
     Quando eu acesso a página "Defina sua Senha" usando o link válido
     E eu deixo o campo "Nova Senha" em branco
@@ -49,6 +54,7 @@ Funcionalidade: Sistema de definição de senha
     Então eu devo permanecer na página "Defina sua Senha"
     E eu devo ver a mensagem de erro "Todos os campos devem ser preenchidos."
 
+  @sad_path
   Cenário: Campo "Confirme a senha" em branco
     Quando eu acesso a página "Defina sua Senha" usando o link válido
     E eu preencho o campo "Nova Senha" com "senhaForte123"

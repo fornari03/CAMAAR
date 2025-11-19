@@ -10,7 +10,8 @@ Contexto:
   Dado que existe um template "Avaliação de Meio de Semestre"
   E existem as turmas "Engenharia de Software - TA" e "Banco de Dados - TB" importadas do SIGAA
 
-Cenário: Admin cria um formulário para múltiplas turmas (Caminho Feliz - Admin)
+@happy_path
+Cenário: Admin cria um formulário para múltiplas turmas (Admin)
   Dado que eu sou um "admin" logado no sistema
   E eu estou na página "formularios/new"
   Quando eu seleciono o template "Avaliação de Meio de Semestre"
@@ -21,7 +22,8 @@ Cenário: Admin cria um formulário para múltiplas turmas (Caminho Feliz - Admi
   E eu devo ver a mensagem "Formulário criado com sucesso e associado a 2 turma(s)"
   E o formulário deve estar associado ao template "Avaliação de Meio de Semestre"
 
-Cenário: Admin tenta criar um formulário sem selecionar um template (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um formulário sem selecionar um template
   Dado que eu sou um "admin" logado no sistema
   E eu estou na página "formularios/new"
   Quando eu seleciono as turmas "Engenharia de Software - TA"
@@ -29,7 +31,8 @@ Cenário: Admin tenta criar um formulário sem selecionar um template (Caminho T
   Então eu devo permanecer na página "formularios/new"
   E eu devo ver a mensagem de erro "É necessário selecionar um template"
 
-Cenário: Admin tenta criar um formulário sem selecionar turmas (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um formulário sem selecionar turmas
   Dado que eu sou um "admin" logado no sistema
   E eu estou na página "formularios/new"
   Quando eu seleciono o template "Avaliação de Meio de Semestre"
@@ -37,7 +40,8 @@ Cenário: Admin tenta criar um formulário sem selecionar turmas (Caminho Triste
   Então eu devo permanecer na página "formularios/new"
   E eu devo ver a mensagem de erro "É necessário selecionar pelo menos uma turma"
 
-Cenário: Docente cria um formulário para suas turmas (Caminho Feliz - Usuário comum)
+@happy_path
+Cenário: Docente cria um formulário para suas turmas (Usuário comum)
   Dado que eu sou um "docente" logado no sistema
   E eu sou responsável pelas turmas "Engenharia de Software - TA"
   E eu estou na página "formularios/new"
@@ -49,7 +53,8 @@ Cenário: Docente cria um formulário para suas turmas (Caminho Feliz - Usuário
   E eu devo ver a mensagem "Formulário criado com sucesso e associado a 1 turma(s)"
   E o formulário deve estar associado ao docente atual
 
-Cenário: Discente cria um formulário para sua própria turma (Caminho Feliz - Usuário comum)
+@happy_path
+Cenário: Discente cria um formulário para sua própria turma (Usuário comum)
   Dado que eu sou um "discente" logado no sistema
   E eu estou matriculado na turma "Banco de Dados - TB"
   E eu estou na página "formularios/new"
@@ -61,7 +66,8 @@ Cenário: Discente cria um formulário para sua própria turma (Caminho Feliz - 
   E eu devo ver a mensagem "Formulário criado com sucesso e associado a 1 turma(s)"
   E o formulário deve estar marcado como criado por "discente"
 
-Cenário: Usuário sem permissão tenta criar formulário (Caminho Triste - Acesso negado)
+@sad_path
+Cenário: Usuário sem permissão tenta criar formulário (Acesso negado)
   Dado que eu sou um "convidado" não autenticado
   E eu estou na página "formularios/new"
   Quando eu tento acessar a funcionalidade de criação (clicar no botão "Gerar Formulário")

@@ -10,6 +10,7 @@ Funcionalidade: Cadastrar usuários do sistema (e enviar convite por email)
     Dado que eu estou logado como Administrador
     E estou na página "Gerenciamento"
 
+  @happy_path
   Cenário: Importar um usuário que é novo no sistema
     Dado que o sigaa contém o usuário "Fulano de Tal" (150084006) com e-mail "fulano@gmail.com"
     E o usuário "150084006" não existe na base de dados do CAMAAR
@@ -18,6 +19,7 @@ Funcionalidade: Cadastrar usuários do sistema (e enviar convite por email)
     E um e-mail de "Definição de Senha" deve ser enviado para "fulano@gmail.com"
     E eu devo ver a mensagem de sucesso "Dados atualizados com sucesso!"
 
+  @happy_path
   Cenário: Importar um usuário que já existe no sistema
     Dado que o sigaa contém o usuário "Fulano de Tal" (150084006)
     E o usuário "150084006" já existe na base de dados do CAMAAR (seja "pendente" ou "ativo")
@@ -25,6 +27,7 @@ Funcionalidade: Cadastrar usuários do sistema (e enviar convite por email)
     Então nenhum novo e-mail de "Definição de Senha" deve ser enviado para "150084006"
     E nenhum usuário duplicado deve ser criado
 
+  @sad_path
   Cenário: Importar um novo usuário que não possui e-mail
     Dado que o sigaa contém o usuário "Usuário Sem Email" (190099999)
     Mas o registro de "190099999" não possui um endereço de e-mail
