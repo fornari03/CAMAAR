@@ -12,7 +12,8 @@ Contexto:
   E existe um formulário "Avaliação BD 2025.1" para a turma "Banco de Dados - TB"
   E o formulário "Avaliação BD 2025.1" tem a pergunta "O professor domina o conteúdo?" do tipo "numérica (1-5)"
 
-Cenário: Participante responde um formulário pendente (Caminho Feliz)
+@happy_path
+Cenário: Participante responde um formulário pendente
   Dado que eu não respondi o formulário "Avaliação BD 2025.1" ainda
   E eu estou na minha página inicial (dashboard)
   Quando eu vejo "Avaliação BD 2025.1" na minha lista de "Formulários Pendentes"
@@ -24,7 +25,8 @@ Cenário: Participante responde um formulário pendente (Caminho Feliz)
   E eu devo ver a mensagem "Avaliação enviada com sucesso. Obrigado!"
   E "Avaliação BD 2025.1" deve aparecer na minha lista de "Formulários Respondidos"
 
-Cenário: Participante tenta responder um formulário que já respondeu (Caminho Triste)
+@sad_path
+Cenário: Participante tenta responder um formulário que já respondeu
   Dado que eu já respondi o formulário "Avaliação BD 2025.1"
   E eu estou na minha página inicial (dashboard)
   Quando eu vejo "Avaliação BD 2025.1" na minha lista de "Formulários Respondidos"
@@ -32,7 +34,8 @@ Cenário: Participante tenta responder um formulário que já respondeu (Caminho
   Então eu devo ser redirecionado para a minha página inicial
   E eu devo ver a mensagem "Você já respondeu este formulário."
 
-Cenário: Participante tenta responder um formulário após a data de encerramento (Caminho Triste)
+@sad_path
+Cenário: Participante tenta responder um formulário após a data de encerramento
   Dado que o formulário "Avaliação BD 2025.1" expirou em "01/12/2025"
   E eu não respondi o formulário "Avaliação BD 2025.1" ainda
   E eu estou na minha página inicial (dashboard)

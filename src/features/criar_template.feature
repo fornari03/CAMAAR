@@ -9,7 +9,8 @@ Funcionalidade: Criação de Template de Formulário
 Contexto:
   Dado que eu sou um "admin" logado no sistema
 
-Cenário: Admin cria um template com sucesso (Caminho Feliz)
+@happy_path
+Cenário: Admin cria um template com sucesso
   Dado que eu estou na página "templates/new"
   Quando eu preencho "Nome do Template" com "Avaliação Semestral 2025.1"
   E eu adiciono uma pergunta "O professor foi didático?" do tipo "numérica (1-5)"
@@ -19,21 +20,24 @@ Cenário: Admin cria um template com sucesso (Caminho Feliz)
   Então eu devo ser redirecionado para a página "templates"
   E eu devo ver a mensagem "Template 'Avaliação Semestral 2025.1' criado com sucesso"
 
-Cenário: Admin tenta criar um template sem nome (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um template sem nome
   Dado que eu estou na página "templates/new"
   Quando eu adiciono uma pergunta "O professor foi didático?" do tipo "numérica (1-5)"
   E eu clico no botão "Salvar Template"
   Então eu devo permanecer na página "templates/new"
   E eu devo ver a mensagem de erro "Nome do Template não pode ficar em branco"
 
-Cenário: Admin tenta criar um template sem perguntas (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um template sem perguntas
   Dado que eu estou na página "templates/new"
   Quando eu preencho "Nome do Template" com "Template Vazio"
   E eu clico no botão "Salvar Template"
   Então eu devo permanecer na página "templates/new"
   E eu devo ver a mensagem de erro "Template deve ter pelo menos uma pergunta"
 
-Cenário: Admin tenta criar um template com uma pergunta sem texto (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um template com uma pergunta sem texto
   Dado que eu estou na página "templates/new"
   Quando eu preencho "Nome do Template" com "Template Teste"
   E eu adiciono uma pergunta "" do tipo "texto"
@@ -41,7 +45,8 @@ Cenário: Admin tenta criar um template com uma pergunta sem texto (Caminho Tris
   Então eu devo permanecer na página "templates/new"
   E eu devo ver a mensagem de erro "O enunciado da pergunta não pode ficar vazio"
 
-Cenário: Admin tenta criar um template com alternativas vazias (Caminho Triste)
+@sad_path
+Cenário: Admin tenta criar um template com alternativas vazias
   Dado que eu estou na página "templates/new"
   Quando eu preencho "Nome do Template" com "Template Teste"
   E eu adiciono uma pergunta "Qual sua cor favorita?" do tipo "múltipla escolha" com opções "Azul, , Vermelho"

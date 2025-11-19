@@ -11,14 +11,16 @@ Contexto:
   E existe um formulário "Avaliação EngSoft 2025.1"
   E o formulário "Avaliação EngSoft 2025.1" tem "15" respostas submetidas
 
-Cenário: Admin baixa o relatório de um formulário com respostas (Caminho Feliz)
+@happy_path
+Cenário: Admin baixa o relatório de um formulário com respostas
   Dado que eu estou na página de resultados do formulário "Avaliação EngSoft 2025.1"
   Quando eu clico no botão "Exportar para CSV"
   Então um download de um arquivo "relatorio_engsoft_2025.1.csv" deve ser iniciado
   # Testar o conteúdo do CSV é muito complexo para BDD,
   # então testamos apenas a ação de download.
 
-Cenário: Admin tenta baixar relatório de um formulário sem respostas (Caminho Triste)
+@sad_path
+Cenário: Admin tenta baixar relatório de um formulário sem respostas
   Dado que existe um formulário "Avaliação BD 2025.1"
   E o formulário "Avaliação BD 2025.1" tem "0" respostas submetidas
   E que eu estou na página de resultados do formulário "Avaliação BD 2025.1"

@@ -10,6 +10,7 @@ Funcionalidade: Importar novos dados do SIGAA
     Dado que eu estou logado como Administrador
     E estou na página "Gerenciamento"
 
+  @happy_path
   Cenário: Importação inicial de turma e participante na turma com sucesso
     Dado que o sistema não possui nenhuma turma cadastrada
     E que o sistema não possui nenhum usuário cadastrado
@@ -21,6 +22,7 @@ Funcionalidade: Importar novos dados do SIGAA
     E o usuário "Fulano de Tal" deve estar matriculado na turma "BANCOS DE DADOS"
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
+  @happy_path
   Cenário: Importação de nova turma e participante já existente na turma com sucesso
     Dado que o sistema possui o usuário "Ciclano de Tal" (150084007) cadastrado
     E que o sistema não possui a turma "ESTRUTURA DE DADOS" (CIC0002) cadastrada
@@ -31,6 +33,7 @@ Funcionalidade: Importar novos dados do SIGAA
     E o usuário "Ciclano de Tal" deve estar matriculado na turma "ESTRUTURA DE DADOS" (CIC0002)
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
+  @happy_path
   Cenário: Importação de turma já existente e novo participante na turma com sucesso
     Dado que o sistema possui a turma "ALGORITMOS E PROGRAMAÇÃO" (CIC0001) cadastrada
     E que o sistema não possui o usuário "Beltrano de Tal" (150084008) cadastrado
@@ -40,6 +43,7 @@ Funcionalidade: Importar novos dados do SIGAA
     E o usuário "Beltrano de Tal" deve estar matriculado na turma "ALGORITMOS E PROGRAMAÇÃO" (CIC0001)
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
+  @happy_path
   Cenário: Importação sem duplicação de um usuário já existente
     Dado que o sistema possui o usuário "Fulano de Tal" (150084006) cadastrado
     E que o sigaa contém a turma "REDES DE COMPUTADORES" (CIC0003)
@@ -49,6 +53,7 @@ Funcionalidade: Importar novos dados do SIGAA
     E o usuário "Fulano de Tal" deve estar matriculado na turma "REDES DE COMPUTADORES" (CIC0003)
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
+  @sad_path
   Cenário: Falha ao buscar os dados externos
     Dado que o sigaa está indisponível
     Quando eu clico no botão "Importar dados"
