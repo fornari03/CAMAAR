@@ -39,3 +39,23 @@ Então('eu devo permanecer na página de login') do
 end
 
 
+Dado('que existe um usuário {string} \({int}) pré-cadastrado via SIGAA, mas com status {string}') do |string, int, string2|
+# Dado('que existe um usuário {string} \({float}) pré-cadastrado via SIGAA, mas com status {string}') do |string, float, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('eu estou na página de login') do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('eu estou na página de {string}') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Quando('eu preencho {string} com {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o status do usuário {string} deve continuar {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
