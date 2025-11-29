@@ -1,7 +1,3 @@
-Dado('estou na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('que o usuário {string} \({int}) já existe no sistema com o e-mail {string}') do |string, int, string2|
 # Dado('que o usuário {string} \({float}) já existe no sistema com o e-mail {string}') do |string, float, string2|
   pending # Write code here that turns the phrase above into concrete actions
@@ -91,10 +87,6 @@ Dado('que o usuário {string} \({int}) já existe no sistema com o e-mail {strin
 end
 
 Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string} e o nome agora é {string}') do |string, string2, string3|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('que o sigaa está indisponível') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 

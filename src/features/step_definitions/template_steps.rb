@@ -2,10 +2,6 @@ Dado('que eu sou um {string} logado no sistema') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('que eu estou na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Quando('eu preencho {string} com {string}') do |string, string2|
   pending # Write code here that turns the phrase above into concrete actions
 end
