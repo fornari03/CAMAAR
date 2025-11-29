@@ -1,5 +1,6 @@
 class Formulario < ApplicationRecord
   belongs_to :template
+  belongs_to :turma
   has_many :respostas
 
   validates :titulo_envio, presence: true
