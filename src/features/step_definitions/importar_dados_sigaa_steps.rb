@@ -61,8 +61,9 @@ Então('eu devo ver a mensagem de sucesso {string}') do |string|
   expect(page).to have_content(mensagem)
 end
 
-
-
+Quando('eu solicito a importação clicando em {string}') do |botao|
+  click_button botao
+end
 
 Dado('que o sistema possui o usuário {string} \({int}) cadastrado') do |string, int|
 # Dado('que o sistema possui o usuário {string} \({float}) cadastrado') do |string, float|
@@ -70,10 +71,6 @@ Dado('que o sistema possui o usuário {string} \({int}) cadastrado') do |string,
 end
 
 Dado('que o sistema não possui a turma {string} \(CIC0002) cadastrada') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('que o sigaa contém a turma {string} \(CIC0002)') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
@@ -111,10 +108,6 @@ Então('nenhuma nova turma deve ser cadastrada no sistema') do
 end
 
 Então('nenhum novo usuário deve ser cadastrado no sistema') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('que o sigaa contém a turma {string} \(CIC0003)') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
