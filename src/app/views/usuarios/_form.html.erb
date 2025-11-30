@@ -1,0 +1,55 @@
+<%= form_with(model: usuario, local: true) do |form| %>
+
+  <% if usuario.errors.any? %>
+    <div style="background:#ffdddd; border:1px solid red; padding:10px; margin-bottom:15px;">
+      <strong><%= pluralize(usuario.errors.count, "erro") %> impedem o salvamento:</strong>
+      <ul>
+        <% usuario.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>
+    <%= form.label :nome %><br>
+    <%= form.text_field :nome %>
+  </p>
+
+  <p>
+    <%= form.label :email %><br>
+    <%= form.email_field :email %>
+  </p>
+
+  <p>
+    <%= form.label :matricula %><br>
+    <%= form.text_field :matricula %>
+  </p>
+
+  <p>
+    <%= form.label :usuario %><br>
+    <%= form.text_field :usuario %>
+  </p>
+
+  <p>
+    <%= form.label :password %><br>
+    <%= form.password_field :password %>
+  </p>
+
+  <p>
+    <%= form.label :password_confirmation %><br>
+    <%= form.password_field :password_confirmation %>
+  </p>
+
+  <p>
+    <%= form.label :ocupacao %><br>
+    <%= form.text_field :ocupacao, placeholder: "discente, docente ou admin" %>
+  </p>
+
+  <p>
+    <%= form.label :status %><br>
+    <%= form.check_box :status %> Ativo
+  </p>
+
+  <%= form.submit "Salvar Usuário" %>
+<% end %>

@@ -1,0 +1,31 @@
+<h1>Login</h1>
+
+<!-- Mensagens de erro ou aviso -->
+<% if flash[:alert] %>
+  <div style="background:#ffdddd; border:1px solid red; padding:10px; margin-bottom:10px;">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
+
+<% if flash[:notice] %>
+  <div style="background:#e2ffd8; border:1px solid #3c8d18; padding:10px; margin-bottom:10px;">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
+
+<!-- Formulário -->
+<%= form_with model: @usuario, url: login_path, local: true do |form| %>
+
+  <p>
+    <%= form.label :usuario, "Usuário" %><br>
+    <%= form.text_field :usuario, placeholder: "Digite seu usuário" %>
+  </p>
+
+  <p>
+    <%= form.label :password, "Senha" %><br>
+    <%= form.password_field :password, placeholder: "Digite sua senha" %>
+  </p>
+
+  <%= form.submit "Entrar", style: "padding:5px 20px; margin-top:10px;" %>
+
+<% end %>

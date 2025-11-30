@@ -1,0 +1,15 @@
+<h1>Detalhes do Usuário</h1>
+
+<p><strong>Nome:</strong> <%= @usuario.nome %></p>
+<p><strong>Email:</strong> <%= @usuario.email %></p>
+<p><strong>Matrícula:</strong> <%= @usuario.matricula %></p>
+<p><strong>Usuário:</strong> <%= @usuario.usuario %></p>
+<p><strong>Ocupação:</strong> <%= @usuario.ocupacao %></p>
+<p><strong>Status:</strong> <%= @usuario.status ? "Ativo" : "Inativo" %></p>
+<p><strong>Criado em:</strong> <%= @usuario.created_at %></p>
+<p><strong>Atualizado em:</strong> <%= @usuario.updated_at %></p>
+
+<br>
+
+<%= link_to "Editar", edit_usuario_path(@usuario) %> |
+<%= link_to "Voltar", usuarios_path %>
