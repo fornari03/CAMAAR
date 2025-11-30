@@ -25,10 +25,10 @@ Dado('que o sigaa contém a turma {string} \({string})') do |nome_turma, codigo_
   }
 end
 
-Dado('esta turma contém o participante {string} \({int})') do |string, int|
+Dado('esta turma contém o participante {string} \({string})') do |nome, matricula|
   @fake_members << {
     "name" => string,
-    "matricula" => int,
+    "matricula" => string,
     "ocupacao" => "aluno",
     "class_code" => @fake_classes.last["codigo"]
   }
@@ -40,19 +40,22 @@ Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome, 
   expect(turma.materia.nome).to eq(nome)
 end
 
-Então('o usuário {string} \({int}) deve ser cadastrado no sistema') do |string, int|
+Então('o usuário {string} \({string}) deve ser cadastrado no sistema') do |nome, matricula|
   step "o usuário \"#{nome}\" (\"#{matricula}\") deve ser cadastrado no sistema"
 end
 
 Então('o usuário {string} deve estar matriculado na turma {string}') do |string, string2|
   user = Usuario.find_by(nome: nome_usuario)
   
-  # ATENÇÃO: Seu model Usuario não tem associação direta com turmas como aluno!
-  # O código abaixo assume que você criará 'has_and_belongs_to_many :turmas' 
-  # ou 'has_many :matriculas' no model Usuario.
-  
-  # Buscando a turma pelo nome da matéria associada
   turma = Turma.joins(:materia).find_by(materias: { nome: nome_turma })
+  
+  expect(user.turmas).to include(turma)
+end
+
+Então('o usuário {string} deve estar matriculado na turma {string} \({string})') do |string, string2, string3|
+  user = Usuario.find_by(nome: string)
+  
+  turma = Turma.joins(:materia).find_by(materias: { nome: string2 }, codigo: string3)
   
   expect(user.turmas).to include(turma)
 end
@@ -65,33 +68,24 @@ Quando('eu solicito a importação clicando em {string}') do |botao|
   click_button botao
 end
 
-Dado('que o sistema possui o usuário {string} \({int}) cadastrado') do |string, int|
-# Dado('que o sistema possui o usuário {string} \({float}) cadastrado') do |string, float|
+Dado('que o sistema possui o usuário {string} \({string}) cadastrado') do |nome, matricula|
+  expect(Usuario.where(matricula: matricula).count).to eq(1)
+end
+
+Dado('que o sistema não possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('que o sistema não possui a turma {string} \(CIC0002) cadastrada') do |string|
+Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome_turma, codigo_turma|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('a turma {string} \(CIC0002) deve ser cadastrada no sistema') do |string|
+Dado('que o sistema possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o usuário {string} deve estar matriculado na turma {string} \(CIC0002)') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('que o sistema possui a turma {string} \(CIC0001) cadastrada') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('que o sistema não possui o usuário {string} \({int}) cadastrado') do |string, int|
+Dado('que o sistema não possui o usuário {string} \({string}) cadastrado') do |nome, matricula|
 # Dado('que o sistema não possui o usuário {string} \({float}) cadastrado') do |string, float|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Então('o usuário {string} deve estar matriculado na turma {string} \(CIC0001)') do |string, string2|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
@@ -111,10 +105,6 @@ Então('nenhum novo usuário deve ser cadastrado no sistema') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o usuário {string} \({int}) não deve ser duplicado no sistema') do |string, int|
+Então('o usuário {string} \({string}) não deve ser duplicado no sistema') do |nome, matricula|
   expect(Usuario.where(matricula: matricula).count).to eq(1)
-end
-
-Então('o usuário {string} deve estar matriculado na turma {string} \(CIC0003)') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
 end
