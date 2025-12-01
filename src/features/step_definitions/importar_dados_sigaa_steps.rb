@@ -73,7 +73,7 @@ Dado('que o sistema possui o usuário {string} \({string}) cadastrado') do |nome
 end
 
 Dado('que o sistema não possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Turma.joins(:materia).where(materias: { nome: nome_turma }, codigo: codigo_turma).count).to eq(0)
 end
 
 Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome_turma, codigo_turma|
@@ -81,16 +81,15 @@ Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome_t
 end
 
 Dado('que o sistema possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Turma.joins(:materia).where(materias: { nome: nome_turma }, codigo: codigo_turma).count).to eq(1)
 end
 
 Dado('que o sistema não possui o usuário {string} \({string}) cadastrado') do |nome, matricula|
-# Dado('que o sistema não possui o usuário {string} \({float}) cadastrado') do |string, float|
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Usuario.where(matricula: matricula).count).to eq(0)
 end
 
 Dado('que o sigaa está indisponível') do
-  pending # Write code here that turns the phrase above into concrete actions
+  pending # TODO: o que poderia ser aqui?
 end
 
 Então('eu devo ver a mensagem de erro {string}') do |string|
