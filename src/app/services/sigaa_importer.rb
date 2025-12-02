@@ -1,4 +1,3 @@
-# app/services/sigaa_importer.rb
 require 'json'
 
 class SigaaImporter
@@ -27,7 +26,6 @@ class SigaaImporter
       classes_data.each do |cls|
         materia = Materia.find_or_create_by(codigo: cls['code']) do |m|
           m.nome = cls['name']
-          m.table_name = "materias" # Garante o uso da tabela correta
         end
 
         Turma.find_or_create_by(codigo: cls['code']) do |t|
@@ -35,7 +33,7 @@ class SigaaImporter
           t.docente = docente_padrao
           t.semestre = cls['semester']
           t.horario = cls['schedule']
-          t.nome = cls['name'] if t.respond_to?(:nome=) # Previne erro se o campo não existir
+          t.nome = cls['name'] if t.respond_to?(:nome=)
         end
       end
 
@@ -44,7 +42,7 @@ class SigaaImporter
           u.nome = member['name']
           u.email = "#{member['registration']}@aluno.unb.br"
           u.usuario = member['registration']
-          u.password = "123456" # Senha padrão
+          u.password = "123456"
           u.ocupacao = :discente
           u.status = true
         end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_29_191826) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_02_011508) do
   create_table "formularios", force: :cascade do |t|
     t.string "titulo_envio"
     t.datetime "data_criacao"
@@ -25,6 +25,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_29_191826) do
   create_table "materias", force: :cascade do |t|
     t.string "codigo"
     t.string "nome"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "matriculas", force: :cascade do |t|
+    t.integer "id_usuario"
+    t.integer "id_turma"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
