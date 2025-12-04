@@ -1,0 +1,34 @@
+<h1>Lista de Usuários</h1>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Nome</th>
+    <th>Email</th>
+    <th>Matrícula</th>
+    <th>Usuário</th>
+    <th>Ocupação</th>
+    <th>Status</th>
+    <th>Ações</th>
+  </tr>
+
+  <% @usuarios.each do |usuario| %>
+    <tr>
+      <td><%= usuario.nome %></td>
+      <td><%= usuario.email %></td>
+      <td><%= usuario.matricula %></td>
+      <td><%= usuario.usuario %></td>
+      <td><%= usuario.ocupacao %></td>
+      <td><%= usuario.status ? "Ativo" : "Inativo" %></td>
+      <td>
+        <%= link_to "Mostrar", usuario %> |
+        <%= link_to "Editar", edit_usuario_path(usuario) %> |
+        <%= button_to "Excluir", usuario, method: :delete,
+              data: { confirm: "Tem certeza que deseja excluir este usuário?" },
+              class: "inline-block px-3 py-1 text-sm text-white bg-red-600 rounded" %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<br>
+<%= link_to "Cadastrar novo usuário", new_usuario_path %>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title><%= content_for?(:title) ? yield(:title) : "CAMAAR" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous">
+  </head>
+
+  <body class="min-h-screen bg-gray-100 font-sans antialiased flex flex-col">
+
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center space-x-4">
+            <a href="<%= root_path %>" class="text-xl font-semibold text-gray-800">CAMAAR</a>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <% if defined?(current_usuario) && current_usuario %>
+              <span class="text-gray-700 text-sm">
+                <i class="fa-solid fa-user mr-2"></i>
+                Logado como <strong><%= current_usuario.usuario %></strong>
+              </span>
+
+              <%= button_to "Sair",
+                            logout_path,
+                            method: :delete,
+                            data: { turbo: false, confirm: "Deseja realmente sair?" },
+                            class: "ml-2 px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm" %>
+            <% else %>
+              <%= link_to "Login",
+                          login_path,
+                          class: "px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN: área que ocupa o espaço restante e centraliza conteúdo -->
+    <!-- usamos flex para centrar verticalmente abaixo da navbar -->
+    <main class="flex-1 flex items-center justify-center">
+      <!-- caixa centralizada com largura máxima -->
+      <div class="w-full max-w-4xl mx-auto px-6 py-10">
+        <!-- Flash Messages -->
+        <% flash.each do |type, msg| %>
+          <% classes = case type.to_s %>
+            <% when 'notice' then 'bg-green-100 border-green-400 text-green-700' %>
+            <% when 'alert'  then 'bg-red-100 border-red-400 text-red-700' %>
+            <% else               'bg-blue-100 border-blue-400 text-blue-700' %>
+          <% end %>
+
+          <div class="mb-4 px-4 py-3 rounded relative border <%= classes %>" role="alert">
+            <span class="block sm:inline"><%= msg %></span>
+          </div>
+        <% end %>
+
+        <!-- Conteúdo dinâmico das views -->
+        <%= yield %>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+      <div class="max-w-4xl mx-auto px-6 py-4 text-sm text-gray-600 text-center">
+        © <%= Time.current.year %> CAMAAR
+      </div>
+    </footer>
+
+    <!-- Scripts (já incluídos no head) -->
+  </body>
+</html>
