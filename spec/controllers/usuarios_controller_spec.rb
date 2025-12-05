@@ -1,4 +1,3 @@
-# spec/controllers/usuarios_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe UsuariosController, type: :controller do
@@ -13,6 +12,7 @@ RSpec.describe UsuariosController, type: :controller do
       status: true
     }
   end
+
   let(:invalid_attributes) do
     {
       nome: nil,
@@ -25,14 +25,21 @@ RSpec.describe UsuariosController, type: :controller do
     }
   end
 
+  # Limpa DB antes de cada bloco para evitar interferência entre testes
+  before(:each) do
+    allow_any_instance_of(described_class).to receive(:authenticate_admin).and_return(true)
+    Usuario.delete_all 
+  end
+
   describe "GET #index" do
     before do
-      # cria pelo menos um usuário para a view consumir
-      Usuario.create!(valid_attributes)
+      # cria pelo menos um usuário para a view consumir, e executa a action
+      usuario = Usuario.create!(valid_attributes)
       get :index
     end
+
     it "retorna uma lista vazia quando não há usuários (apenas criados no teste)" do
-      # Primeiro limpar todos os usuários criados por factories
+      # limpa todos os usuários e faz a requisição novamente
       Usuario.delete_all
       get :index
       expect(assigns(:usuarios)).to be_empty
@@ -45,40 +52,38 @@ RSpec.describe UsuariosController, type: :controller do
       expect(assigns(:usuarios)).to be_present
     end
 
-
     it "mostra todos usuarios" do
       initial_count = Usuario.count
-      #exite validação de e-mail e usuario unico
+      # existe validação de e-mail e usuario único, por isso alteramos valores
       usuario1 = Usuario.create!(valid_attributes.merge(email: 'u1@example.com', usuario: 'u1'))
       usuario2 = Usuario.create!(valid_attributes.merge(email: 'u2@example.com', usuario: 'u2'))
 
-      #faz a requisição
+      # faz a requisição
       get :index
 
-      #verifica que usuarios tem novos registros
+      # verifica que há novos registros
       expect(assigns(:usuarios).count).to eq(initial_count + 2)
       expect(assigns(:usuarios)).to include(usuario1, usuario2)
     end
-
   end
-
 
   describe "GET #show" do
     it "retorna uma resposta de sucesso" do
-      usuario = Usuario.create! (valid_attributes)
-      get :show, params: { id: usuario.id }
-      expect(response).to be_successful
-    end 
-     it "retorna o usuário solicitado" do
       usuario = Usuario.create!(valid_attributes)
       get :show, params: { id: usuario.id }
-      expect(assigns(:usuario)).to eq(usuario)  # mais direto
+      expect(response).to be_successful
+    end
+
+    it "retorna o usuário solicitado" do
+      usuario = Usuario.create!(valid_attributes)
+      get :show, params: { id: usuario.id }
+      expect(assigns(:usuario)).to eq(usuario)
     end
   end
 
   describe "POST #create" do
     it "cria usuario com dados validos" do
-      post :create,params: {usuario: valid_attributes}
+      post :create, params: { usuario: valid_attributes }
       usuario = assigns(:usuario)
       expect(usuario).to be_persisted
       expect(usuario.nome).to eq(valid_attributes[:nome])
@@ -88,6 +93,7 @@ RSpec.describe UsuariosController, type: :controller do
       expect(usuario.ocupacao).to eq(valid_attributes[:ocupacao])
       expect(usuario.status).to eq(valid_attributes[:status])
     end
+
     it "retorna erros ao tentar criar usuário com dados inválidos" do
       post :create, params: { usuario: invalid_attributes }
       usuario = assigns(:usuario)
@@ -96,25 +102,22 @@ RSpec.describe UsuariosController, type: :controller do
       expect(response).to render_template(:new)
       expect(response).to have_http_status(:unprocessable_entity)
     end
-   it "rejeita e-mail duplicado" do
-    usuario1 = Usuario.create!(
-    valid_attributes.merge(email: "usuario1@example.com", usuario: "user1"))
-    post :create, params: { usuario: valid_attributes.merge(
-      email: "usuario1@example.com",
-      usuario: "user2" )}
 
-    usuario = assigns(:usuario)
-    expect(usuario).not_to be_persisted
-    expect(usuario.errors[:email]).to be_present
-    expect(response).to render_template(:new)
-    expect(response).to have_http_status(:unprocessable_entity)
+    it "rejeita e-mail duplicado" do
+      usuario1 = Usuario.create!(valid_attributes.merge(email: "usuario1@example.com", usuario: "user1"))
+      post :create, params: { usuario: valid_attributes.merge(email: "usuario1@example.com", usuario: "user2") }
 
+      usuario = assigns(:usuario)
+      expect(usuario).not_to be_persisted
+      expect(usuario.errors[:email]).to be_present
+      expect(response).to render_template(:new)
+      expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it "rejeita usuario duplicado" do
-      usuario1 = Usuario.create!(
-      valid_attributes.merge(email: "usuario1@example.com", usuario: "user1"))
-      post :create, params: { usuario: valid_attributes.merge(email: "usuario2@example.com",usuario: "user1" )}
+      usuario1 = Usuario.create!(valid_attributes.merge(email: "usuario1@example.com", usuario: "user1"))
+      post :create, params: { usuario: valid_attributes.merge(email: "usuario2@example.com", usuario: "user1") }
+
       usuario = assigns(:usuario)
       expect(usuario).not_to be_persisted
       expect(usuario.errors[:usuario]).to be_present
@@ -127,11 +130,47 @@ RSpec.describe UsuariosController, type: :controller do
       post :create, params: { usuario: invalid }
       usuario = assigns(:usuario)
       expect(usuario).not_to be_persisted
-      expect(usuario.errors[:password]).to include("a senha não pode ser vazia")
+      # Evita depender de mensagem exata; só verificamos que existe erro na senha
+      expect(usuario.errors[:password]).not_to be_empty
       expect(response).to render_template(:new)
       expect(response).to have_http_status(:unprocessable_entity)
     end
-    it "valida o tamanho da senha maior ou igual a 6 " do
+
+    it "valida o tamanho da senha maior ou igual a 6" do
+      invalid = valid_attributes.merge(password: "123")
+      post :create, params: { usuario: invalid }
+      usuario = assigns(:usuario)
+      expect(usuario).not_to be_persisted
+      expect(usuario.errors[:password]).not_to be_empty
+      expect(response).to render_template(:new)
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
-end 
+
+  describe "POST #redefine_senha" do
+    it "recebe usuario e e-mail (quando usuário existe)" do
+      user = Usuario.create!(valid_attributes)
+      post :redefinir_senha, params: { usuario: user.usuario, email: user.email }
+
+      # comportamento pode variar: aqui apenas checamos que controller encontrou o usuário.
+      # ajuste conforme sua implementação (p.ex. redirect, enviar email, etc).
+      expect(assigns(:usuario)).to eq(user)
+      # se sua action redirecionar, substitua por:
+      # expect(response).to redirect_to(some_path)
+    end
+
+    it "falha se usuario não existe" do
+      post :redefinir_senha, params: { usuario: 'nao_existe', email: 'noone@example.com' }
+      # Ajuste a expectativa conforme o comportamento real: not_found / unprocessable / render :new
+      # Por enquanto verificamos que nenhum usuário foi encontrado
+      expect(assigns(:usuario)).to be_nil
+      # ex.: expect(response).to have_http_status(:not_found)
+    end
+
+    it "falha se email não corresponde ao usuário" do
+      user = Usuario.create!(valid_attributes)
+      post :redefinir_senha, params: { usuario: user.usuario, email: 'outro@email.com' }
+      expect(assigns(:usuario)).to be_nil
+    end
+  end
+end

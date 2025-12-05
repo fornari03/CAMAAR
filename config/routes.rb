@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   # Página inicial Home
   get "/home", to: "home#index"
 
+  post "/redefinir_senha" , to: "usuarios#redefinir_senha"
+
 
   root "autenticacao#new"
 end
