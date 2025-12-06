@@ -103,10 +103,8 @@ Quando('eu solicito a importação clicando em {string}') do |botao|
     path = args.first.to_s
     
     if path.include?('classes.json')
-      puts "👻 MOCK ATIVADO: Retornando classes fake!"
       @fake_classes.to_json
     elsif path.include?('class_members.json')
-      puts "👻 MOCK ATIVADO: Retornando membros fake!"
       @fake_members.to_json
     else
       original_method.call(*args)
