@@ -50,7 +50,7 @@ Funcionalidade: Atualizar base de dados com os dados do SIGAA
     Dado que o sistema possui o usuário "Fulano de Tal" ("150084006") cadastrado
     E a fonte de dados externa indica que "150084006" não está mais presente
     Quando eu solicito a importação clicando em "Importar dados"
-    Então o usuário "150084006" deve ser desativado no sistema
+    Então o usuário "150084006" deve ser excluído do sistema
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
   @sad_path
