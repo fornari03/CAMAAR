@@ -93,9 +93,12 @@ RSpec.describe SigaaImporter do
       let(:classes_json) do
         [
           {
-            "name" => "BANCOS DE DADOS AVANÇADO",
+            "name" => "BANCOS DE DADOS AVANÇADO", # Alterado: Nome da matéria mudou
             "code" => "CIC0097",
-            "class" => { "semester" => "2024.1", "time" => "35T23" }
+            "class" => {
+              "semester" => "2024.1",
+              "time" => "35T23"
+            }
           }
         ].to_json
       end
@@ -105,18 +108,21 @@ RSpec.describe SigaaImporter do
           {
             "code" => "CIC0097",
             "classCode" => "TA",
-            "semester" => "2024.1",
+            "semester" => "2024.1", # Mantendo a estrutura
             "dicente" => [
               {
-                "nome" => "Fulano da Silva", 
-                "matricula" => "150084006",
+                "nome" => "Fulano da Silva",        # Alterado: Nome do aluno mudou
+                "matricula" => "150084006",         # Alterado: ID para casar com aluno_existente
                 "usuario" => "150084006",
-                "email" => "fulano.novo@gmail.com",
+                "email" => "fulano.novo@gmail.com", # Alterado: Email mudou
                 "ocupacao" => "dicente"
               }
             ],
             "docente" => {
-              "nome" => "Prof. Real", "usuario" => "88888", "email" => "prof@real.com", "ocupacao" => "docente"
+                "nome" => "Prof. Real",
+                "usuario" => "88888",
+                "email" => "prof@real.com",
+                "ocupacao" => "docente"
             }
           }
         ].to_json
@@ -133,15 +139,14 @@ RSpec.describe SigaaImporter do
       end
 
       let!(:turma_existente) do
-        t = Turma.create!(
-          nome: "BANCOS DE DADOS",
+        m = Materia.create!(nome: "BANCOS DE DADOS", codigo: "CIC0097")
+        
+        Turma.create!(
           codigo: "CIC0097",
+          materia: m,
           docente: docente,
-          semestre: "2024.1", horario: "35T23", status: true
+          semestre: "2024.1", horario: "35T23"
         )
-        t.materia = Materia.create!(nome: "BD", codigo: "CIC0097")
-        t.save!
-        t
       end
 
       let!(:aluno_removido) do
@@ -153,14 +158,13 @@ RSpec.describe SigaaImporter do
       end
 
       let!(:turma_removida) do
-         t = Turma.create!(
-          nome: "TURMA VELHA", 
+         m = Materia.create!(nome: "Materia Velha", codigo: "OLD0001")
+
+         Turma.create!(
           codigo: "OLD0001",
-          docente: docente, semestre: "2024.1", horario: "35T23", status: true
+          materia: m,
+          docente: docente, semestre: "2024.1", horario: "35T23"
         )
-        t.materia = Materia.create!(nome: "Velha", codigo: "OLD0001")
-        t.save!
-        t
       end
 
       before do
@@ -180,7 +184,7 @@ RSpec.describe SigaaImporter do
         described_class.call
         turma_existente.reload
         
-        expect(turma_existente.nome).to eq("BANCOS DE DADOS AVANÇADO")
+        expect(turma_existente.materia.reload.nome).to eq("BANCOS DE DADOS AVANÇADO")
       end
 
       it 'matricula o aluno na turma se ele não estava matriculado' do
@@ -192,20 +196,24 @@ RSpec.describe SigaaImporter do
         expect(aluno_existente.turmas).to include(turma_existente)
       end
 
-      it 'desativa alunos que não estão mais no arquivo' do
+      it 'exclui alunos que não estão mais no arquivo' do
         described_class.call
-        aluno_removido.reload
         
-        expect(aluno_removido.status).to be(false)
-        expect(aluno_existente.reload.status).to be(true)
+        # Verifica se o registro sumiu do banco (virou nil)
+        expect(Usuario.find_by(id: aluno_removido.id)).to be_nil
+        
+        # Garante que o outro aluno continua lá
+        expect(Usuario.find_by(id: aluno_existente.id)).to be_present
       end
 
-      it 'desativa turmas que não estão mais no arquivo' do
+      it 'exclui turmas que não estão mais no arquivo' do
         described_class.call
-        turma_removida.reload
         
-        expect(turma_removida.status).to be(false)
-        expect(turma_existente.reload.status).to be(true)
+        # Verifica se o registro sumiu do banco (virou nil)
+        expect(Turma.find_by(id: turma_removida.id)).to be_nil
+        
+        # Garante que a outra turma continua lá
+        expect(Turma.find_by(id: turma_existente.id)).to be_present
       end
     end
 
