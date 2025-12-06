@@ -28,12 +28,35 @@ Dado('que o sigaa contém a turma {string} \({string})') do |nome_turma, codigo_
 end
 
 Dado('esta turma contém o participante {string} \({string})') do |nome, matricula|
-  @fake_members << {
-    "name" => nome,
+  codigo_turma_atual = @fake_classes.last["code"]
+  
+  # verifica se ja tem essa turma no array de membros
+  turma_member_data = @fake_members.find { |m| m["code"] == codigo_turma_atual }
+
+  # senão, cria a estrutura da turma no arquivo de membros
+  unless turma_member_data
+    turma_member_data = {
+      "code" => codigo_turma_atual,
+      "dicente" => [],
+      "docente" => {
+        "nome" => "Professor Mock",
+        "usuario" => "99999",
+        "email" => "prof@mock.com",
+        "ocupacao" => "docente"
+      }
+    }
+    @fake_members << turma_member_data
+  end
+
+  # adiciona o aluno na turma
+  turma_member_data["dicente"] << {
+    "nome" => nome_aluno,
     "matricula" => matricula,
-    "ocupacao" => "aluno",
-    "class_code" => @fake_classes.last["codigo"]
+    "usuario" => matricula,
+    "email" => "#{matricula}@aluno.unb.br",
+    "ocupacao" => "dicente"
   }
+
 end
 
 Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome, codigo|
