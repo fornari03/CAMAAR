@@ -8,4 +8,8 @@ class AdminController < ApplicationController
     end
     redirect_back(fallback_location: "/gerenciamento") 
   end
+
+  def gerenciamento
+    @sistema_tem_dados = Turma.exists?
+  end
 end

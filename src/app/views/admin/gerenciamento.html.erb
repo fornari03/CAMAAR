@@ -1,7 +1,20 @@
 <div class="flex flex-col space-y-4">
   <%= button_to "Importar dados", importar_dados_path, method: :post, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full" %>
 
-  <button class="bg-green-300 text-white py-2 px-4 rounded w-full" disabled>Editar Templates</button>
-  <button class="bg-green-300 text-white py-2 px-4 rounded w-full" disabled>Enviar Formularios</button>
-  <button class="bg-green-300 text-white py-2 px-4 rounded w-full" disabled>Resultados</button>
+  <%
+     css_classe = @sistema_tem_dados ? "bg-green-500 hover:bg-green-700" : "bg-green-300 cursor-not-allowed"
+     esta_desabilitado = !@sistema_tem_dados 
+  %>
+
+  <button class="<%= css_classe %> text-white py-2 px-4 rounded w-full" <%= "disabled" if esta_desabilitado %>>
+    Editar Templates
+  </button>
+
+  <button class="<%= css_classe %> text-white py-2 px-4 rounded w-full" <%= "disabled" if esta_desabilitado %>>
+    Enviar Formularios
+  </button>
+
+  <button class="<%= css_classe %> text-white py-2 px-4 rounded w-full" <%= "disabled" if esta_desabilitado %>>
+    Resultados
+  </button>
 </div>

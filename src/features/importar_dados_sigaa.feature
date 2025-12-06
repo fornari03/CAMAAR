@@ -21,6 +21,7 @@ Funcionalidade: Importar novos dados do SIGAA
     E o usuário "Fulano de Tal" ("150084006") deve ser cadastrado no sistema
     E o usuário "Fulano de Tal" deve estar matriculado na turma "BANCOS DE DADOS"
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
+    E os outro botões na página devem ser liberados
 
   @happy_path
   Cenário: Importação de nova turma e participante já existente na turma com sucesso
