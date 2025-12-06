@@ -182,3 +182,51 @@ Então('os outro botões na página devem ser liberados') do
     expect(botao[:class]).to include("bg-green-500")
   end
 end
+
+Dado('que o sistema possui o usuário {string} \({string}) cadastrado com o e-mail {string}') do |string, string2, string3|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('o usuário {string} ainda não está matriculado na turma {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('a fonte de dados externa indica que {string} está matriculado em {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o usuário {string} deve ser matriculado na turma {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o nome do usuário {string} deve ser atualizado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('a fonte de dados externa indica que o nome da turma {string} agora é {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o nome da turma {string} deve ser atualizado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('a fonte de dados externa indica que {string} não está mais presente') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('o usuário {string} deve ser desativado no sistema') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
