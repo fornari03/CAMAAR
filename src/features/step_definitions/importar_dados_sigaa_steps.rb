@@ -50,7 +50,7 @@ Dado('esta turma contém o participante {string} \({string})') do |nome, matricu
 
   # adiciona o aluno na turma
   turma_member_data["dicente"] << {
-    "nome" => nome_aluno,
+    "nome" => nome,
     "matricula" => matricula,
     "usuario" => matricula,
     "email" => "#{matricula}@aluno.unb.br",
@@ -66,10 +66,13 @@ Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome, 
 end
 
 Então('o usuário {string} \({string}) deve ser cadastrado no sistema') do |nome, matricula|
-  step "o usuário \"#{nome}\" (\"#{matricula}\") deve ser cadastrado no sistema"
+  usuario = Usuario.find_by(matricula: matricula)
+  
+  expect(usuario).to be_present
+  expect(usuario.nome).to eq(nome)
 end
 
-Então('o usuário {string} deve estar matriculado na turma {string}') do |string, string2|
+Então('o usuário {string} deve estar matriculado na turma {string}') do |nome_usuario, nome_turma|
   user = Usuario.find_by(nome: nome_usuario)
   
   turma = Turma.joins(:materia).find_by(materias: { nome: nome_turma })
@@ -85,11 +88,24 @@ Então('o usuário {string} deve estar matriculado na turma {string} \({string})
   expect(user.turmas).to include(turma)
 end
 
-Então('eu devo ver a mensagem de sucesso {string}') do |string|
+Então('eu devo ver a mensagem de sucesso {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
 Quando('eu solicito a importação clicando em {string}') do |botao|
+  allow(File).to receive(:read).and_wrap_original do |original_method, *args|
+    path = args.first.to_s
+    
+    if path.include?('classes.json')
+      puts "👻 MOCK ATIVADO: Retornando classes fake!"
+      @fake_classes.to_json
+    elsif path.include?('class_members.json')
+      puts "👻 MOCK ATIVADO: Retornando membros fake!"
+      @fake_members.to_json
+    else
+      original_method.call(*args)
+    end
+  end
   click_button botao
 end
 

@@ -3,6 +3,6 @@ Rails.application.routes.draw do
   
   get "up" => "rails/health#show", as: :rails_health_check
 
-  post '/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
+  post '/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
 
 end

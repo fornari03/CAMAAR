@@ -41,8 +41,14 @@ class SigaaImporter
       end
 
       members_data.each do |turma_data|
+        puts "🔍 Lendo turma do JSON de membros: #{turma_data['code']}"
         turma = Turma.find_by(codigo: turma_data['code'])
-        next unless turma
+        unless turma
+          puts "🔴 TURMA NÃO ENCONTRADA NO BANCO: #{turma_data['code']}"
+          next 
+        end
+
+        puts "🟢 Turma encontrada. Verificando alunos..."
 
         if turma_data['docente']
           doc_data = turma_data['docente']
@@ -58,6 +64,7 @@ class SigaaImporter
         end
 
         if turma_data['dicente']
+          puts "found #{turma_data['dicente'].size} alunos para importar"
           turma_data['dicente'].each do |aluno_data|
             user = Usuario.find_or_create_by!(matricula: aluno_data['matricula']) do |u|
               u.nome = aluno_data['nome']
@@ -72,6 +79,8 @@ class SigaaImporter
               user.turmas << turma
             end
           end
+        else 
+          puts "⚠️ Chave 'dicente' não encontrada ou vazia!"
         end
       end
     end

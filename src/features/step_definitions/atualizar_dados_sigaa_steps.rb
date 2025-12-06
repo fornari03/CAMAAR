@@ -15,10 +15,6 @@ Então('nenhum usuário duplicado deve ser criado') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('eu devo ver a mensagem de sucesso {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('que o usuário {string} \({int}) já existe no sistema') do |string, int|
 # Dado('que o usuário {string} \({float}) já existe no sistema') do |string, float|
   pending # Write code here that turns the phrase above into concrete actions

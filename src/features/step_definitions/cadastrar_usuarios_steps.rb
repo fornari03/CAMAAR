@@ -16,10 +16,6 @@ Então('um e-mail de {string} deve ser enviado para {string}') do |string, strin
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('eu devo ver a mensagem de sucesso {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('que o sigaa contém o usuário {string} \({int})') do |string, int|
 # Dado('que o sigaa contém o usuário {string} \({float})') do |string, float|
   pending # Write code here that turns the phrase above into concrete actions
