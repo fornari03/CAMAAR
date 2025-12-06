@@ -1,0 +1,35 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold">Gerenciar Templates</h1>
+  <%= link_to "Novo Template", new_template_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+</div>
+
+<div class="bg-white shadow-md rounded my-6 overflow-x-auto">
+  <table class="min-w-full table-auto">
+    <thead>
+      <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+        <th class="py-3 px-6 text-left">Nome</th>
+        <th class="py-3 px-6 text-center">Ações</th>
+      </tr>
+    </thead>
+    <tbody class="text-gray-600 text-sm font-light">
+      <% @templates.each do |template| %>
+        <tr class="border-b border-gray-200 hover:bg-gray-100">
+          <td class="py-3 px-6 text-left whitespace-nowrap">
+            <span class="font-medium"><%= template.titulo %></span>
+          </td>
+          <td class="py-3 px-6 text-center">
+            <div class="flex item-center justify-center">
+              <%= link_to edit_template_path(template), class: "w-4 mr-2 transform hover:text-purple-500 hover:scale-110" do %>
+                <i class="fa-solid fa-pen"></i> Editar
+              <% end %>
+              
+              <%= button_to template_path(template), method: :delete, data: { confirm: "Tem certeza que deseja deletar?" }, class: "w-4 mr-2 transform hover:text-red-500 hover:scale-110 bg-transparent border-0 cursor-pointer" do %>
+                <i class="fa-solid fa-trash"></i> Deletar
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_29_191826) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_05_210703) do
   create_table "formularios", force: :cascade do |t|
     t.string "titulo_envio"
     t.datetime "data_criacao"
@@ -68,12 +68,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_29_191826) do
     t.index ["id_participante"], name: "index_respostas_on_id_participante"
   end
 
+  create_table "template_questions", force: :cascade do |t|
+    t.string "title", default: ""
+    t.string "question_type", default: "text"
+    t.text "content", default: "[]"
+    t.integer "template_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["template_id"], name: "index_template_questions_on_template_id"
+  end
+
   create_table "templates", force: :cascade do |t|
     t.string "titulo"
     t.string "participantes"
     t.integer "id_criador", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
+    t.boolean "hidden", default: false
     t.index ["id_criador"], name: "index_templates_on_id_criador"
   end
 
@@ -110,6 +122,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_29_191826) do
   add_foreign_key "resposta_items", "respostas"
   add_foreign_key "respostas", "formularios"
   add_foreign_key "respostas", "usuarios", column: "id_participante"
+  add_foreign_key "template_questions", "templates"
   add_foreign_key "templates", "usuarios", column: "id_criador"
   add_foreign_key "turmas", "materias"
   add_foreign_key "turmas", "usuarios", column: "id_docente"
