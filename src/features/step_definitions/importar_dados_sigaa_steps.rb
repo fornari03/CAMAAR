@@ -93,7 +93,13 @@ Então('eu devo ver a mensagem de sucesso {string}') do |mensagem|
 end
 
 Quando('eu solicito a importação clicando em {string}') do |botao|
+  @quantidade_inicial_turmas = Turma.count 
+  @quantidade_inicial_usuarios = Usuario.count
   allow(File).to receive(:read).and_wrap_original do |original_method, *args|
+    if @simular_erro_arquivo
+      raise Errno::ENOENT 
+    end
+
     path = args.first.to_s
     
     if path.include?('classes.json')
@@ -110,7 +116,15 @@ Quando('eu solicito a importação clicando em {string}') do |botao|
 end
 
 Dado('que o sistema possui o usuário {string} \({string}) cadastrado') do |nome, matricula|
-  expect(Usuario.where(matricula: matricula).count).to eq(1)
+  Usuario.create!(
+    nome: nome,
+    matricula: matricula,
+    email: "#{matricula}@exemplo.com",
+    usuario: matricula,
+    password: "password123",
+    ocupacao: :discente,
+    status: true
+  )
 end
 
 Dado('que o sistema não possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
@@ -118,7 +132,26 @@ Dado('que o sistema não possui a turma {string} \({string}) cadastrada') do |no
 end
 
 Dado('que o sistema possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
-  expect(Turma.joins(:materia).where(materias: { nome: nome_turma }, codigo: codigo_turma).count).to eq(1)
+  materia = Materia.find_or_create_by!(codigo: codigo_turma) do |m|
+    m.nome = nome_turma
+  end
+
+  docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
+    nome: "Professor Teste",
+    matricula: "999999",
+    usuario: "999999",
+    email: "prof_teste_local@unb.br",
+    password: "123",
+    ocupacao: :docente,
+    status: true
+  )
+
+  Turma.find_or_create_by!(codigo: codigo_turma) do |t|
+    t.materia = materia
+    t.docente = docente
+    t.semestre = "2024.1"
+    t.horario = "35T23"
+  end
 end
 
 Dado('que o sistema não possui o usuário {string} \({string}) cadastrado') do |nome, matricula|
@@ -126,19 +159,15 @@ Dado('que o sistema não possui o usuário {string} \({string}) cadastrado') do 
 end
 
 Dado('que o sigaa está indisponível') do
-  pending # TODO: o que poderia ser aqui?
-end
-
-Então('eu devo ver a mensagem de erro {string}') do |string|
-  expect(page).to have_content(mensagem)
+  @simular_erro_arquivo = true
 end
 
 Então('nenhuma nova turma deve ser cadastrada no sistema') do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Turma.count).to eq(@quantidade_inicial_turmas)
 end
 
 Então('nenhum novo usuário deve ser cadastrado no sistema') do
-  pending # Write code here that turns the phrase above into concrete actions
+  expect(Usuario.count).to eq(@quantidade_inicial_usuarios)
 end
 
 Então('o usuário {string} \({string}) não deve ser duplicado no sistema') do |nome, matricula|

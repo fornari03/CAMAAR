@@ -37,6 +37,7 @@ Funcionalidade: Importar novos dados do SIGAA
   Cenário: Importação de turma já existente e novo participante na turma com sucesso
     Dado que o sistema possui a turma "ALGORITMOS E PROGRAMAÇÃO" ("CIC0001") cadastrada
     E que o sistema não possui o usuário "Beltrano de Tal" ("150084008") cadastrado
+    E que o sigaa contém a turma "ALGORITMOS E PROGRAMAÇÃO" ("CIC0001")
     E esta turma contém o participante "Beltrano de Tal" ("150084008")
     Quando eu solicito a importação clicando em "Importar dados"
     Então o usuário "Beltrano de Tal" ("150084008") deve ser cadastrado no sistema
