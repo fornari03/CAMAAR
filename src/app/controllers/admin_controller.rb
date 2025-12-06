@@ -6,7 +6,7 @@ class AdminController < ApplicationController
     rescue StandardError => e
       flash[:alert] = e.message
     end
-    redirect_back(fallback_location: "/gerenciamento") 
+    redirect_back(fallback_location: "/admin/gerenciamento") 
   end
 
   def gerenciamento
