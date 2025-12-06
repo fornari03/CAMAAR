@@ -17,28 +17,32 @@ class SigaaImporter
         nome: "Docente Importador", 
         email: "docente@sistema.com", 
         matricula: "999999", 
-        usuario: "docente_imp", 
+        usuario: "999999", 
         password: "password123", 
         ocupacao: :docente, 
         status: true
       )
 
       classes_data.each do |cls|
-        materia = Materia.find_or_create_by(codigo: cls['code']) do |m|
+        materia = Materia.find_or_create_by!(codigo: cls['code']) do |m|
           m.nome = cls['name']
         end
 
-        Turma.find_or_create_by(codigo: cls['code']) do |t|
+        Turma.find_or_create_by!(codigo: cls['code']) do |t|
           t.materia = materia
           t.docente = docente_padrao
-          t.semestre = cls['semester']
-          t.horario = cls['schedule']
+          if cls['class']
+            t.semestre = cls['class']['semester']
+            t.horario  = cls['class']['time']
+          end
+          
           t.nome = cls['name'] if t.respond_to?(:nome=)
         end
       end
 
       members_data.each do |member|
-        aluno = Usuario.find_or_create_by(matricula: member['registration']) do |u|
+        puts "🔍 MEMBRO LIDO: #{member.inspect}"
+        aluno = Usuario.find_or_create_by!(matricula: member['registration']) do |u|
           u.nome = member['name']
           u.email = "#{member['registration']}@aluno.unb.br"
           u.usuario = member['registration']

@@ -8,8 +8,10 @@ RSpec.describe SigaaImporter do
         {
           "name" => "BANCOS DE DADOS",
           "code" => "CIC0097",
-          "semester" => "2024.1",
-          "schedule" => "35T23"
+          "class" => {
+            "semester" => "2024.1",
+            "time" => "35T23"
+          }
         }
       ].to_json
     end

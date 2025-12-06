@@ -19,16 +19,18 @@ end
 Dado('que o sigaa contém a turma {string} \({string})') do |nome_turma, codigo_turma|
   @fake_classes << {
     "name" => nome_turma,
-    "codigo" => codigo_turma,
-    "semestre" => "2024.1",
-    "horario" => "35T23" 
+    "code" => codigo_turma,
+    "class" => {
+      "semester" => "2024.1",
+      "time" => "35T23"
+    }
   }
 end
 
 Dado('esta turma contém o participante {string} \({string})') do |nome, matricula|
   @fake_members << {
-    "name" => string,
-    "matricula" => string,
+    "name" => nome,
+    "matricula" => matricula,
     "ocupacao" => "aluno",
     "class_code" => @fake_classes.last["codigo"]
   }
@@ -74,10 +76,6 @@ end
 
 Dado('que o sistema não possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
   expect(Turma.joins(:materia).where(materias: { nome: nome_turma }, codigo: codigo_turma).count).to eq(0)
-end
-
-Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome_turma, codigo_turma|
-  pending # Write code here that turns the phrase above into concrete actions
 end
 
 Dado('que o sistema possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
