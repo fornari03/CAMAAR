@@ -9,6 +9,7 @@ Dado('que eu estou logado como Administrador') do
     status: true
   )
 
+  # TODO: implementar com feature de login quando existir
   # visit '/login'
 
   # fill_in 'Usuário', with: @admin.usuario
@@ -21,3 +22,6 @@ Dado('estou na página {string}') do |string|
   visit "/" + string
 end
 
+Então('eu devo ver a mensagem de erro {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
+end
