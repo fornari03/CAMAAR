@@ -9,6 +9,7 @@ RSpec.describe SigaaImporter do
           "name" => "BANCOS DE DADOS",
           "code" => "CIC0097",
           "class" => {
+            "classCode" => "TA",
             "semester" => "2024.1",
             "time" => "35T23"
           }
@@ -66,7 +67,8 @@ RSpec.describe SigaaImporter do
       it 'cria a turma associada à matéria e ao docente' do
         expect { described_class.call }.to change(Turma, :count).by(1)
         turma = Turma.last
-        expect(turma.codigo).to eq('CIC0097')
+        expect(turma.codigo).to eq('TA')
+        expect(turma.materia.codigo).to eq('CIC0097')
         expect(turma.docente.nome).to eq('Prof. Real') 
         expect(turma.docente.matricula).to eq('88888')
       end
@@ -84,7 +86,8 @@ RSpec.describe SigaaImporter do
       it 'matricula o aluno na turma' do
         described_class.call
         aluno = Usuario.find_by(matricula: '123456789')
-        turma = Turma.find_by(codigo: 'CIC0097')
+        materia = Materia.find_by(codigo: 'CIC0097')
+        turma = Turma.find_by(codigo: 'TA', materia: materia)
         
         expect(aluno.turmas).to include(turma)
       end
@@ -97,6 +100,7 @@ RSpec.describe SigaaImporter do
             "name" => "BANCOS DE DADOS AVANÇADO",
             "code" => "CIC0097",
             "class" => {
+              "classCode" => "TA",
               "semester" => "2024.1",
               "time" => "35T23"
             }
@@ -143,7 +147,7 @@ RSpec.describe SigaaImporter do
         m = Materia.create!(nome: "BANCOS DE DADOS", codigo: "CIC0097")
         
         Turma.create!(
-          codigo: "CIC0097",
+          codigo: "TA",
           materia: m,
           docente: docente,
           semestre: "2024.1", horario: "35T23"
@@ -285,7 +289,10 @@ RSpec.describe SigaaImporter do
         end
 
         it 'não cria o usuário no sistema' do
-          described_class.call
+          expect { 
+            described_class.call 
+          }.to raise_error(StandardError, /e-mail ausente/)
+
           expect(Usuario.find_by(matricula: "NOEMAIL100")).to be_nil
         end
       end

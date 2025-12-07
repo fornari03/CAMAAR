@@ -32,7 +32,7 @@ class SigaaImporter
         materia.nome = cls['name']
         materia.save!
 
-        codigo_turma = cls['class']['classCode'] || "#{cls['code']}"
+        codigo_turma = cls['class']['classCode']
 
         turma = Turma.find_or_initialize_by(codigo: codigo_turma, materia: materia)
         
@@ -65,7 +65,6 @@ class SigaaImporter
             horario: classes_data.find { |c| c['code'] == turma_data['code'] }['class']['time'],
             docente: docente_padrao
           )
-          active_turma_ids << turma.id
         end
         
         active_turma_ids << turma.id

@@ -1,25 +1,34 @@
 Dado('que o sigaa contém o usuário {string} \({string}) com e-mail {string}') do |nome, matricula, email|
-  codigo_padrao = "CIC0097"
-  turma_padrao = "TA"
+  codigo_materia = "CIC0097"
+  codigo_turma = "TA"
 
-  unless @fake_classes.any? { |c| c["code"] == codigo_padrao }
+  unless @fake_classes.any? { |c| c["code"] == codigo_materia }
     @fake_classes << {
       "name" => "Matéria Mock",
-      "code" => codigo_padrao,
-      "classCode" => turma_padrao,
-      "class" => { "semester" => "2024.1", "time" => "35T23" }
+      "code" => codigo_materia,
+      "classCode" => codigo_turma,
+      "class" => {
+        "classCode" => codigo_turma,
+        "semester" => "2024.1",
+        "time" => "35T23"
+      }
     }
   end
 
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_padrao && m["classCode"] == turma_padrao }
-  
+  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
+
   unless turma_mock
     turma_mock = {
-      "code" => codigo_padrao,
-      "classCode" => turma_padrao,
+      "code" => codigo_materia,
+      "classCode" => codigo_turma,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "prof@mock.com", "ocupacao" => "docente"}
+      "docente" => { 
+        "nome" => "Prof Mock", 
+        "usuario" => "99999", 
+        "email" => "prof@mock.com",
+        "ocupacao" => "docente"
+      }
     }
     @fake_members << turma_mock
   end
@@ -36,38 +45,47 @@ Dado('que o sigaa contém o usuário {string} \({string}) com e-mail {string}') 
 end
 
 Dado('que o sigaa contém o usuário {string} \({string})') do |nome, matricula|
-  codigo_padrao = "CIC0097"
-  turma_padrao = "TA"
+  codigo_materia = "CIC0097"
+  codigo_turma = "TA"
 
-  unless @fake_classes.any? { |c| c["code"] == codigo_padrao }
+  unless @fake_classes.any? { |c| c["code"] == codigo_materia }
     @fake_classes << {
       "name" => "Matéria Mock",
-      "code" => codigo_padrao,
-      "classCode" => turma_padrao,
-      "class" => { "semester" => "2024.1", "time" => "35T23" }
+      "code" => codigo_materia,
+      "classCode" => codigo_turma,
+      "class" => {
+        "classCode" => codigo_turma,
+        "semester" => "2024.1",
+        "time" => "35T23"
+      }
     }
   end
 
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_padrao && m["classCode"] == turma_padrao }
-  
+  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
+
   unless turma_mock
     turma_mock = {
-      "code" => codigo_padrao,
-      "classCode" => turma_padrao,
+      "code" => codigo_materia,
+      "classCode" => codigo_turma,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "prof@mock.com", "ocupacao" => "docente"}
+      "docente" => { 
+        "nome" => "Prof Mock", 
+        "usuario" => "99999", 
+        "email" => "prof@mock.com",
+        "ocupacao" => "docente"
+      }
     }
     @fake_members << turma_mock
   end
 
   turma_mock["dicente"].reject! { |d| d["matricula"] == matricula }
-
+  
   turma_mock["dicente"] << {
     "nome" => nome,
     "matricula" => matricula,
     "usuario" => matricula,
-    "email" => "#{matricula}@aluno.unb.br",
+    "email" => "#{matricula}@temp.com", 
     "ocupacao" => "dicente"
   }
 end
