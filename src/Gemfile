@@ -52,6 +52,7 @@ group :development, :test do
   
   gem 'cucumber-rails', require: false
   gem 'rspec-rails'
+  gem 'rails-controller-testing'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'database_cleaner'

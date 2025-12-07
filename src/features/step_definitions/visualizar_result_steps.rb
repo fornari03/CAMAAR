@@ -2,6 +2,7 @@ Dado('eu sou um {string} logado no sistema') do |perfil|
   pending
 end
 
+
 Dado('existem os formulários {string} e {string}') do |f1, f2|
   pending
 end

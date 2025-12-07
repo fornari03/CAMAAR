@@ -5,4 +5,12 @@ Rails.application.routes.draw do
 
   post 'admin/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
 
+  resources :templates do
+    resources :template_questions, only: [:create, :update, :destroy] do
+      post 'add_alternative', on: :member
+    end
+  end
+
+  get "home/index"
+  root "home#index"
 end
