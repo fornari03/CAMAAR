@@ -34,7 +34,7 @@ class SigaaImporter
         materia.save!
         puts "MMMMMMMMMMMMMMM #{materia.inspect}"
 
-        codigo_turma = cls['class']['classCode'] || "T#{cls['code']}"
+        codigo_turma = cls['class']['classCode'] || "#{cls['code']}"
 
         turma = Turma.find_or_create_by(codigo: codigo_turma, materia: materia)
         
@@ -57,6 +57,18 @@ class SigaaImporter
 
         codigo_turma = turma_data['classCode']
         turma = Turma.find_by(codigo: codigo_turma, materia: materia)
+        if !turma
+          turma = Turma.create!(
+            codigo: codigo_turma,
+            materia: materia,
+            semestre: turma_data['semester'],
+            horario: classes_data.find { |c| c['code'] == turma_data['code'] }['class']['time'],
+            docente: docente_padrao
+          ) 
+          puts "NNNNNNNNNNNNN #{turma.inspect}"
+          active_turma_ids << turma.id
+        end
+
         puts "CCCCCCCCCCCCCCC #{turma.inspect}"
         puts "DDDDDDDDDDDDDDD #{materia.inspect}"
 
@@ -107,7 +119,7 @@ class SigaaImporter
           end
         end
       end
-
+      puts "RRRRRRRRRRRRRR #{Turma.all.inspect}"
       Turma.where.not(id: active_turma_ids).destroy_all
       Usuario.where(ocupacao: [:discente, :docente]).where.not(id: active_user_ids).destroy_all
     end

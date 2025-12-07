@@ -16,10 +16,11 @@ Dado('que o sistema não possui nenhum usuário cadastrado') do
   Usuario.where.not(id: @admin.id).destroy_all
 end
 
-Dado('que o sigaa contém a turma {string} \({string})') do |nome_turma, codigo_turma|
+Dado('que o sigaa contém a turma {string} da matéria {string} \({string})') do |codigo_turma, nome_materia, codigo_materia|
   @fake_classes << {
-    "name" => nome_turma,
-    "code" => codigo_turma,
+    "name" => nome_materia,
+    "code" => codigo_materia,
+    "classCode" => codigo_turma,
     "class" => {
       "semester" => "2024.1",
       "time" => "35T23"
@@ -37,6 +38,8 @@ Dado('esta turma contém o participante {string} \({string})') do |nome, matricu
   unless turma_member_data
     turma_member_data = {
       "code" => codigo_turma_atual,
+      "classCode" => @fake_classes.last["classCode"],
+      "semester" => "2024.1",
       "dicente" => [],
       "docente" => {
         "nome" => "Professor Mock",
@@ -59,10 +62,11 @@ Dado('esta turma contém o participante {string} \({string})') do |nome, matricu
 
 end
 
-Então('a turma {string} \({string}) deve ser cadastrada no sistema') do |nome, codigo|
-  turma = Turma.find_by(codigo: codigo)
+Então('a turma {string} da matéria {string} \({string}) deve ser cadastrada no sistema') do |codigo_turma, nome_materia, codigo_materia|
+  materia = Materia.find_by(codigo: codigo_materia)
+  turma = Turma.joins(:materia).find_by(codigo: codigo_turma, materia: materia)
   expect(turma).to be_present
-  expect(turma.materia.nome).to eq(nome)
+  expect(turma.materia.nome).to eq(nome_materia)
 end
 
 Então('o usuário {string} \({string}) deve ser cadastrado no sistema') do |nome, matricula|
@@ -72,19 +76,16 @@ Então('o usuário {string} \({string}) deve ser cadastrado no sistema') do |nom
   expect(usuario.nome).to eq(nome)
 end
 
-Então('o usuário {string} deve estar matriculado na turma {string}') do |nome_usuario, nome_turma|
-  user = Usuario.find_by(nome: nome_usuario)
-  
-  turma = Turma.joins(:materia).find_by(materias: { nome: nome_turma })
-  
-  expect(user.turmas).to include(turma)
-end
+Então('o usuário {string} deve estar matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
+  user = Usuario.find_by(matricula: matricula)
+  materia = Materia.find_by(codigo: codigo_materia)
+  puts "UUUUUUUUUUUUUUU #{materia.inspect}"
+  turma = Turma.find_by(codigo: codigo_turma, materia: materia)
 
-Então('o usuário {string} deve estar matriculado na turma {string} \({string})') do |string, string2, string3|
-  user = Usuario.find_by(nome: string)
-  
-  turma = Turma.joins(:materia).find_by(materias: { nome: string2 }, codigo: string3)
-  
+  puts "UUUUUUUUUUUUUUU #{turma.inspect}"
+  puts "UUUUUUUUUUUUUUU #{Turma.all.inspect}"
+
+  expect(turma).to be_present
   expect(user.turmas).to include(turma)
 end
 
@@ -141,9 +142,9 @@ Dado('que o sistema não possui a turma {string} \({string}) cadastrada') do |no
   expect(Turma.joins(:materia).where(materias: { nome: nome_turma }, codigo: codigo_turma).count).to eq(0)
 end
 
-Dado('que o sistema possui a turma {string} \({string}) cadastrada') do |nome_turma, codigo_turma|
-  materia = Materia.find_or_create_by!(codigo: codigo_turma) do |m|
-    m.nome = nome_turma
+Dado('que o sistema possui a turma {string} da matéria {string} \({string}) cadastrada') do |codigo_turma, nome_materia, codigo_materia|
+  materia = Materia.find_or_create_by!(codigo: codigo_materia) do |m|
+    m.nome = nome_materia
   end
 
   docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
