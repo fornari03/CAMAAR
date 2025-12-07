@@ -1,11 +1,3 @@
-Dado('que eu estou logado como Administrador') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('estou na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('que o usuário {string} \({int}) já existe no sistema com o e-mail {string}') do |string, int, string2|
 # Dado('que o usuário {string} \({float}) já existe no sistema com o e-mail {string}') do |string, float, string2|
   pending # Write code here that turns the phrase above into concrete actions
@@ -20,10 +12,6 @@ Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |st
 end
 
 Então('nenhum usuário duplicado deve ser criado') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Então('eu devo ver a mensagem de sucesso {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
@@ -95,21 +83,5 @@ Dado('que o usuário {string} \({int}) já existe no sistema com o e-mail {strin
 end
 
 Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string} e o nome agora é {string}') do |string, string2, string3|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('que o sigaa está indisponível') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Então('eu devo ver a mensagem de erro {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Então('nenhuma nova turma deve ser cadastrada no sistema') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Então('nenhum novo usuário deve ser cadastrado no sistema') do
   pending # Write code here that turns the phrase above into concrete actions
 end
