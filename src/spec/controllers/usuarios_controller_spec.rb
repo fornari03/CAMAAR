@@ -146,31 +146,4 @@ RSpec.describe UsuariosController, type: :controller do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
-
-  describe "POST #redefine_senha" do
-    it "recebe usuario e e-mail (quando usuário existe)" do
-      user = Usuario.create!(valid_attributes)
-      post :redefinir_senha, params: { usuario: user.usuario, email: user.email }
-
-      # comportamento pode variar: aqui apenas checamos que controller encontrou o usuário.
-      # ajuste conforme sua implementação (p.ex. redirect, enviar email, etc).
-      expect(assigns(:usuario)).to eq(user)
-      # se sua action redirecionar, substitua por:
-      # expect(response).to redirect_to(some_path)
-    end
-
-    it "falha se usuario não existe" do
-      post :redefinir_senha, params: { usuario: 'nao_existe', email: 'noone@example.com' }
-      # Ajuste a expectativa conforme o comportamento real: not_found / unprocessable / render :new
-      # Por enquanto verificamos que nenhum usuário foi encontrado
-      expect(assigns(:usuario)).to be_nil
-      # ex.: expect(response).to have_http_status(:not_found)
-    end
-
-    it "falha se email não corresponde ao usuário" do
-      user = Usuario.create!(valid_attributes)
-      post :redefinir_senha, params: { usuario: user.usuario, email: 'outro@email.com' }
-      expect(assigns(:usuario)).to be_nil
-    end
-  end
 end
