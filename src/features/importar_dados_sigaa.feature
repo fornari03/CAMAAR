@@ -8,7 +8,7 @@ Funcionalidade: Importar novos dados do SIGAA
 
   Contexto:
     Dado que eu estou logado como Administrador
-    E estou na página "gerenciamento"
+    E estou na página "Gerenciamento"
 
   @happy_path
   Cenário: Importação inicial de turma e participante na turma com sucesso

@@ -24,6 +24,7 @@ end
 
 # método auxiliar para traduzir nomes para rotas
 def path_to(page_name)
+  page_name = page_name.downcase
   case page_name
   when "gerenciamento"
     admin_gerenciamento_path 
