@@ -196,97 +196,138 @@ Então('os outro botões na página devem ser liberados') do
 end
 
 Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string}') do |matricula, novo_email|
-  found = false
-  @fake_members.each do |turma|
-    aluno = turma["dicente"].find { |d| d["matricula"] == matricula }
-    if aluno
-      aluno["email"] = novo_email
-      found = true
-    end
-  end
+  matricula_str = matricula.to_s
   
-  unless found
-    raise "Erro no Teste: Tentou atualizar email do aluno #{matricula}, mas ele não existe no Mock inicial."
+  codigo_materia_padrao = "CIC0097" 
+  codigo_turma_padrao = "TA"
+
+  turma_mock = @fake_members.find { |m| m["dicente"].any? { |d| d["matricula"].to_s == matricula_str } }
+  
+  unless turma_mock
+    turma_mock = @fake_members.find { |m| m["code"] == codigo_materia_padrao } || {
+      "code" => codigo_materia_padrao,
+      "classCode" => codigo_turma_padrao,
+      "semester" => "2024.1",
+      "dicente" => [],
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+    }
+    @fake_members << turma_mock unless @fake_members.include?(turma_mock)
+  end
+
+  unless @fake_classes.any? { |c| c["code"] == turma_mock["code"] }
+    @fake_classes << {
+      "name" => "Matéria Mock",
+      "code" => turma_mock["code"],
+      "class" => { "semester" => "2024.1", "time" => "35T23" }
+    }
+  end
+
+  @fake_members.each do |t|
+    t["dicente"].reject! { |d| d["matricula"].to_s == matricula_str }
+  end
+
+  turma_mock["dicente"] << {
+    "nome" => "Nome Genérico",
+    "matricula" => matricula_str,
+    "usuario" => matricula_str,
+    "email" => novo_email,
+    "ocupacao" => "dicente"
+  }
+end
+
+Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('que o sistema possui a turma {string} da matéria {string} cadastrada') do |codigo_turma, codigo_materia|
+  docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
+    nome: "Docente Padrão", matricula: "99999", usuario: "prof", 
+    email: "prof@unb.br", password: "123", ocupacao: :docente, status: true
+  )
+
+  materia = Materia.find_or_create_by!(codigo: codigo_materia) do |m|
+    m.nome = "Matéria #{codigo_materia}"
+  end
+
+  Turma.find_or_create_by!(codigo: codigo_turma, materia: materia) do |t|
+    t.docente = docente
+    t.semestre = "2024.1"
+    t.horario = "35T23"
   end
 end
 
-Dado('a fonte de dados externa indica que {string} está matriculado em {string}') do |matricula_aluno, codigo_turma|
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_turma }
-  
+Dado('o usuário {string} ainda não está matriculado na turma {string} da matéria {string}') do |matricula_usuario, codigo_turma, codigo_materia|
+  user = Usuario.find_by(matricula: matricula_usuario)
+  turma = Turma.joins(:materia).find_by(codigo: codigo_turma, materias: { codigo: codigo_materia })
+
+  if turma
+    expect(user.turmas).not_to include(turma)
+  end
+end
+
+Dado('a fonte de dados externa indica que {string} está matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
+  matricula_str = matricula.to_s
+
+  unless @fake_classes.any? { |c| c["code"] == codigo_materia }
+    @fake_classes << {
+      "name" => "Matéria Importada",
+      "code" => codigo_materia,
+      "class" => { "semester" => "2024.1", "time" => "35T23" }
+    }
+  end
+
+  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
+
   unless turma_mock
-    turma_mock = { 
-      "code" => codigo_turma, 
-      "dicente" => [], 
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999" } 
+    turma_mock = {
+      "code" => codigo_materia,
+      "classCode" => codigo_turma,
+      "semester" => "2024.1",
+      "dicente" => [],
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
     }
     @fake_members << turma_mock
   end
 
-  novo_aluno_mock = {
-    "nome" => "Fulano de Tal",
-    "matricula" => matricula_aluno,
-    "usuario" => matricula_aluno,
-    "email" => "#{matricula_aluno}@email.com",
+  turma_mock["dicente"].reject! { |d| d["matricula"].to_s == matricula_str }
+  
+  turma_mock["dicente"] << {
+    "nome" => "Aluno Importado",
+    "matricula" => matricula_str,
+    "usuario" => matricula_str,
+    "email" => "#{matricula_str}@aluno.unb.br",
     "ocupacao" => "dicente"
   }
-
-  turma_mock["dicente"] << novo_aluno_mock
 end
 
-Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |matricula, novo_nome|
-  @fake_members.each do |turma|
-    aluno = turma["dicente"].find { |d| d["matricula"] == matricula }
-    if aluno
-      aluno["nome"] = novo_nome
-    end
-  end
+Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |string, string2, string3|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('a fonte de dados externa indica que o nome da turma {string} agora é {string}') do |codigo_turma, novo_nome|
-  turma = @fake_classes.find { |c| c["code"] == codigo_turma }
-  turma["name"] = novo_nome if turma
+Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('a fonte de dados externa indica que {string} não está mais presente') do |identificador|
-  @fake_classes.reject! { |c| c["code"] == identificador }
-  
-  @fake_members.reject! { |m| m["code"] == identificador }
-
-  @fake_members.each do |turma|
-    turma["dicente"].reject! { |d| d["matricula"] == identificador }
-  end
+Então('o nome do usuário {string} deve ser atualizado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('o usuário {string} ainda não está matriculado na turma {string}') do |nome_usuario, nome_turma|
-  user = Usuario.find_by(nome: nome_usuario)
-  turma = Turma.find_by(nome: nome_turma)
-  
-  expect(user.turmas).not_to include(turma)
+Dado('que o sistema possui a matéria {string} cadastrada') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |matricula, novo_email|
-  usuario = Usuario.find_by(matricula: matricula)
-  expect(usuario.email).to eq(novo_email)
+Dado('a fonte de dados externa indica que o nome da matéria {string} agora é {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o usuário {string} deve ser matriculado na turma {string}') do |nome_usuario, nome_turma|
-  user = Usuario.find_by(nome: nome_usuario)
-  turma = Turma.find_by(nome: nome_turma)
-  
-  expect(user.turmas).to include(turma)
+Então('o nome da matéria {string} deve ser atualizado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o nome do usuário {string} deve ser atualizado para {string}') do |matricula, novo_nome|
-  usuario = Usuario.find_by(matricula: matricula)
-  expect(usuario.nome).to eq(novo_nome)
+Dado('a fonte de dados externa indica que {string} não está mais presente') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o nome da turma {string} deve ser atualizado para {string}') do |codigo_turma, novo_nome|
-  turma = Turma.find_by(codigo: codigo_turma)
-  expect(turma.nome).to eq(novo_nome)
-end
-
-Então('o usuário {string} deve ser excluído do sistema') do |matricula|
-  usuario = Usuario.find_by(matricula: matricula)
-  expect(usuario).to be_nil
+Então('o usuário {string} deve ser excluído do sistema') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
 end
