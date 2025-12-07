@@ -29,6 +29,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_05_210703) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "matriculas", force: :cascade do |t|
+    t.integer "id_usuario"
+    t.integer "id_turma"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "opcoes", force: :cascade do |t|
     t.string "texto_opcao"
     t.integer "questao_id", null: false

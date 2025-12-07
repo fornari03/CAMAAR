@@ -17,7 +17,7 @@ end
 
 Dado('(que eu )estou na página {string}') do |page_name|
   path = case page_name
-         when "Gerenciamento"
+         when "Gerenciamento", "gerenciamento"
            templates_path 
          when "formularios/new"
            new_formulario_path
@@ -25,6 +25,8 @@ Dado('(que eu )estou na página {string}') do |page_name|
            new_template_path
          when "templates"
            templates_path
+         when "home", "inicial"
+           root_path
          else
            page_name
          end
@@ -50,4 +52,8 @@ Dado('que eu sou um {string} logado no sistema') do |role|
     ocupacao: role.to_sym, # Assuming enum matches role string
     status: true
   )
+end
+
+Então('eu devo ver a mensagem de erro {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
 end

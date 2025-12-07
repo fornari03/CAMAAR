@@ -2,7 +2,6 @@ Dado('que estou logado') do
   step "que eu estou logado como Administrador"
 end
 
-
 Dado('que existe um template criado com o campo {string} preenchido com {string}, e o campo {string} preenchido com {string}, e o campo {string} preenchido com {string}') do |field1, value1, field2, value2, field3, value3|
   # Concatenate fields into title to satisfy the test expectation without changing schema
   title = "#{value1} - #{value2} - #{value3}"
