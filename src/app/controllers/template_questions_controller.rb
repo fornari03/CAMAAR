@@ -4,7 +4,7 @@ class TemplateQuestionsController < ApplicationController
 
   def create
     @question = @template.template_questions.create(
-      title: "",
+      title: "Nova Questão",
       question_type: "text",
       content: []
     )
@@ -20,27 +20,48 @@ class TemplateQuestionsController < ApplicationController
       @question.content = params[:alternatives] # params[:alternatives] is an array from name="alternatives[]"
     end
 
-    if @question.update(question_params)
-      # If question type changed to text, maybe clear content?
+    # If commit is nil (JS submit) or type is changing, skip validation to allow UI update.
+    @question.assign_attributes(question_params)
+    type_changing = @question.question_type_changed?
+    
+    if params[:commit].nil? || type_changing
+      @question.save(validate: false)
+      
+      # Clear content if type changed to text
       if @question.question_type == 'text'
         @question.content = []
-        @question.save
+        @question.save(validate: false)
       end
-      redirect_to edit_template_path(@template), notice: 'Questão atualizada.'
+      redirect_to edit_template_path(@template), notice: 'Tipo de questão atualizado.'
     else
-      redirect_to edit_template_path(@template), alert: 'Erro ao atualizar questão.'
+      # Normal save with validation
+      if @question.save
+        if @question.question_type == 'text'
+          @question.content = []
+          @question.save
+        end
+        redirect_to edit_template_path(@template), notice: 'template alterado com sucesso'
+      else
+        redirect_to edit_template_path(@template), alert: @question.errors.full_messages.join(', ')
+      end
     end
   end
 
   def destroy
+    if @template.template_questions.count <= 1
+      redirect_to edit_template_path(@template), alert: 'não é possível salvar template sem questões'
+      return
+    end
+
     @question.destroy
-    redirect_to edit_template_path(@template), notice: 'Questão removida.'
+    redirect_to edit_template_path(@template), notice: 'template alterado com sucesso'
   end
 
   def add_alternative
     current_content = @question.content || []
     current_content << "" # Add empty option
-    @question.update(content: current_content)
+    @question.content = current_content
+    @question.save(validate: false) # Bypass validation to allow adding empty option
     redirect_to edit_template_path(@template)
   end
 
