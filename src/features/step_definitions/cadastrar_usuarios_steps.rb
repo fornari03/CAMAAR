@@ -29,10 +29,6 @@ Então('nenhum novo e-mail de {string} deve ser enviado para {string}') do |stri
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('nenhum usuário duplicado deve ser criado') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('o registro de {string} não possui um endereço de e-mail') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end

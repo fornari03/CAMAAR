@@ -184,6 +184,10 @@ Então('o usuário {string} \({string}) não deve ser duplicado no sistema') do 
   expect(Usuario.where(matricula: matricula).count).to eq(1)
 end
 
+Então('nenhum usuário duplicado deve ser criado') do
+  expect(Usuario.where(matricula: "150084006").count).to eq(1)
+end
+
 Então('os outro botões na página devem ser liberados') do
   botoes_para_verificar = ["Editar Templates", "Enviar Formularios", "Resultados"]
 
@@ -209,7 +213,7 @@ Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string}
       "classCode" => codigo_turma_padrao,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "mock@email"}
     }
     @fake_members << turma_mock unless @fake_members.include?(turma_mock)
   end
@@ -218,7 +222,7 @@ Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string}
     @fake_classes << {
       "name" => "Matéria Mock",
       "code" => turma_mock["code"],
-      "class" => { "semester" => "2024.1", "time" => "35T23" }
+      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode" => "TA"}
     }
   end
 
@@ -233,10 +237,6 @@ Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string}
     "email" => novo_email,
     "ocupacao" => "dicente"
   }
-end
-
-Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
 end
 
 Dado('que o sistema possui a turma {string} da matéria {string} cadastrada') do |codigo_turma, codigo_materia|
@@ -300,34 +300,99 @@ Dado('a fonte de dados externa indica que {string} está matriculado na turma {s
   }
 end
 
-Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |string, string2, string3|
-  pending # Write code here that turns the phrase above into concrete actions
+Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |matricula, novo_nome|
+  matricula_str = matricula.to_s
+  codigo_materia_padrao = "CIC0097"
+  codigo_turma_padrao = "TA"
+
+  unless @fake_classes.any? { |c| c["code"] == codigo_materia_padrao }
+    @fake_classes << {
+      "name" => "Matéria Mock",
+      "code" => codigo_materia_padrao,
+      "class" => { "semester" => "2024.1", "time" => "35T23", classCode: "TA"}
+    }
+  end
+
+  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia_padrao && m["classCode"] == codigo_turma_padrao }
+  unless turma_mock
+    turma_mock = {
+      "code" => codigo_materia_padrao,
+      "classCode" => codigo_turma_padrao,
+      "semester" => "2024.1",
+      "dicente" => [],
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+    }
+    @fake_members << turma_mock
+  end
+
+  turma_mock["dicente"].reject! { |d| d["matricula"].to_s == matricula_str }
+
+  turma_mock["dicente"] << {
+    "nome" => novo_nome,
+    "matricula" => matricula_str,
+    "usuario" => matricula_str,
+    "email" => "#{matricula_str}@aluno.unb.br",
+    "ocupacao" => "dicente"
+  }
 end
 
-Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
+Dado('que o sistema possui a matéria {string} cadastrada') do |codigo_materia|
+  Materia.find_or_create_by!(codigo: codigo_materia) do |m|
+    m.nome = "Matéria #{codigo_materia}"
+  end
 end
 
-Então('o nome do usuário {string} deve ser atualizado para {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
+Dado('a fonte de dados externa indica que o nome da matéria {string} agora é {string}') do |codigo_materia, novo_nome|
+  class_mock = @fake_classes.find { |c| c["code"] == codigo_materia }
+
+  unless class_mock
+    class_mock = {
+      "code" => codigo_materia,
+      "name" => "Nome Antigo",
+      "class" => { "semester" => "2024.1", "time" => "35T23" }
+    }
+    @fake_classes << class_mock
+  end
+
+  class_mock["name"] = novo_nome
 end
 
-Dado('que o sistema possui a matéria {string} cadastrada') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
+Dado('a fonte de dados externa indica que {string} não está mais presente') do |identificador|
+  @fake_classes.reject! { |c| c["code"] == identificador }
+  @fake_members.reject! { |m| m["code"] == identificador }
+  
+  @fake_members.each do |turma|
+    turma["dicente"].reject! { |d| d["matricula"].to_s == identificador.to_s }
+  end
 end
 
-Dado('a fonte de dados externa indica que o nome da matéria {string} agora é {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
+Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |matricula, novo_email|
+  usuario = Usuario.find_by(matricula: matricula)
+  expect(usuario).to be_present
+  expect(usuario.email).to eq(novo_email)
 end
 
-Então('o nome da matéria {string} deve ser atualizado para {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
+Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |nome_usuario, codigo_turma, codigo_materia|
+  user = Usuario.find_by(nome: nome_usuario)
+  turma = Turma.joins(:materia).find_by(codigo: codigo_turma, materias: { codigo: codigo_materia })
+  
+  expect(user).to be_present
+  expect(turma).to be_present
+  expect(user.turmas).to include(turma)
 end
 
-Dado('a fonte de dados externa indica que {string} não está mais presente') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
+Então('o nome do usuário {string} deve ser atualizado para {string}') do |matricula, novo_nome|
+  usuario = Usuario.find_by(matricula: matricula)
+  expect(usuario).to be_present
+  expect(usuario.nome).to eq(novo_nome)
 end
 
-Então('o usuário {string} deve ser excluído do sistema') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
+Então('o nome da matéria {string} deve ser atualizado para {string}') do |codigo_materia, novo_nome|
+  materia = Materia.find_by(codigo: codigo_materia)
+  expect(materia).to be_present
+  expect(materia.nome).to eq(novo_nome)
+end
+
+Então('o usuário {string} deve ser excluído do sistema') do |matricula|
+  expect(Usuario.find_by(matricula: matricula)).to be_nil
 end
