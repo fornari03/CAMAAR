@@ -1,0 +1,69 @@
+<h1 class="text-2xl font-bold mb-6">Editar Template</h1>
+
+<!-- Template Name Form -->
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-6">
+  <h2 class="text-xl font-semibold mb-4">Configurações do Template</h2>
+  <%= form_with(model: @template, local: true) do |form| %>
+    <div class="mb-4">
+      <%= form.label :titulo, "Nome", class: "block text-gray-700 text-sm font-bold mb-2" %>
+      <div class="flex">
+        <%= form.text_field :titulo, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2" %>
+        <%= form.submit "Atualizar Nome", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Questions List -->
+<div class="mb-6">
+  <h2 class="text-xl font-semibold mb-4">Questões</h2>
+  
+  <% @template.template_questions.each_with_index do |question, index| %>
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 question-form">
+      <h3 class="text-lg font-medium mb-2">Questão <%= index + 1 %></h3>
+      
+      <%= form_with(model: [ @template, question ], local: true) do |f| %>
+        <div class="mb-4">
+          <%= f.label :title, "Título da Questão", class: "block text-gray-700 text-sm font-bold mb-2" %>
+          <%= f.text_field :title, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :question_type, "Tipo da Questão", class: "block text-gray-700 text-sm font-bold mb-2" %>
+          <%= f.select :question_type, TemplateQuestion.question_types.keys.map { |k| [k.humanize, k] }, {}, { class: "shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", onchange: "this.form.submit()" } %>
+        </div>
+
+        <!-- Alternatives for Radio/Checkbox -->
+        <% if ['radio', 'checkbox'].include?(question.question_type) %>
+          <div class="mb-4 ml-4">
+            <h4 class="text-sm font-bold mb-2">Alternativas:</h4>
+            <% (question.content || []).each_with_index do |alternative, i| %>
+              <div class="mb-2">
+                <input type="text" name="alternatives[]" value="<%= alternative %>" class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Opção <%= i + 1 %>">
+              </div>
+            <% end %>
+            
+            <div class="mt-2">
+              <%= button_to "Adicionar Alternativa", add_alternative_template_template_question_path(@template, question), method: :post, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded text-xs" %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="flex items-center justify-between mt-4">
+          <%= f.submit "Salvar Questão", class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+          
+          <%= link_to "Remover Questão", template_template_question_path(@template, question), data: { turbo_method: :delete, confirm: "Tem certeza?" }, class: "text-red-600 hover:text-red-800 text-sm font-bold" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<!-- Add Question Button -->
+<div class="flex justify-center mb-8">
+  <%= button_to "Adicionar Questão", template_template_questions_path(@template), method: :post, class: "bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline text-lg" %>
+</div>
+
+<div class="mt-8 text-center">
+  <%= link_to "Voltar para Templates", templates_path, class: "text-blue-500 hover:text-blue-800" %>
+</div>

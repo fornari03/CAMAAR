@@ -1,6 +1,3 @@
-Dado('que eu sou um {string} logado no sistema') do |perfil|
-  pending # Write code here that turns the phrase above into concrete actions
-end
 
 Dado('estou matriculado nas turmas {string} e {string}') do |t1, t2|
   pending # Write code here that turns the phrase above into concrete actions

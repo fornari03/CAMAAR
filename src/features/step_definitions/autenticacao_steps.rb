@@ -56,6 +56,16 @@ Quando('eu preencho {string} com {string}') do |string, string2|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('o status do usuário {string} deve continuar {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
+Então('o status do usuário {string} deve continuar {string}') do |email_ou_matricula, status|
+  usuario = Usuario.find_by(email: email_ou_matricula) || Usuario.find_by(matricula: email_ou_matricula)
+  expect(usuario.status).to eq(status)
+end
+
+# Pending steps added
+Dado('que eu sou um {string} não autenticado') do |role|
+  pending "Authentication logic for unauthenticated #{role} not implemented"
+end
+
+Quando('eu tento acessar a funcionalidade de criação \(clicar no botão {string})') do |button_text|
+  pending "Access control testing logic not implemented"
 end

@@ -1,3 +1,11 @@
+Dado('que eu estou logado como Administrador') do
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Dado('estou na página {string}') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
 Dado('que o sigaa contém o usuário {string} \({int}) com e-mail {string}') do |string, int, string2|
 # Dado('que o sigaa contém o usuário {string} \({float}) com e-mail {string}') do |string, float, string2|
   pending # Write code here that turns the phrase above into concrete actions
@@ -16,6 +24,10 @@ Então('um e-mail de {string} deve ser enviado para {string}') do |string, strin
   pending # Write code here that turns the phrase above into concrete actions
 end
 
+Então('eu devo ver a mensagem de sucesso {string}') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
 Dado('que o sigaa contém o usuário {string} \({int})') do |string, int|
 # Dado('que o sigaa contém o usuário {string} \({float})') do |string, float|
   pending # Write code here that turns the phrase above into concrete actions
@@ -26,6 +38,10 @@ Dado('o usuário {string} já existe na base de dados do CAMAAR \(seja {string} 
 end
 
 Então('nenhum novo e-mail de {string} deve ser enviado para {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
+
+Então('nenhum usuário duplicado deve ser criado') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
