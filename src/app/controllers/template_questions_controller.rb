@@ -31,6 +31,10 @@ class TemplateQuestionsController < ApplicationController
       if @question.question_type == 'text'
         @question.content = []
         @question.save(validate: false)
+      # Add empty alternative if type changed to radio/checkbox and content is empty
+      elsif ['radio', 'checkbox'].include?(@question.question_type) && (@question.content.nil? || @question.content.empty?)
+        @question.content = ['']
+        @question.save(validate: false)
       end
       redirect_to edit_template_path(@template), notice: 'Tipo de questão atualizado.'
     else
