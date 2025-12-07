@@ -1,10 +1,4 @@
-Dado('que eu estou logado como Administrador') do
-  pending # Write code here that turns the phrase above into concrete actions
-end
 
-Dado('estou na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
 
 Dado('que o sistema não possui nenhuma turma cadastrada') do
   pending # Write code here that turns the phrase above into concrete actions

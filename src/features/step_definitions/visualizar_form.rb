@@ -6,10 +6,6 @@ Dado('estou na página {string}') do |pagina|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('estou matriculado nas turmas {string} e {string}') do |t1, t2|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('a turma {string} possui os formulários {string} e {string}') do |turma, f1, f2|
   pending # Write code here that turns the phrase above into concrete actions
 end
