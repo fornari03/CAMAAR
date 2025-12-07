@@ -15,11 +15,10 @@ Dado('que eu estou logado como Administrador') do
   # However, the other steps might have had implementation. Let's check one.
 end
 
-Dado('estou na página {string}') do |page_name|
+Dado('(que eu )estou na página {string}') do |page_name|
   path = case page_name
          when "Gerenciamento"
-           # TODO: Define the actual path for management page
-           "/gerenciamento" 
+           templates_path 
          when "formularios/new"
            new_formulario_path
          when "templates/new"
