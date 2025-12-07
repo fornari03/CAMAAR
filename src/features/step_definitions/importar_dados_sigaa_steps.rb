@@ -272,7 +272,7 @@ Dado('a fonte de dados externa indica que {string} está matriculado na turma {s
     @fake_classes << {
       "name" => "Matéria Importada",
       "code" => codigo_materia,
-      "class" => { "semester" => "2024.1", "time" => "35T23" }
+      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode" => codigo_turma }
     }
   end
 
@@ -284,20 +284,19 @@ Dado('a fonte de dados externa indica que {string} está matriculado na turma {s
       "classCode" => codigo_turma,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "mock@email"}
     }
-    @fake_members << turma_mock
-  end
 
-  turma_mock["dicente"].reject! { |d| d["matricula"].to_s == matricula_str }
-  
-  turma_mock["dicente"] << {
+    turma_mock["dicente"] << {
     "nome" => "Aluno Importado",
     "matricula" => matricula_str,
     "usuario" => matricula_str,
     "email" => "#{matricula_str}@aluno.unb.br",
     "ocupacao" => "dicente"
-  }
+    }
+
+    @fake_members << turma_mock
+  end
 end
 
 Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |matricula, novo_nome|
@@ -320,7 +319,7 @@ Dado('a fonte de dados externa indica que o nome de {string} agora é {string}')
       "classCode" => codigo_turma_padrao,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "mock@email"}
     }
     @fake_members << turma_mock
   end
@@ -372,8 +371,8 @@ Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |ma
   expect(usuario.email).to eq(novo_email)
 end
 
-Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |nome_usuario, codigo_turma, codigo_materia|
-  user = Usuario.find_by(nome: nome_usuario)
+Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
+  user = Usuario.find_by(matricula: matricula)
   turma = Turma.joins(:materia).find_by(codigo: codigo_turma, materias: { codigo: codigo_materia })
   
   expect(user).to be_present

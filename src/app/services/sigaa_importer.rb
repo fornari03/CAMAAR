@@ -32,8 +32,9 @@ class SigaaImporter
         materia = Materia.find_or_initialize_by(codigo: cls['code'])
         materia.nome = cls['name']
         materia.save!
+        puts "MMMMMMMMMMMMMMM #{materia.inspect}"
 
-        codigo_turma = cls['class']['classCode']
+        codigo_turma = cls['class']['classCode'] || "T#{cls['code']}"
 
         turma = Turma.find_or_create_by(codigo: codigo_turma, materia: materia)
         
