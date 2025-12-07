@@ -50,6 +50,7 @@ RSpec.describe SigaaImporter do
 
     context 'quando os arquivos JSON existem e são válidos' do
       before do
+        allow(File).to receive(:read).and_call_original
         
         allow(File).to receive(:read).with(satisfy { |path| path.to_s.include?('classes.json') })
           .and_return(classes_json)
@@ -214,11 +215,8 @@ RSpec.describe SigaaImporter do
     context 'funcionalidade de cadastro e convite por email' do
       before do
         ActionMailer::Base.deliveries.clear
-        allow(File).to receive(:read).with(satisfy { |path| path.to_s.include?('classes.json') })
-          .and_return(classes_json)
-          
-        allow(File).to receive(:read).with(satisfy { |path| path.to_s.include?('class_members.json') })
-          .and_return(members_json)
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('classes.json') }).and_return(classes_json)
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('class_members.json') }).and_return(members_json_feature)
       end
 
       context 'quando importa um usuário novo com email' do
@@ -260,7 +258,7 @@ RSpec.describe SigaaImporter do
             {
               "code" => "CIC0097", "classCode" => "TA",
               "dicente" => [
-                { "nome" => "Aluno Existe", "matricula" => "EXISTE100", "email" => "existe@email.com", "ocupacao" => "dicente" }
+                { "nome" => "Aluno Existe", "matricula" => "EXISTE100", "usuario" => "EXISTE100", "email" => "existe@email.com", "ocupacao" => "dicente" }
               ],
               "docente" => { "nome" => "Prof", "usuario" => "P99", "email" => "p@p.com", "ocupacao" => "docente" }
             }

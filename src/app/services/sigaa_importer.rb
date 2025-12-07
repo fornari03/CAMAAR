@@ -61,7 +61,7 @@ class SigaaImporter
           turma = Turma.create!(
             codigo: codigo_turma,
             materia: materia,
-            semestre: turma_data['semester'],
+            semestre: classes_data.find { |c| c['code'] == turma_data['code'] }['class']['semester'],
             horario: classes_data.find { |c| c['code'] == turma_data['code'] }['class']['time'],
             docente: docente_padrao
           )
@@ -73,14 +73,19 @@ class SigaaImporter
         if turma_data['docente']
           doc_data = turma_data['docente']
           docente_real = Usuario.find_or_initialize_by(matricula: doc_data['usuario'].to_s)
+          eh_novo_docente = docente_real.new_record?
+          
           docente_real.assign_attributes(
             nome: doc_data['nome'],
             email: doc_data['email'],
             usuario: doc_data['usuario'],
-            ocupacao: :docente,
-            status: true
+            ocupacao: :docente
           )
-          docente_real.password = "password123" if docente_real.new_record?
+          
+          if eh_novo_docente
+            docente_real.password = SecureRandom.hex(8) 
+            docente_real.status = false
+          end
 
           docente_real.save!
           active_user_ids << docente_real.id
@@ -90,11 +95,13 @@ class SigaaImporter
         if turma_data['dicente']
           turma_data['dicente'].each do |aluno_data|
             
-            # se não tem e-mail, não cria e nem processa
+            # REQUISITO: Validar presença de e-mail
             email_aluno = aluno_data['email']
-            if email_aluno.nil? || email_aluno.strip.empty?
-              next 
+            
+            if email_aluno.nil? || email_aluno.to_s.strip.empty?
+              raise StandardError, "Falha ao importar usuário '#{aluno_data['matricula']}': e-mail ausente."
             end
+
 
             user = Usuario.find_or_initialize_by(matricula: aluno_data['matricula'].to_s)
             eh_novo_usuario = user.new_record?
@@ -118,7 +125,7 @@ class SigaaImporter
               begin
                 UserMailer.with(user: user).definicao_senha.deliver_now
               rescue => e
-                Rails.logger.error "Falha ao importar usuário #{user.matricula}: #{e.message}"
+                Rails.logger.error "Falha ao enviar e-mail para #{user.email}: #{e.message}"
               end
             end
 
