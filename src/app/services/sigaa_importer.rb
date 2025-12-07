@@ -1,4 +1,5 @@
 require 'json'
+require 'securerandom'
 
 class SigaaImporter
   def self.call
@@ -33,7 +34,7 @@ class SigaaImporter
 
         codigo_turma = cls['class']['classCode'] || "#{cls['code']}"
 
-        turma = Turma.find_or_create_by(codigo: codigo_turma, materia: materia)
+        turma = Turma.find_or_initialize_by(codigo: codigo_turma, materia: materia)
         
         turma.docente = docente_padrao unless turma.docente
         
@@ -54,6 +55,8 @@ class SigaaImporter
 
         codigo_turma = turma_data['classCode']
         turma = Turma.find_by(codigo: codigo_turma, materia: materia)
+
+        # se a turma não existir, cria agora para garantir integridade
         if !turma
           turma = Turma.create!(
             codigo: codigo_turma,
@@ -64,8 +67,8 @@ class SigaaImporter
           )
           active_turma_ids << turma.id
         end
-
-        next unless turma
+        
+        active_turma_ids << turma.id
 
         if turma_data['docente']
           doc_data = turma_data['docente']
@@ -74,10 +77,11 @@ class SigaaImporter
             nome: doc_data['nome'],
             email: doc_data['email'],
             usuario: doc_data['usuario'],
-            password: "123456",
             ocupacao: :docente,
             status: true
           )
+          docente_real.password = "password123" if docente_real.new_record?
+
           docente_real.save!
           active_user_ids << docente_real.id
           turma.update!(docente: docente_real)
@@ -85,18 +89,38 @@ class SigaaImporter
 
         if turma_data['dicente']
           turma_data['dicente'].each do |aluno_data|
-            user = Usuario.find_or_initialize_by(matricula: aluno_data['matricula'].to_s)
             
+            # se não tem e-mail, não cria e nem processa
+            email_aluno = aluno_data['email']
+            if email_aluno.nil? || email_aluno.strip.empty?
+              next 
+            end
+
+            user = Usuario.find_or_initialize_by(matricula: aluno_data['matricula'].to_s)
+            eh_novo_usuario = user.new_record?
+
             user.assign_attributes(
               nome: aluno_data['nome'],
-              email: aluno_data['email'] || "#{aluno_data['matricula']}@aluno.unb.br",
+              email: email_aluno,
               usuario: aluno_data['usuario'],
-              password: "123456",
-              ocupacao: :discente,
-              status: true
+              ocupacao: :discente
             )
+
+            if eh_novo_usuario
+              user.password = SecureRandom.hex(8) 
+              user.status = false 
+            end
+
             user.save!
             active_user_ids << user.id
+
+            if eh_novo_usuario
+              begin
+                UserMailer.with(user: user).definicao_senha.deliver_now
+              rescue => e
+                Rails.logger.error "Falha ao importar usuário #{user.matricula}: #{e.message}"
+              end
+            end
 
             unless user.turmas.exists?(turma.id)
               user.turmas << turma
@@ -104,6 +128,7 @@ class SigaaImporter
           end
         end
       end
+      
       Turma.where.not(id: active_turma_ids).destroy_all
       Usuario.where(ocupacao: [:discente, :docente]).where.not(id: active_user_ids).destroy_all
     end
