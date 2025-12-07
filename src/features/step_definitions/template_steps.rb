@@ -53,8 +53,59 @@ Então('eu devo ser redirecionado para a página de edição do template {string
   expect(current_path).to eq(edit_template_path(template))
 end
 
-Então('eu devo ver a mensagem do template {string}') do |conteudo|
-  expect(page).to have_content(conteudo)
+Então('eu devo ver a mensagem do template {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
+end
+
+# Pending steps added
+Dado('que existe um template {string}') do |template_name|
+  criador = @admin || Usuario.first || Usuario.create!(nome: 'Admin', email: 'admin@test.com', matricula: '123', usuario: 'admin', password: 'password', ocupacao: :admin, status: true)
+  Template.create!(titulo: template_name, criador: criador)
+end
+
+Quando('eu adiciono uma pergunta {string} do tipo {string}') do |question_text, type|
+  click_button "Adicionar Questão"
+  within all('.question-form').last do
+    fill_in "Título da Questão", with: question_text
+    
+    select_option = case type
+                    when "texto" then "Text"
+                    when "numérica (1-5)" then "Text"
+                    when "múltipla escolha" then "Radio"
+                    else type.humanize
+                    end
+    
+    select select_option, from: "Tipo da Questão"
+    click_button "Salvar Questão"
+  end
+end
+
+Quando('eu adiciono uma pergunta {string} do tipo {string} com opções {string}') do |question_text, type, options|
+  click_button "Adicionar Questão"
+  
+  within all('.question-form').last do
+    fill_in "Título da Questão", with: question_text
+    
+    select_option = case type
+                    when "múltipla escolha" then "Radio"
+                    when "caixa de seleção" then "Checkbox"
+                    else type.humanize
+                    end
+    
+    select select_option, from: "Tipo da Questão"
+    click_button "Salvar Questão"
+  end
+  
+  options.split(',').each do |option|
+    within all('.question-form').last do
+      click_button "Adicionar Alternativa"
+    end
+    
+    within all('.question-form').last do
+      all('input[name="alternatives[]"]').last.set(option.strip)
+      click_button "Salvar Questão"
+    end
+  end
 end
 
 
@@ -71,4 +122,10 @@ Então('o template {string} deve continuar existindo no banco de dados') do |tit
   template = Template.unscoped.find_by(titulo: titulo)
   expect(template).not_to be_nil
   expect(template.hidden).to be true
+end
+
+Então('eu devo permanecer na página de novo template') do
+  # On validation error, Rails renders the 'new' view but the URL is '/templates' (POST)
+  # So we check for the presence of the "Novo Template" header instead of the exact URL
+  expect(page).to have_css('h1', text: 'Novo Template')
 end
