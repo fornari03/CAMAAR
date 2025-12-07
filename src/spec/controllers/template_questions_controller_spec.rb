@@ -15,7 +15,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
       }.to change(TemplateQuestion, :count).by(1)
 
       question = TemplateQuestion.last
-      expect(question.title).to eq("")
+      expect(question.title).to eq("Nova Questão")
       expect(question.question_type).to eq("text")
       expect(response).to redirect_to(edit_template_path(template))
     end
@@ -54,7 +54,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
   end
 
   describe 'POST #add_alternative' do
-    let(:question) { TemplateQuestion.create!(template: template, question_type: 'radio', content: ['A']) }
+    let(:question) { TemplateQuestion.create!(template: template, title: 'Questão Teste', question_type: 'radio', content: ['A']) }
 
     it 'adds a new empty alternative to the content' do
       post :add_alternative, params: { template_id: template.id, id: question.id }
