@@ -1,88 +1,81 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>CAMAAR</title>
+    <meta charset="utf-8">
+    <title><%= content_for?(:title) ? yield(:title) : "CAMAAR" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <!-- Adicionando FontAwesome para os ícones (Menu, Lupa) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous">
   </head>
 
-  <body class="bg-gray-100 font-sans antialiased">
-    
-    <!-- HEADER (Barra Superior Fixa) -->
-    <header class="bg-white shadow fixed w-full top-0 left-0 z-50 flex items-center justify-between px-4 py-2 h-16 border-b border-gray-200">
-      <div class="flex items-center">
-        <!-- Botão Menu Hambúrguer -->
-        <button class="text-gray-800 text-2xl mr-4 focus:outline-none">
-          <i class="fas fa-bars"></i>
-        </button>
-        <!-- Título da Página -->
-        <h1 class="text-xl font-semibold text-gray-800">
-          Gerenciamento - Templates
-        </h1>
-      </div>
+  <body class="min-h-screen bg-gray-100 font-sans antialiased flex flex-col">
 
-      <div class="flex items-center space-x-4">
-        <!-- Barra de Pesquisa -->
-        <div class="relative hidden md:block">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <i class="fas fa-search"></i>
-          </span>
-          <input type="text" 
-                 placeholder="Pesquisar..." 
-                 class="w-64 pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm">
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center space-x-4">
+            <a href="<%= root_path %>" class="text-xl font-semibold text-gray-800">CAMAAR</a>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <% if defined?(current_usuario) && current_usuario %>
+              <span class="text-gray-700 text-sm">
+                <i class="fa-solid fa-user mr-2"></i>
+                Logado como <strong><%= current_usuario.usuario %></strong>
+              </span>
+
+              <%= button_to "Sair",
+                            logout_path,
+                            method: :delete,
+                            data: { turbo: false, confirm: "Deseja realmente sair?" },
+                            class: "ml-2 px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm" %>
+            <% else %>
+              <%= link_to "Login",
+                          login_path,
+                          class: "px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
+            <% end %>
+          </div>
         </div>
-
-        <!-- Avatar do Usuário -->
-        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-purple-800 text-white font-bold text-lg cursor-pointer">
-          U
-        </div>
       </div>
-    </header>
+    </nav>
 
-    <div class="flex pt-16 h-screen overflow-hidden">
-      
-      <!-- SIDEBAR (Barra Lateral Fixa) -->
-      <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col h-full">
-        <nav class="flex-1 py-4">
-          <ul class="space-y-1">
-            <!-- Link: Avaliações -->
-            <li>
-              <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                Avaliações
-              </a>
-            </li>
-            
-            <!-- Link: Gerenciamento (Ativo) -->
-            <li>
-              <a href="#" class="block px-6 py-3 bg-purple-800 text-white font-medium">
-                Gerenciamento
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
-      <!-- CONTEÚDO PRINCIPAL (Área Cinza) -->
-      <main class="flex-1 bg-gray-200 overflow-y-auto p-8 relative">
-        
+    <!-- MAIN: área que ocupa o espaço restante e centraliza conteúdo -->
+    <!-- usamos flex para centrar verticalmente abaixo da navbar -->
+    <main class="flex-1 flex items-center justify-center">
+      <!-- caixa centralizada com largura máxima -->
+      <div class="w-full max-w-4xl mx-auto px-6 py-10">
         <!-- Flash Messages -->
         <% flash.each do |type, msg| %>
-          <% color = type == 'notice' ? 'green' : 'red' %>
-          <div class="mb-4 px-4 py-3 rounded relative bg-<%= color %>-100 border border-<%= color %>-400 text-<%= color %>-700" role="alert">
+          <% classes = case type.to_s %>
+            <% when 'notice' then 'bg-green-100 border-green-400 text-green-700' %>
+            <% when 'alert'  then 'bg-red-100 border-red-400 text-red-700' %>
+            <% else               'bg-blue-100 border-blue-400 text-blue-700' %>
+          <% end %>
+
+          <div class="mb-4 px-4 py-3 rounded relative border <%= classes %>" role="alert">
             <span class="block sm:inline"><%= msg %></span>
           </div>
         <% end %>
 
         <!-- Conteúdo dinâmico das views -->
         <%= yield %>
+      </div>
+    </main>
 
-      </main>
-    </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+      <div class="max-w-4xl mx-auto px-6 py-4 text-sm text-gray-600 text-center">
+        © <%= Time.current.year %> CAMAAR
+      </div>
+    </footer>
 
+    <!-- Scripts (já incluídos no head) -->
   </body>
 </html>

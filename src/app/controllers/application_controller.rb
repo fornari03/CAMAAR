@@ -1,4 +1,14 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  helper_method :current_usuario
+  def current_usuario
+    @current_usuario ||= Usuario.find_by(id: session[:usuario_id])
+  end
+
+  def authenticate_usuario
+    redirect_to login_path, alert: "Faça login para continuar." unless current_usuario.present?
+  end
+
+  def authenticate_admin
+    redirect_to root_path, alert: "Acesso negado." unless current_usuario&.admin?
+  end
 end

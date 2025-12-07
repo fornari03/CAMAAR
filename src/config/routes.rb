@@ -1,14 +1,20 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Autenticação
+  get    "/login",  to: "autenticacao#new"
+  post   "/login",  to: "autenticacao#create"
+  delete "/logout", to: "autenticacao#destroy"
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Painel Admin
+  get "/admin", to: "admin#index", as: :admin
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  # CRUD de usuários
+  resources :usuarios
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Página inicial Home
+  get "/home", to: "home#index"
+
+  post "/redefinir_senha" , to: "usuarios#redefinir_senha"
+
+
+  root "autenticacao#new"
 end
