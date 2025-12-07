@@ -4,7 +4,7 @@ Dado('que estou na página de gerenciamento') do
   pending
 end
 
-Dado('seleciono o template com o campo nome "{string}" e o campo semestre "{string}"') do |nome, semestre|
+Dado('seleciono o template com o campo nome {string} e o campo semestre {string}') do |nome, semestre|
   pending
 end
 
@@ -24,7 +24,7 @@ Quando('clico em salvar') do
   pending
 end
 
-Então('devo ver a mensagem "{string}"') do |mensagem|
+Então('devo ver a mensagem {string}') do |mensagem|
   pending
 end
 
@@ -32,55 +32,39 @@ Então('devo ver que a questão {int} migrou para a posição da questão {int}'
   pending
 end
 
-Quando('eu clico no botão de exclusão ao lado da (nova) questão {int}') do |num|
+Quando('eu clico no botão de exclusão ao lado da \(nova) questão {int}') do |num|
   pending
 end
 
-Então('devo ser redirecionado para a página "Gerenciamento"') do
+Quando('eu altero o tipo da questão {int} para {string}') do |num, novo_tipo|
   pending
 end
 
-Então('devo permanecer na página de edição do template') do
+Quando('preencho o campo texto com {string}') do |texto|
   pending
 end
 
-Dado('que a questão {int} é do tipo "{string}" com opções "{string}"') do |num, tipo, opcoes|
+Quando('preencho o campo Opções com {string}') do |opcoes|
   pending
 end
 
-Dado('que a questão {int} é do tipo "{string}"') do |num, tipo|
+Quando('eu altero o tipo da questão {int} para {string} e preencho o campo texto com {string}') do |num, tipo, texto|
   pending
 end
 
-Quando('eu altero o tipo da questão {int} para "{string}"') do |num, novo_tipo|
+Quando('eu altero o tipo da questão {int} para {string} e preencho o campo texto com {string} e preencho o campo Opções com {string}') do |num, tipo, texto, opcoes|
   pending
 end
 
-Quando('preencho o campo texto com "{string}"') do |texto|
+Quando('eu altero o corpo para {string}') do |texto|
   pending
 end
 
-Quando('preencho o campo Opções com "{string}"') do |opcoes|
+Quando('eu altero o texto da questão para {string}') do |texto|
   pending
 end
 
-Quando('eu altero o tipo da questão {int} para "{string}" e preencho o campo texto com "{string}"') do |num, tipo, texto|
-  pending
-end
-
-Quando('eu altero o tipo da questão {int} para "{string}" e preencho o campo texto com "{string}" e preencho o campo Opções com "{string}"') do |num, tipo, texto, opcoes|
-  pending
-end
-
-Quando('eu altero o corpo para "{string}"') do |texto|
-  pending
-end
-
-Quando('eu altero o texto da questão para "{string}"') do |texto|
-  pending
-end
-
-Quando('eu altero as opções da questão para "{string}"') do |opcoes|
+Quando('eu altero as opções da questão para {string}') do |opcoes|
   pending
 end
 
