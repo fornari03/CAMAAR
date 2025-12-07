@@ -95,13 +95,13 @@ class SigaaImporter
         if turma_data['dicente']
           turma_data['dicente'].each do |aluno_data|
             
-            # REQUISITO: Validar presença de e-mail
             email_aluno = aluno_data['email']
             
             if email_aluno.nil? || email_aluno.to_s.strip.empty?
               raise StandardError, "Falha ao importar usuário '#{aluno_data['matricula']}': e-mail ausente."
             end
 
+            next if email_aluno.nil? || email_aluno.to_s.strip.empty?
 
             user = Usuario.find_or_initialize_by(matricula: aluno_data['matricula'].to_s)
             eh_novo_usuario = user.new_record?

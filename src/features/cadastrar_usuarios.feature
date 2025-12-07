@@ -17,7 +17,7 @@ Funcionalidade: Cadastrar usuários do sistema (e enviar convite por email)
     Quando eu solicito a importação clicando em "Importar dados"
     Então o usuário "Fulano de Tal" ("150084006") deve ser criado no sistema com o status "pendente"
     E um e-mail de "Definição de Senha" deve ser enviado para "fulano@gmail.com"
-    E eu devo ver a mensagem de sucesso "Dados atualizados com sucesso!"
+    E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
   @happy_path
   Cenário: Importar um usuário que já existe no sistema

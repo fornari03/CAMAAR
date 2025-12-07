@@ -19,7 +19,7 @@ Dado('que o sigaa contém o usuário {string} \({string}) com e-mail {string}') 
       "classCode" => turma_padrao,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "prof@mock.com", "ocupacao" => "docente"}
     }
     @fake_members << turma_mock
   end
@@ -56,7 +56,7 @@ Dado('que o sigaa contém o usuário {string} \({string})') do |nome, matricula|
       "classCode" => turma_padrao,
       "semester" => "2024.1",
       "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999" }
+      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "prof@mock.com", "ocupacao" => "docente"}
     }
     @fake_members << turma_mock
   end
@@ -96,6 +96,12 @@ end
 Então('o usuário {string} \({string}) deve ser criado no sistema com o status {string}') do |nome, matricula, status_esperado|
   user = Usuario.find_by(matricula: matricula)
   
+  if status_esperado == "ativo"
+    status_esperado = "true"
+  else
+    status_esperado = "false"
+  end
+
   expect(user).to be_present
   expect(user.nome).to eq(nome)
   expect(user.status.to_s).to eq(status_esperado)
@@ -117,4 +123,12 @@ end
 
 Então('eu devo ver uma mensagem de erro {string}') do |mensagem_erro|
   expect(page).to have_content(mensagem_erro)
+end
+
+Então('um e-mail de {string} deve ser enviado para {string}') do |assunto, destinatario|
+  email = ActionMailer::Base.deliveries.find do |e|
+    e.to.include?(destinatario) && e.subject.to_s.include?(assunto)
+  end
+
+  expect(email).to be_present
 end
