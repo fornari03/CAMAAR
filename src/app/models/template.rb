@@ -4,7 +4,7 @@ class Template < ApplicationRecord
   has_many :formularios
   has_many :template_questions, dependent: :destroy
 
-  validates :titulo, presence: true
+  validates :titulo, presence: { message: "Nome do Template não pode ficar em branco" }
   # validates :titulo, presence: true # Keeping existing validation if needed, but user wants name
   
   scope :all_visible, -> { where(hidden: false) }
