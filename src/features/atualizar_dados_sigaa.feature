@@ -22,11 +22,11 @@ Funcionalidade: Atualizar base de dados com os dados do SIGAA
   @happy_path
   Cenário: Sincronizar matrícula de participante em nova turma
     Dado que o sistema possui o usuário "Fulano de Tal" ("150084006") cadastrado
-    E que o sistema possui a turma "BANCOS DE DADOS" ("CIC0097") cadastrada
-    E o usuário "Fulano de Tal" ainda não está matriculado na turma "BANCOS DE DADOS"
-    E a fonte de dados externa indica que "150084006" está matriculado em "CIC0097"
+    E que o sistema possui a turma "TA" da matéria "CIC0097" cadastrada
+    E o usuário "150084006" ainda não está matriculado na turma "TA" da matéria "CIC0097"
+    E a fonte de dados externa indica que "150084006" está matriculado na turma "TA" da matéria "CIC0097"
     Quando eu solicito a importação clicando em "Importar dados"
-    Então o usuário "Fulano de Tal" deve ser matriculado na turma "BANCOS DE DADOS"
+    Então o usuário "150084006" deve ser matriculado na turma "TA" da matéria "CIC0097"
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
   @happy_path
@@ -38,11 +38,11 @@ Funcionalidade: Atualizar base de dados com os dados do SIGAA
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
   @happy_path
-  Cenário: Sincronizar turma que mudou de nome
-    Dado que o sistema possui a turma "BANCOS DE DADOS" ("CIC0097") cadastrada
-    E a fonte de dados externa indica que o nome da turma "CIC0097" agora é "BANCOS DE DADOS AVANÇADO"
+  Cenário: Sincronizar matéria que mudou de nome
+    Dado que o sistema possui a matéria "CIC0097" cadastrada
+    E a fonte de dados externa indica que o nome da matéria "CIC0097" agora é "BANCOS DE DADOS AVANÇADO"
     Quando eu solicito a importação clicando em "Importar dados"
-    Então o nome da turma "CIC0097" deve ser atualizado para "BANCOS DE DADOS AVANÇADO"
+    Então o nome da matéria "CIC0097" deve ser atualizado para "BANCOS DE DADOS AVANÇADO"
     E eu devo ver a mensagem de sucesso "Dados importados com sucesso!"
 
   @happy_path
