@@ -34,7 +34,7 @@ Dado('todos os formulários desta turma já foram respondidos por mim') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('eu devo ver a mensagem {string}') do |mensagem|
+Então('eu devo ver a mensaagem {string}') do |mensagem|
   pending # Write code here that turns the phrase above into concrete actions
 end
 

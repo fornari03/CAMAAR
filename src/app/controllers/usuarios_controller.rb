@@ -1,7 +1,7 @@
 class UsuariosController < ApplicationController
   # Antes de show, edit, update e destroy, carrega o @usuario
   before_action :set_usuario, only: %i[show edit update destroy]
-  before_action :authenticate_admin
+  #before_action :authenticate_admin
 
   # GET /usuarios
   def index

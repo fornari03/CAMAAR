@@ -26,7 +26,7 @@ Quando('eu acesso a página {string}') do |pagina|
   pending
 end
 
-Quando('eu clico no botão {string}') do |botao|
+Quando('eu clicoo no botão {string}') do |botao|
   pending
 end
 
@@ -34,7 +34,7 @@ Então('eu devo ver {string}') do |texto|
   pending
 end
 
-Então('eu devo ver a mensagem {string}') do |mensagem|
+Então('eu devo ver a mensaagem {string}') do |mensagem|
   pending
 end
 

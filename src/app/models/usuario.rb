@@ -30,12 +30,33 @@ class Usuario < ApplicationRecord
   has_many :respostas,         class_name: 'Resposta', foreign_key: 'id_participante'
 
   # método de autenticação para login (usando :usuario)
-  def self.authenticate(usuario, password)
-    user = find_by(usuario: usuario)
-    raise AuthenticationError, "Usuário não encontrado" unless user
-    raise AuthenticationError, "Senha incorreta"        unless user.authenticate(password)
+  def self.authenticate(login, password)
+    # tenta achar pelo campo usuario, email ou matricula
+    user = find_by(usuario: login) ||
+           find_by(email: login)   ||
+           find_by(matricula: login)
+
+    # usuário não encontrado
+    raise AuthenticationError, "Login ou senha inválidos" unless user
+
+    # usuário pendente (ajuste conforme seu tipo de status)
+    if user.status == false  # supondo boolean: false = pendente, true = ativo
+      raise AuthenticationError,
+            "Sua conta está pendente. Por favor, redefina sua senha para ativar."
+    end
+
+    # senha incorreta
+    unless user.authenticate(password)
+      raise AuthenticationError, "Login ou senha inválidos"
+    end
+
     user
   end
+
+  def admin?
+  ocupacao == "admin"
+  end
+
 
   private
 
