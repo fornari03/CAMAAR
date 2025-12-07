@@ -10,10 +10,6 @@ Dado('existem as turmas {string} e {string} importadas do SIGAA') do |string, st
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('que eu estou na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Quando('eu seleciono o template {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
@@ -35,9 +31,5 @@ Quando('eu seleciono as turmas {string}') do |string|
 end
 
 Então('eu devo permanecer na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Então('eu devo ver a mensagem de erro {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end

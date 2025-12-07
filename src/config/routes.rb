@@ -17,4 +17,13 @@ Rails.application.routes.draw do
 
 
   root "autenticacao#new"
+
+  get "admin/gerenciamento" => "admin#gerenciamento", as: :admin_gerenciamento
+  
+  get "up" => "rails/health#show", as: :rails_health_check
+
+  post 'admin/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
+
+  # Template routes are kept here structure-wise for potential merge, but commented out if not in feature-login
+  # resources :templates 
 end

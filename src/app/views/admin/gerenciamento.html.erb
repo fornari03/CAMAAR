@@ -1,0 +1,33 @@
+<div class="flex flex-col items-center justify-center min-h-[80vh]">
+  
+  <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-sm">
+    
+    <div class="flex flex-col space-y-4">
+      
+      <%= button_to "Importar dados", importar_dados_path, method: :post, class: "bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded shadow-sm w-full transition duration-150 ease-in-out" %>
+
+      <% 
+         if @sistema_tem_dados
+           css_classe = "bg-green-500 hover:bg-green-500 cursor-pointer shadow-sm"
+           disabled_attr = ""
+         else
+           css_classe = "bg-green-300 cursor-not-allowed opacity-70"
+           disabled_attr = "disabled"
+         end
+      %>
+
+      <button class="<%= css_classe %> text-white font-medium py-3 px-4 rounded w-full transition duration-150 ease-in-out" <%= disabled_attr %>>
+        Editar Templates
+      </button>
+
+      <button class="<%= css_classe %> text-white font-medium py-3 px-4 rounded w-full transition duration-150 ease-in-out" <%= disabled_attr %>>
+        Enviar Formularios
+      </button>
+
+      <button class="<%= css_classe %> text-white font-medium py-3 px-4 rounded w-full transition duration-150 ease-in-out" <%= disabled_attr %>>
+        Resultados
+      </button>
+
+    </div>
+  </div>
+</div>

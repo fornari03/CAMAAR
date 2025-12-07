@@ -1,11 +1,31 @@
-<!-- MAIN: área que ocupa o espaço restante -->
-<main class="flex flex-1">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CAMAAR</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <!-- Adicionando FontAwesome para os ícones (Menu, Lupa) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  </head>
 
-  <!-- SIDEBAR (só aparece se for admin) -->
-  <% if defined?(current_usuario) && current_usuario&.admin? %>
-    <aside class="w-60 bg-gray-800 text-white flex flex-col">
-      <div class="px-4 py-4 font-bold text-lg border-b border-gray-700">
-        Administração
+  <body class="bg-gray-100 font-sans antialiased">
+    
+    <!-- HEADER (Barra Superior Fixa) -->
+    <header class="bg-white shadow fixed w-full top-0 left-0 z-50 flex items-center justify-between px-4 py-2 h-16 border-b border-gray-200">
+      <div class="flex items-center">
+        <!-- Botão Menu Hambúrguer -->
+        <button class="text-gray-800 text-2xl mr-4 focus:outline-none">
+          <i class="fas fa-bars"></i>
+        </button>
+        <!-- Título da Página -->
+        <h1 class="text-xl font-semibold text-gray-800">
+          Gerenciamento
+        </h1>
+
       </div>
 
       <nav class="flex-1 px-2 py-4 space-y-2">
