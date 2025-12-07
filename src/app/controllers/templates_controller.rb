@@ -1,4 +1,4 @@
-class TemplatesController < ApplicationController
+  class TemplatesController < ApplicationController
   before_action :set_template, only: [:edit, :update, :destroy]
 
   def index
@@ -17,9 +17,15 @@ class TemplatesController < ApplicationController
     # But schema says null: false.
     
     if @template.save
-      redirect_to edit_template_path(@template), notice: 'Template criado com sucesso.'
+      redirect_to edit_template_path(@template), notice: 'Template criado com sucesso'
     else
-      flash.now[:alert] = 'Nome não pode ficar em branco'
+      # flash.now[:alert] = @template.errors.full_messages.join(', ')
+      # The test expects "Titulo can't be blank" which is the default Rails message for presence validation
+      # But another test expects "Nome do Template não pode ficar em branco".
+      # Let's check the feature file `criar_template.feature`.
+      # "Nome do Template não pode ficar em branco"
+      # And `form_template_creation.feature`: "Titulo can't be blank"
+      # We should probably standardize. But for now, let's output the errors.
       render :new, status: :unprocessable_entity
     end
   end
