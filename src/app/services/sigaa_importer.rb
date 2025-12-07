@@ -26,13 +26,10 @@ class SigaaImporter
       end
       active_user_ids << docente_padrao.id
 
-      puts "AAAAAAAAAAAAAAA #{classes_data.inspect}"
-      puts "BBBBBBBBBBBBBBB #{members_data.inspect}"
       classes_data.each do |cls|
         materia = Materia.find_or_initialize_by(codigo: cls['code'])
         materia.nome = cls['name']
         materia.save!
-        puts "MMMMMMMMMMMMMMM #{materia.inspect}"
 
         codigo_turma = cls['class']['classCode'] || "#{cls['code']}"
 
@@ -64,13 +61,9 @@ class SigaaImporter
             semestre: turma_data['semester'],
             horario: classes_data.find { |c| c['code'] == turma_data['code'] }['class']['time'],
             docente: docente_padrao
-          ) 
-          puts "NNNNNNNNNNNNN #{turma.inspect}"
+          )
           active_turma_ids << turma.id
         end
-
-        puts "CCCCCCCCCCCCCCC #{turma.inspect}"
-        puts "DDDDDDDDDDDDDDD #{materia.inspect}"
 
         next unless turma
 
@@ -85,17 +78,9 @@ class SigaaImporter
             ocupacao: :docente,
             status: true
           )
-          begin
-            docente_real.save!
-            active_user_ids << docente_real.id
-            turma.update!(docente: docente_real)
-          rescue ActiveRecord::RecordInvalid => e
-            puts "\n🛑 ERRO AO SALVAR DOCENTE: #{doc_data['nome']}"
-            puts "   MENSAGEM: #{e.message}"
-            puts "   ERROS: #{docente_real.errors.full_messages}"
-            puts "   DADOS TENTADOS: #{docente_real.attributes.inspect}\n"
-            raise e # Lança o erro de novo para o teste falhar, mas agora você leu o motivo
-          end
+          docente_real.save!
+          active_user_ids << docente_real.id
+          turma.update!(docente: docente_real)
         end
 
         if turma_data['dicente']
@@ -119,7 +104,6 @@ class SigaaImporter
           end
         end
       end
-      puts "RRRRRRRRRRRRRR #{Turma.all.inspect}"
       Turma.where.not(id: active_turma_ids).destroy_all
       Usuario.where(ocupacao: [:discente, :docente]).where.not(id: active_user_ids).destroy_all
     end

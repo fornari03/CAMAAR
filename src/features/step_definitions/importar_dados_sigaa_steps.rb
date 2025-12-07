@@ -79,11 +79,7 @@ end
 Então('o usuário {string} deve estar matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
   user = Usuario.find_by(matricula: matricula)
   materia = Materia.find_by(codigo: codigo_materia)
-  puts "UUUUUUUUUUUUUUU #{materia.inspect}"
   turma = Turma.find_by(codigo: codigo_turma, materia: materia)
-
-  puts "UUUUUUUUUUUUUUU #{turma.inspect}"
-  puts "UUUUUUUUUUUUUUU #{Turma.all.inspect}"
 
   expect(turma).to be_present
   expect(user.turmas).to include(turma)
