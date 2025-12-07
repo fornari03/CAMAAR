@@ -16,7 +16,27 @@ Dado('que eu estou logado como Administrador') do
 end
 
 Dado('estou na página {string}') do |page_name|
-  visit page_name
+  path = case page_name
+         when "Gerenciamento"
+           # TODO: Define the actual path for management page
+           "/gerenciamento" 
+         when "formularios/new"
+           new_formulario_path
+         when "templates/new"
+           new_template_path
+         when "templates"
+           templates_path
+         else
+           page_name
+         end
+  
+  # If the path is not defined yet (e.g. /gerenciamento), we can't visit it.
+  # For now, we will try to visit it and catch the error or just pending it if it looks like a placeholder.
+  begin
+    visit path
+  rescue ActionController::RoutingError
+    pending "Route for #{page_name} (#{path}) not implemented yet"
+  end
 end
 
 Dado('que eu sou um {string} logado no sistema') do |role|

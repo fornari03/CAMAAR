@@ -1,10 +1,6 @@
-Dado('que eu sou um {string} logado no sistema') do |perfil|
-  pending # Write code here that turns the phrase above into concrete actions
-end
 
-Dado('estou na página {string}') do |pagina|
-  pending # Write code here that turns the phrase above into concrete actions
-end
+
+
 
 Dado('a turma {string} possui os formulários {string} e {string}') do |turma, f1, f2|
   pending # Write code here that turns the phrase above into concrete actions
