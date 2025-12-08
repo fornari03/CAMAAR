@@ -14,14 +14,20 @@ class TemplateQuestionsController < ApplicationController
   def update
     # Handle alternatives if present
     if params[:alternatives]
-      # Filter out empty alternatives if desired, or keep them.
-      # The plan says "colete os inputs... serialize".
-      # Here we assume params[:alternatives] is an array of strings.
       @question.content = params[:alternatives] # params[:alternatives] is an array from name="alternatives[]"
     end
 
-    # If commit is nil (JS submit) or type is changing, skip validation to allow UI update.
     @question.assign_attributes(question_params)
+    
+    # Handle "Adicionar Alternativa" button click
+    if params[:commit] == "Adicionar Alternativa"
+      @question.content ||= []
+      @question.content << "" # Add empty option
+      @question.save(validate: false)
+      redirect_to edit_template_path(@template) # Reload page to show new input
+      return
+    end
+
     type_changing = @question.question_type_changed?
     
     if params[:commit].nil? || type_changing
