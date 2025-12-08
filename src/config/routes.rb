@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get "home/index"
+  resources :formularios, only: [:new, :create, :index]
+  resources :avaliacoes, only: [:index]
   root "home#index"
 end
