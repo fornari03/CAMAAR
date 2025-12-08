@@ -34,6 +34,11 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :admin do
+    resources :formularios, only: [:index, :create]
+  end
+  resources :avaliacoes, only: [:index]
+  root "home#index"
   # ============================
   # Health Check
   # ============================

@@ -3,6 +3,7 @@ class AuthenticationError < StandardError; end
 
 class Usuario < ApplicationRecord
   has_secure_password
+  has_many :respostas, foreign_key: 'id_participante'
 
   #define a senha atual
   attr_accessor :current_password
@@ -16,6 +17,10 @@ class Usuario < ApplicationRecord
   validates :usuario,   presence: true, uniqueness: true
   validates :ocupacao,  presence: true
   validates :status,    inclusion: { in: [true, false] }
+
+  def pendencias
+    respostas.where(data_submissao: nil)
+  end
 
   # 🔥 Validação de senha obrigatória e igual à confirmação
   validates :password,
@@ -36,8 +41,8 @@ class Usuario < ApplicationRecord
   # Associations
   has_many :turmas_lecionadas, class_name: 'Turma', foreign_key: 'id_docente', dependent: :destroy
   has_many :templates_criados, class_name: 'Template', foreign_key: 'id_criador'
-  has_many :respostas, class_name: 'Resposta', foreign_key: 'id_participante'
-  has_and_belongs_to_many :turmas, join_table: 'matriculas', foreign_key: 'id_usuario', association_foreign_key: 'id_turma', dependent: :destroy
+  has_many :matriculas, foreign_key: 'id_usuario'
+  has_many :turmas, through: :matriculas
 
   # método de autenticação para login (usando :usuario)
   def self.authenticate(usuario, password)

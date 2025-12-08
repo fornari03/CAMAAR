@@ -9,6 +9,10 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.irregular "person", "people"
 #   inflect.uncountable %w( fish sheep )
     inflect.irregular 'materia', 'materias'
+    inflect.irregular 'resposta', 'respostas'
+    inflect.irregular 'formulario', 'formularios'
+    inflect.irregular 'turma', 'turmas'
+    inflect.irregular 'usuario', 'usuarios'
 end
 
 # These inflection rules are supported but not enabled by default:
