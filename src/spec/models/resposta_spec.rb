@@ -10,10 +10,15 @@ RSpec.describe Resposta, type: :model do
     end
   end
 
-  describe 'defaults' do
-    it 'sets respondido to false by default' do
-      resposta = Resposta.new
-      expect(resposta.respondido).to be_falsey
+  describe '#respondido?' do
+    it 'returns true if data_submissao is present' do
+      r = Resposta.new(data_submissao: Time.now)
+      expect(r.respondido?).to be true
+    end
+
+    it 'returns false if data_submissao is nil' do
+      r = Resposta.new(data_submissao: nil)
+      expect(r.respondido?).to be false
     end
   end
 end

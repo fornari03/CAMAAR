@@ -4,6 +4,8 @@ class Resposta < ApplicationRecord
   has_many :resposta_items
   
   validates :id_participante, uniqueness: { scope: :formulario_id }
-  attribute :respondido, :boolean, default: false
-
+  
+  def respondido?
+    data_submissao.present?
+  end
 end

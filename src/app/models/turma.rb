@@ -23,7 +23,7 @@ class Turma < ApplicationRecord
         Resposta.create!(
           formulario: form,
           participante: participante,
-          respondido: false
+
         )
       end
     end

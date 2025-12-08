@@ -19,7 +19,7 @@ class Usuario < ApplicationRecord
   validates :status,    inclusion: { in: [true, false] }
 
   def pendencias
-    respostas.where(respondido: false)
+    respostas.where(data_submissao: nil)
   end
 
 

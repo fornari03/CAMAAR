@@ -37,7 +37,8 @@ RSpec.describe Turma, type: :model do
 
       respostas = created_form.respostas
       expect(respostas.map(&:id_participante)).to include(aluno1.id, docente.id)
-      expect(respostas.first.respondido).to be_falsey
+      expect(respostas.first.respondido?).to be_falsey
+      expect(respostas.first.data_submissao).to be_nil
     end
   end
 end
