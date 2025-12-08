@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <!-- Adicionando FontAwesome para os ícones (Menu, Lupa) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   </head>
 
   <body class="bg-gray-100 font-sans antialiased">
-    
+
     <!-- HEADER (Barra Superior Fixa) -->
     <header class="bg-white shadow fixed w-full top-0 left-0 z-50 flex items-center justify-between px-4 py-2 h-16 border-b border-gray-200">
       <div class="flex items-center">
@@ -25,7 +23,6 @@
         <h1 class="text-xl font-semibold text-gray-800">
           Gerenciamento
         </h1>
-
       </div>
 
       <nav class="flex-1 px-2 py-4 space-y-2">
@@ -33,28 +30,28 @@
                     "/admin",
                     class: "block px-4 py-2 rounded hover:bg-gray-700" %>
       </nav>
-    </aside>
-  <% end %>
+    </header>
 
-  <!-- CONTEÚDO PRINCIPAL -->
-  <section class="flex-1 flex items-center justify-center">
-    <div class="w-full max-w-4xl mx-auto px-6 py-10">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="pt-16 flex-1 flex items-center justify-center">
+      <section class="w-full max-w-4xl mx-auto px-6 py-10">
 
-      <!-- Flash Messages -->
-      <% flash.each do |type, msg| %>
-        <% classes = case type.to_s %>
-          <% when 'notice' then 'bg-green-100 border-green-400 text-green-700' %>
-          <% when 'alert'  then 'bg-red-100 border-red-400 text-red-700' %>
-          <% else               'bg-blue-100 border-blue-400 text-blue-700' %>
+        <!-- Flash Messages -->
+        <% flash.each do |type, msg| %>
+          <% classes = case type.to_s
+                       when 'notice' then 'bg-green-100 border-green-400 text-green-700'
+                       when 'alert'  then 'bg-red-100 border-red-400 text-red-700'
+                       else               'bg-blue-100 border-blue-400 text-blue-700'
+                       end %>
+
+          <div class="mb-4 px-4 py-3 rounded relative border <%= classes %>" role="alert">
+            <span class="block sm:inline"><%= msg %></span>
+          </div>
         <% end %>
 
-        <div class="mb-4 px-4 py-3 rounded relative border <%= classes %>" role="alert">
-          <span class="block sm:inline"><%= msg %></span>
-        </div>
-      <% end %>
-
-      <!-- Conteúdo dinâmico das views -->
-      <%= yield %>
-    </div>
-  </section>
-</main>
+        <!-- Conteúdo dinâmico das views -->
+        <%= yield %>
+      </section>
+    </main>
+  </body>
+</html>

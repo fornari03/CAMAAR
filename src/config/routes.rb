@@ -1,46 +1,41 @@
 Rails.application.routes.draw do
+  # ============================
   # Autenticação
+  # ============================
   get    "/login",  to: "autenticacao#new"
   post   "/login",  to: "autenticacao#create"
   delete "/logout", to: "autenticacao#destroy"
 
-  # Painel Admin
-  get "/admin", to: "admin#index", as: :admin
-  # CRUD de usuários
+  # ============================
+  # Admin
+  # ============================
+  get  "/admin", to: "admin#index", as: :admin
+  get  "/admin/gerenciamento", to: "admin#gerenciamento", as: :admin_gerenciamento
+  post "/admin/gerenciamento/importar_dados", to: "admin#importar_dados", as: :importar_dados
+
+  # ============================
+  # Usuários
+  # ============================
   resources :usuarios
-  # Página inicial Home
-  get "/home", to: "home#index"
+  post "/redefinir_senha", to: "usuarios#redefinir_senha"
 
-  post "/redefinir_senha" , to: "usuarios#redefinir_senha"
-
-    get "admin/gerenciamento" => "admin#gerenciamento", as: :admin_gerenciamento
-  
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  post 'admin/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
-
-  resources :templates do
-    resources :template_questions, only: [:create, :update, :destroy] do
-      post 'add_alternative', on: :member
-    end
-  end
-
-  root "autenticacao#new"
-
-  get "admin/gerenciamento" => "admin#gerenciamento", as: :admin_gerenciamento
-  
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  post 'admin/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
-
-  # Template routes are kept here structure-wise for potential merge, but commented out if not in feature-login
-  # resources :templates 
-  resources :templates do
-    resources :template_questions, only: [:create, :update, :destroy] do
-      post 'add_alternative', on: :member
-    end
-  end
-
-  get "home/index"
+  # ============================
+  # Home
+  # ============================
+  get  "/home", to: "home#index"
   root "home#index"
+
+  # ============================
+  # Templates
+  # ============================
+  resources :templates do
+    resources :template_questions, only: [:create, :update, :destroy] do
+      post "add_alternative", on: :member
+    end
+  end
+
+  # ============================
+  # Health Check
+  # ============================
+  get "/up", to: "rails/health#show", as: :rails_health_check
 end
