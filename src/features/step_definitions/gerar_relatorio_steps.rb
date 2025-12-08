@@ -1,6 +1,4 @@
-Dado('que eu sou um {string} logado no sistema') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
+
 
 Dado('existe um formulário {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions

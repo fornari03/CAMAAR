@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 require 'json'
 
 Before do
@@ -6,6 +7,9 @@ Before do
   @fake_members = []
 
 end
+=======
+
+>>>>>>> main
 
 Dado('que o sistema não possui nenhuma turma cadastrada') do
   Turma.destroy_all

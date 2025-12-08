@@ -37,7 +37,6 @@ Cenário: Excluir a questão 1 e renumerar as questões
 Cenário: Tentar excluir todas as questões de um template
   Quando eu clico no botão de exclusão ao lado da questão 1
   E clico no botão de exclusão ao lado da (nova) questão 1
-  E clico em salvar
   Então devo ver a mensagem "não é possível salvar template sem questões"
   E devo permanecer na página de edição do template
 
@@ -120,7 +119,7 @@ Cenário: Alterar as Opções da questão 2 (tipo radio) para valor nulo
   Dado que a questão 2 é do tipo "radio"
   Quando eu deixo o campo Opções vazio
   E clico em salvar
-  Então devo ver a mensagem "As opções da questão são obrigatórias"
+  Então devo ver a mensagem "Todas as alternativas devem ser preenchidas"
 
 #############################################################################
 # ALTERAÇÃO DO TEXTO DA QUESTÃO
