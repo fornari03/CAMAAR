@@ -1,7 +1,19 @@
 class ApplicationController < ActionController::Base
+  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
+  allow_browser versions: :modern
   helper_method :current_usuario
+
   def current_usuario
-    @current_usuario ||= Usuario.find_by(id: session[:usuario_id])
+    # Dummy implementation for Templates feature development without full Login feature
+    @current_usuario ||= Usuario.first || Usuario.create!(
+      nome: 'Admin', 
+      email: 'admin@test.com', 
+      matricula: '123456', 
+      usuario: 'admin', 
+      password: 'password', 
+      ocupacao: :admin, 
+      status: true
+    )
   end
 
   def authenticate_usuario

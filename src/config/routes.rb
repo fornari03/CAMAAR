@@ -6,15 +6,24 @@ Rails.application.routes.draw do
 
   # Painel Admin
   get "/admin", to: "admin#index", as: :admin
-
   # CRUD de usuários
   resources :usuarios
-
   # Página inicial Home
   get "/home", to: "home#index"
 
   post "/redefinir_senha" , to: "usuarios#redefinir_senha"
 
+    get "admin/gerenciamento" => "admin#gerenciamento", as: :admin_gerenciamento
+  
+  get "up" => "rails/health#show", as: :rails_health_check
+
+  post 'admin/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
+
+  resources :templates do
+    resources :template_questions, only: [:create, :update, :destroy] do
+      post 'add_alternative', on: :member
+    end
+  end
 
   root "autenticacao#new"
 end
