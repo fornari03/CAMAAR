@@ -1,7 +1,12 @@
 
+<<<<<<< HEAD
 Dado('estou matriculado nas turmas {string} e {string}') do |t1, t2|
   pending # Write code here that turns the phrase above into concrete actions
 end
+=======
+
+
+>>>>>>> main
 
 Dado('a turma {string} possui os formulários {string} e {string}') do |turma, f1, f2|
   pending # Write code here that turns the phrase above into concrete actions
@@ -27,7 +32,7 @@ Dado('todos os formulários desta turma já foram respondidos por mim') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('eu devo ver a mensagem {string}') do |mensagem|
+Então('eu devo ver a mensaagem {string}') do |mensagem|
   pending # Write code here that turns the phrase above into concrete actions
 end
 

@@ -12,6 +12,8 @@ Dado('que eu estou logado como administrador') do
   # Login bypassed via ApplicationController#current_usuario
 end
 
+Quando('eu preencho {string} com {string}') do |string, string2|
+  pending # Write code here that turns the phrase above into concrete actions
 Dado('que eu estou na página de novo template') do
   visit new_template_path
 end
@@ -35,6 +37,8 @@ Quando('eu preencho o campo do template {string} com {string}') do |campo, valor
   fill_in campo, with: valor
 end
 
+Então('eu devo permanecer na página {string}') do |string|
+  pending # Write code here that turns the phrase above into concrete actions
 Quando('eu clico no botão do template {string}') do |botao|
   click_button botao
 end

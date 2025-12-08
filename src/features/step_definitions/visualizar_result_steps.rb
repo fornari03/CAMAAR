@@ -1,8 +1,6 @@
 Dado('eu sou um {string} logado no sistema') do |perfil|
   pending
 end
-
-
 Dado('existem os formulários {string} e {string}') do |f1, f2|
   pending
 end
@@ -23,7 +21,7 @@ Quando('eu acesso a página {string}') do |pagina|
   pending
 end
 
-Quando('eu clico no botão {string}') do |botao|
+Quando('eu clicoo no botão {string}') do |botao|
   pending
 end
 
@@ -31,7 +29,7 @@ Então('eu devo ver {string}') do |texto|
   pending
 end
 
-Então('eu devo ver a mensagem {string}') do |mensagem|
+Então('eu devo ver a mensaagem {string}') do |mensagem|
   pending
 end
 

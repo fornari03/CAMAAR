@@ -9,7 +9,6 @@
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
-
 ActiveRecord::Schema[8.0].define(version: 2025_12_05_210703) do
   create_table "formularios", force: :cascade do |t|
     t.string "titulo_envio"

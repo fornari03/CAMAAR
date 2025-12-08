@@ -15,4 +15,12 @@ class ApplicationController < ActionController::Base
       status: true
     )
   end
+
+  def authenticate_usuario
+    redirect_to login_path, alert: "Faça login para continuar." unless current_usuario.present?
+  end
+
+  def authenticate_admin
+    redirect_to root_path, alert: "Acesso negado." unless current_usuario&.admin?
+  end
 end
