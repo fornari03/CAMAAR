@@ -9,14 +9,13 @@ class AutenticacaoController < ApplicationController
     usuario_param  = params[:usuario][:usuario]
     password_param = params[:usuario][:password]
 
-    @usuario = Usuario.authenticate(usuario_param, password_param)
+    usuario = Usuario.authenticate(usuario_param, password_param)
 
     # se não levantou erro, login ok
-    session[:usuario_id] = @usuario.id
+    session[:usuario_id] = usuario.id
 
-    if @usuario.admin?
-      # ajuste aqui para a rota correta da página de admin
-      redirect_to "/admin", notice: "Login de admin realizado com sucesso."
+    if usuario.admin?
+      redirect_to admin_path, notice: "Login de admin realizado com sucesso."
     else
       redirect_to root_path, notice: "Login realizado com sucesso."
     end

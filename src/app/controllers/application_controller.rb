@@ -1,19 +1,15 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
   helper_method :current_usuario
 
   def current_usuario
-    # Dummy implementation for Templates feature development without full Login feature
-    @current_usuario ||= Usuario.first || Usuario.create!(
-      nome: 'Admin', 
-      email: 'admin@test.com', 
-      matricula: '123456', 
-      usuario: 'admin', 
-      password: 'password', 
-      ocupacao: :admin, 
-      status: true
-    )
+    return @current_usuario if defined?(@current_usuario)
+
+    if session[:usuario_id]
+      @current_usuario = Usuario.find_by(id: session[:usuario_id])
+    else
+      @current_usuario = nil
+    end
   end
 
   def authenticate_usuario
@@ -21,6 +17,6 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_admin
-    redirect_to root_path, alert: "Acesso negado." unless current_usuario&.admin?
+    redirect_to login_path, alert: "Acesso negado." unless current_usuario&.admin?
   end
 end

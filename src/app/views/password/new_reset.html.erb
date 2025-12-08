@@ -1,0 +1,48 @@
+<h1>Redefinir senha</h1>
+
+<% if flash[:alert] %>
+  <div class="alert alert-danger">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
+
+<% if @errors.present? %>
+  <div class="alert alert-danger">
+    <ul>
+      <% @errors.each do |error| %>
+        <li><%= error %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with url: password_reset_path, method: :post, local: true do |f| %>
+  <div>
+    <%= f.label :email, "E-mail" %><br>
+    <%= f.email_field :email, value: @usuario_email, required: true, autofocus: true %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= f.label :password, "Nova senha" %><br>
+    <%= f.password_field :password, required: true %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= f.label :password_confirmation, "Confirmar nova senha" %><br>
+    <%= f.password_field :password_confirmation, required: true %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= f.submit "Redefinir senha" %>
+  </div>
+<% end %>
+
+<br>
+
+<%= link_to "Voltar para o login", login_path %>

@@ -48,8 +48,6 @@ class UsuariosController < ApplicationController
     @usuario.destroy
     redirect_to usuarios_url, notice: "Usuário removido com sucesso."
   end
-  def redefinir_senha
-  end
 
   private
 
