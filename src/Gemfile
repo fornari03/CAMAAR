@@ -73,4 +73,8 @@ group :test do
   gem "selenium-webdriver"
 end
 
+<<<<<<< HEAD
 gem "tailwindcss-rails", "~> 4.4"
+=======
+gem "tailwindcss-rails", "~> 4.4"
+>>>>>>> 1b665a7aac428f07b08fcc641f541d701f5b0597
