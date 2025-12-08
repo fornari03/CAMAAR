@@ -16,9 +16,7 @@
          end
       %>
 
-      <button class="<%= css_classe %> text-white font-medium py-3 px-4 rounded w-full transition duration-150 ease-in-out" <%= disabled_attr %>>
-        Editar Templates
-      </button>
+      <%= button_to "Editar Templates", "/templates", method: :get, class: "#{css_classe} text-white font-medium py-3 px-4 rounded w-full transition duration-150 ease-in-out", disabled: !@sistema_tem_dados %>
 
       <button class="<%= css_classe %> text-white font-medium py-3 px-4 rounded w-full transition duration-150 ease-in-out" <%= disabled_attr %>>
         Enviar Formularios
