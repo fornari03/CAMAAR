@@ -11,7 +11,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :formularios, only: [:new, :create, :index]
+  namespace :admin do
+    resources :formularios, only: [:index, :create]
+  end
   resources :avaliacoes, only: [:index]
   root "home#index"
 end

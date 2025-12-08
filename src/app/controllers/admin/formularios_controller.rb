@@ -1,4 +1,4 @@
-class FormulariosController < ApplicationController
+class Admin::FormulariosController < ApplicationController
   def index
     @templates = Template.all
     @turmas = Turma.all
@@ -10,7 +10,7 @@ class FormulariosController < ApplicationController
 
     if turma_ids.blank?
       flash[:alert] = "Selecione pelo menos uma turma"
-      redirect_to formularios_path and return
+      redirect_to admin_formularios_path and return
     end
 
     success_count = 0
@@ -21,9 +21,6 @@ class FormulariosController < ApplicationController
     end
 
     flash[:notice] = "Formulário distribuído com sucesso para #{success_count} turmas"
-    redirect_to formularios_path
-  end
-
-  def new
+    redirect_to admin_formularios_path
   end
 end
