@@ -8,7 +8,7 @@ Funcionalidade: Atualizar base de dados com os dados do SIGAA
 
   Contexto:
     Dado que eu estou logado como Administrador
-    E estou na página "gerenciamento"
+    E estou na página "Gerenciamento"
 
   @happy_path
   Cenário: Sincronizar participante que mudou de e-mail

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Bem-vindo ao CAMAAR, <%= @user.nome %>!</h1>
+    <p>
+      Você recebeu um convite para se cadastrar no sistema.
+    </p>
+    <p>
+      Clique no link abaixo para definir sua senha:
+    </p>
+    <p>
+      <%= link_to "Definir minha senha", @url %>
+    </p>
+  </body>
+</html>

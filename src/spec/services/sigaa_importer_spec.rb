@@ -9,6 +9,7 @@ RSpec.describe SigaaImporter do
           "name" => "BANCOS DE DADOS",
           "code" => "CIC0097",
           "class" => {
+            "classCode" => "TA",
             "semester" => "2024.1",
             "time" => "35T23"
           }
@@ -50,6 +51,7 @@ RSpec.describe SigaaImporter do
 
     context 'quando os arquivos JSON existem e são válidos' do
       before do
+        allow(File).to receive(:read).and_call_original
         
         allow(File).to receive(:read).with(satisfy { |path| path.to_s.include?('classes.json') })
           .and_return(classes_json)
@@ -65,7 +67,8 @@ RSpec.describe SigaaImporter do
       it 'cria a turma associada à matéria e ao docente' do
         expect { described_class.call }.to change(Turma, :count).by(1)
         turma = Turma.last
-        expect(turma.codigo).to eq('CIC0097')
+        expect(turma.codigo).to eq('TA')
+        expect(turma.materia.codigo).to eq('CIC0097')
         expect(turma.docente.nome).to eq('Prof. Real') 
         expect(turma.docente.matricula).to eq('88888')
       end
@@ -83,7 +86,8 @@ RSpec.describe SigaaImporter do
       it 'matricula o aluno na turma' do
         described_class.call
         aluno = Usuario.find_by(matricula: '123456789')
-        turma = Turma.find_by(codigo: 'CIC0097')
+        materia = Materia.find_by(codigo: 'CIC0097')
+        turma = Turma.find_by(codigo: 'TA', materia: materia)
         
         expect(aluno.turmas).to include(turma)
       end
@@ -93,9 +97,10 @@ RSpec.describe SigaaImporter do
       let(:classes_json) do
         [
           {
-            "name" => "BANCOS DE DADOS AVANÇADO", # Alterado: Nome da matéria mudou
+            "name" => "BANCOS DE DADOS AVANÇADO",
             "code" => "CIC0097",
             "class" => {
+              "classCode" => "TA",
               "semester" => "2024.1",
               "time" => "35T23"
             }
@@ -108,13 +113,13 @@ RSpec.describe SigaaImporter do
           {
             "code" => "CIC0097",
             "classCode" => "TA",
-            "semester" => "2024.1", # Mantendo a estrutura
+            "semester" => "2024.1",
             "dicente" => [
               {
-                "nome" => "Fulano da Silva",        # Alterado: Nome do aluno mudou
-                "matricula" => "150084006",         # Alterado: ID para casar com aluno_existente
+                "nome" => "Fulano da Silva",
+                "matricula" => "150084006",
                 "usuario" => "150084006",
-                "email" => "fulano.novo@gmail.com", # Alterado: Email mudou
+                "email" => "fulano.novo@gmail.com",
                 "ocupacao" => "dicente"
               }
             ],
@@ -142,7 +147,7 @@ RSpec.describe SigaaImporter do
         m = Materia.create!(nome: "BANCOS DE DADOS", codigo: "CIC0097")
         
         Turma.create!(
-          codigo: "CIC0097",
+          codigo: "TA",
           materia: m,
           docente: docente,
           semestre: "2024.1", horario: "35T23"
@@ -199,21 +204,97 @@ RSpec.describe SigaaImporter do
       it 'exclui alunos que não estão mais no arquivo' do
         described_class.call
         
-        # Verifica se o registro sumiu do banco (virou nil)
         expect(Usuario.find_by(id: aluno_removido.id)).to be_nil
-        
-        # Garante que o outro aluno continua lá
         expect(Usuario.find_by(id: aluno_existente.id)).to be_present
       end
 
       it 'exclui turmas que não estão mais no arquivo' do
         described_class.call
         
-        # Verifica se o registro sumiu do banco (virou nil)
         expect(Turma.find_by(id: turma_removida.id)).to be_nil
-        
-        # Garante que a outra turma continua lá
         expect(Turma.find_by(id: turma_existente.id)).to be_present
+      end
+    end
+
+    context 'funcionalidade de cadastro e convite por email' do
+      before do
+        ActionMailer::Base.deliveries.clear
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('classes.json') }).and_return(classes_json)
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('class_members.json') }).and_return(members_json_feature)
+      end
+
+      context 'quando importa um usuário novo com email' do
+        let(:members_json_feature) do
+          [
+            {
+              "code" => "CIC0097", "classCode" => "TA",
+              "dicente" => [
+                { "nome" => "Novo Aluno", "matricula" => "NEW100", "usuario" => "NEW100", "email" => "novo@email.com", "ocupacao" => "dicente" }
+              ],
+              "docente" => { "nome" => "Prof", "usuario" => "P99", "email" => "p@p.com", "ocupacao" => "docente" }
+            }
+          ].to_json
+        end
+
+        it 'cria o usuário e envia e-mail de definição de senha' do
+          expect { described_class.call }.to change(Usuario, :count).by_at_least(1)
+          
+          user = Usuario.find_by(matricula: "NEW100")
+          expect(user).to be_present
+          expect(user.status).to be_falsey
+          
+          email = ActionMailer::Base.deliveries.find { |e| e.to.include?("novo@email.com") }
+          expect(email).to be_present
+          expect(email.subject).to include("Definição de Senha")
+        end
+      end
+
+      context 'quando importa um usuário que já existe' do
+        let!(:aluno_existente_feature) do
+          Usuario.create!(
+            nome: "Aluno Existe", matricula: "EXISTE100", usuario: "EXISTE100",
+            email: "existe@email.com", password: "123", ocupacao: :discente, status: true
+          )
+        end
+
+        let(:members_json_feature) do
+          [
+            {
+              "code" => "CIC0097", "classCode" => "TA",
+              "dicente" => [
+                { "nome" => "Aluno Existe", "matricula" => "EXISTE100", "usuario" => "EXISTE100", "email" => "existe@email.com", "ocupacao" => "dicente" }
+              ],
+              "docente" => { "nome" => "Prof", "usuario" => "P99", "email" => "p@p.com", "ocupacao" => "docente" }
+            }
+          ].to_json
+        end
+
+        it 'não envia e-mail e não duplica o usuário' do
+          expect { described_class.call }.not_to change { ActionMailer::Base.deliveries.count }
+          expect(Usuario.where(matricula: "EXISTE100").count).to eq(1)
+        end
+      end
+
+      context 'quando importa um usuário novo sem email' do
+        let(:members_json_feature) do
+          [
+            {
+              "code" => "CIC0097", "classCode" => "TA",
+              "dicente" => [
+                { "nome" => "Sem Email", "matricula" => "NOEMAIL100", "usuario" => "NOEMAIL100", "email" => nil, "ocupacao" => "dicente" }
+              ],
+              "docente" => { "nome" => "Prof", "usuario" => "P99", "email" => "p@p.com", "ocupacao" => "docente" }
+            }
+          ].to_json
+        end
+
+        it 'não cria o usuário no sistema' do
+          expect { 
+            described_class.call 
+          }.to raise_error(StandardError, /e-mail ausente/)
+
+          expect(Usuario.find_by(matricula: "NOEMAIL100")).to be_nil
+        end
       end
     end
 

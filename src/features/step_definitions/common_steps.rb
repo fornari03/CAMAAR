@@ -15,28 +15,32 @@ Dado('que eu estou logado como Administrador') do
   # However, the other steps might have had implementation. Let's check one.
 end
 
-Dado('(que eu )estou na página {string}') do |page_name|
-  path = case page_name
-         when "Gerenciamento", "gerenciamento"
-           templates_path 
-         when "formularios/new"
-           new_formulario_path
-         when "templates/new"
-           new_template_path
-         when "templates"
-           templates_path
-         when "home", "inicial"
-           root_path
-         else
-           page_name
-         end
-  
-  # If the path is not defined yet (e.g. /gerenciamento), we can't visit it.
-  # For now, we will try to visit it and catch the error or just pending it if it looks like a placeholder.
-  begin
-    visit path
-  rescue ActionController::RoutingError
-    pending "Route for #{page_name} (#{path}) not implemented yet"
+Dado(/^(?:que )?(?:eu )?estou na página(?: de)? "([^"]*)"$/) do |page_name|
+  visit path_to(page_name)
+end
+
+def path_to(page_name)
+  case page_name.downcase
+  when "gerenciamento"
+    admin_gerenciamento_path
+
+  when "gerenciamento de templates"
+    templates_path
+    
+  when "templates"
+    templates_path
+    
+  when "templates/new"
+    new_template_path
+    
+  when "formularios/new"
+    new_formulario_path
+    
+  when "home", "inicial"
+    root_path
+    
+  else
+    raise "Não sei o caminho para a página '#{page_name}'. Adicione no step definition."
   end
 end
 
