@@ -17,12 +17,6 @@ class Usuario < ApplicationRecord
   validates :ocupacao,  presence: true
   validates :status,    inclusion: { in: [true, false] }
 
-  # Validação de senha obrigatória e igual à confirmação
-  validates :password,
-            presence: { message: "a senha não pode ser vazia" },
-            length: { minimum: 6, message: "precisa ter no mínimo 6 caracteres" },
-            confirmation: { message: "não confere com a confirmação" }
-
 
   # Associations
   has_many :turmas_lecionadas, class_name: 'Turma', foreign_key: 'id_docente', dependent: :destroy
