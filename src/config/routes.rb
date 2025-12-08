@@ -38,9 +38,15 @@ Rails.application.routes.draw do
     resources :formularios, only: [:index, :create]
   end
   resources :avaliacoes, only: [:index]
-  root "home#index"
   # ============================
   # Health Check
   # ============================
   get "/up", to: "rails/health#show", as: :rails_health_check
+
+  get  'password/forgot', to: 'password#new_forgot',  as: :password_new_forgot
+  post 'password/forgot', to: 'password#forgot',      as: :password_forgot
+
+  get  'password/reset',  to: 'password#new_reset',   as: :password_new_reset
+  post 'password/reset', to: 'password#reset',       as: :password_reset
+
 end

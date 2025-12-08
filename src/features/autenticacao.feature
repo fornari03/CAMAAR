@@ -42,7 +42,7 @@ Funcionalidade: Autenticação de Usuário
     E eu preencho o campo "Senha" com "senhaErrada"
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
-    E eu devo ver a mensagem "Login ou senha inválidos"
+    E eu devo ver a mensagem "Senha incorreta"
 
   @sad_path
   Cenário: Login com usuário inexistente
@@ -50,7 +50,7 @@ Funcionalidade: Autenticação de Usuário
     E eu preencho o campo "Senha" com "qualquercoisa"
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
-    E eu devo ver a mensagem "Login ou senha inválidos"
+    E eu devo ver a mensagem "Usuário não encontrado"
 
   @sad_path
   Cenário: Tentativa de login de usuário pré-cadastrado (pendente)
