@@ -22,6 +22,20 @@ class TemplateQuestionsController < ApplicationController
 
     # If commit is nil (JS submit) or type is changing, skip validation to allow UI update.
     @question.assign_attributes(question_params)
+      @question.content = params[:alternatives] # params[:alternatives] is an array from name="alternatives[]"
+    end
+
+    @question.assign_attributes(question_params)
+    
+    # Handle "Adicionar Alternativa" button click
+    if params[:commit] == "Adicionar Alternativa"
+      @question.content ||= []
+      @question.content << "" # Add empty option
+      @question.save(validate: false)
+      redirect_to edit_template_path(@template) # Reload page to show new input
+      return
+    end
+
     type_changing = @question.question_type_changed?
     
     if params[:commit].nil? || type_changing
@@ -30,6 +44,10 @@ class TemplateQuestionsController < ApplicationController
       # Clear content if type changed to text
       if @question.question_type == 'text'
         @question.content = []
+        @question.save(validate: false)
+      # Add empty alternative if type changed to radio/checkbox and content is empty
+      elsif ['radio', 'checkbox'].include?(@question.question_type) && (@question.content.nil? || @question.content.empty?)
+        @question.content = ['']
         @question.save(validate: false)
       end
       redirect_to edit_template_path(@template), notice: 'Tipo de questão atualizado.'

@@ -35,4 +35,12 @@ Rails.application.routes.draw do
 
   # Template routes are kept here structure-wise for potential merge, but commented out if not in feature-login
   # resources :templates 
+  resources :templates do
+    resources :template_questions, only: [:create, :update, :destroy] do
+      post 'add_alternative', on: :member
+    end
+  end
+
+  get "home/index"
+  root "home#index"
 end

@@ -14,10 +14,6 @@ Então('eu devo ser redirecionado para a página de {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('um e-mail de {string} deve ser enviado para {string}') do |string, string2|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('que eu estou na página de {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end

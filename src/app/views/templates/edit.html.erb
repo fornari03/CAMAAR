@@ -45,6 +45,7 @@
             
             <div class="mt-2">
               <%= button_to "Adicionar Alternativa", add_alternative_template_template_question_path(@template, question), method: :post, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded text-xs" %>
+              <%= f.submit "Adicionar Alternativa", name: "commit", class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded text-xs" %>
             </div>
           </div>
         <% end %>

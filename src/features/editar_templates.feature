@@ -8,7 +8,7 @@ Funcionalidade: Edição e exclusão de questões em templates
   A fim de organizar os templates existentes
 
 Contexto:
-  Dado que estou na página de gerenciamento
+  Dado que estou na página de "gerenciamento de templates"
   E seleciono o template com o campo nome "Template1" e o campo semestre "2025.2"
   E o template contém duas questões, sendo:
     | número | tipo  | texto                      | opções                     |

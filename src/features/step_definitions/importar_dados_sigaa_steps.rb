@@ -17,15 +17,15 @@ Dado('que o sistema não possui nenhuma turma cadastrada') do
 end
 
 Dado('que o sistema não possui nenhum usuário cadastrado') do
-  Usuario.where.not(id: @admin.id).destroy_all
+  Usuario.where.not(ocupacao: :admin).destroy_all
 end
 
 Dado('que o sigaa contém a turma {string} da matéria {string} \({string})') do |codigo_turma, nome_materia, codigo_materia|
   @fake_classes << {
     "name" => nome_materia,
     "code" => codigo_materia,
-    "classCode" => codigo_turma,
     "class" => {
+      "classCode" => codigo_turma,
       "semester" => "2024.1",
       "time" => "35T23"
     }
@@ -33,16 +33,16 @@ Dado('que o sigaa contém a turma {string} da matéria {string} \({string})') do
 end
 
 Dado('esta turma contém o participante {string} \({string})') do |nome, matricula|
-  codigo_turma_atual = @fake_classes.last["code"]
-  
-  # verifica se ja tem essa turma no array de membros
-  turma_member_data = @fake_members.find { |m| m["code"] == codigo_turma_atual }
+  last_class = @fake_classes.last
+  codigo_materia = last_class["code"]
+  codigo_turma   = last_class["class"]["classCode"]
 
-  # senão, cria a estrutura da turma no arquivo de membros
+  turma_member_data = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
+
   unless turma_member_data
     turma_member_data = {
-      "code" => codigo_turma_atual,
-      "classCode" => @fake_classes.last["classCode"],
+      "code" => codigo_materia,
+      "classCode" => codigo_turma,
       "semester" => "2024.1",
       "dicente" => [],
       "docente" => {
@@ -55,7 +55,7 @@ Dado('esta turma contém o participante {string} \({string})') do |nome, matricu
     @fake_members << turma_member_data
   end
 
-  # adiciona o aluno na turma
+  turma_member_data["dicente"].reject! { |d| d["matricula"] == matricula }
   turma_member_data["dicente"] << {
     "nome" => nome,
     "matricula" => matricula,
@@ -85,6 +85,7 @@ Então('o usuário {string} deve estar matriculado na turma {string} da matéria
   materia = Materia.find_by(codigo: codigo_materia)
   turma = Turma.find_by(codigo: codigo_turma, materia: materia)
 
+  expect(user).to be_present
   expect(turma).to be_present
   expect(user.turmas).to include(turma)
 end
@@ -186,7 +187,8 @@ Então('o usuário {string} \({string}) não deve ser duplicado no sistema') do 
 end
 
 Então('nenhum usuário duplicado deve ser criado') do
-  expect(Usuario.where(matricula: "150084006").count).to eq(1)
+  duplicados = Usuario.group(:matricula).having('COUNT(*) > 1').count
+  expect(duplicados).to be_empty
 end
 
 Então('os outro botões na página devem ser liberados') do
@@ -309,7 +311,7 @@ Dado('a fonte de dados externa indica que o nome de {string} agora é {string}')
     @fake_classes << {
       "name" => "Matéria Mock",
       "code" => codigo_materia_padrao,
-      "class" => { "semester" => "2024.1", "time" => "35T23", classCode: "TA"}
+      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode": "TA"}
     }
   end
 
@@ -349,7 +351,7 @@ Dado('a fonte de dados externa indica que o nome da matéria {string} agora é {
     class_mock = {
       "code" => codigo_materia,
       "name" => "Nome Antigo",
-      "class" => { "semester" => "2024.1", "time" => "35T23" }
+      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode" => "TA" }
     }
     @fake_classes << class_mock
   end

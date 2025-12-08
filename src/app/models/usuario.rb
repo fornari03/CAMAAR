@@ -32,6 +32,14 @@ class Usuario < ApplicationRecord
   has_and_belongs_to_many :turmas, join_table: 'matriculas', foreign_key: 'id_usuario', association_foreign_key: 'id_turma'
 
    # método de autenticação para login (usando :usuario)
+
+  # Associations
+  has_many :turmas_lecionadas, class_name: 'Turma', foreign_key: 'id_docente', dependent: :destroy
+  has_many :templates_criados, class_name: 'Template', foreign_key: 'id_criador'
+  has_many :respostas, class_name: 'Resposta', foreign_key: 'id_participante'
+  has_and_belongs_to_many :turmas, join_table: 'matriculas', foreign_key: 'id_usuario', association_foreign_key: 'id_turma', dependent: :destroy
+
+  # método de autenticação para login (usando :usuario)
   def self.authenticate(usuario, password)
     user = find_by(usuario: usuario)
     raise AuthenticationError, "Usuário não encontrado" unless user
