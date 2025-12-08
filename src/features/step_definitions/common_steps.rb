@@ -15,7 +15,7 @@ Dado('que eu estou logado como Administrador') do
   # However, the other steps might have had implementation. Let's check one.
 end
 
-Dado('(que eu )estou na página {string}') do |page_name|
+Dado(/^(?:que )?(?:eu )?estou na página(?: de)? "([^"]*)"$/) do |page_name|
   visit path_to(page_name)
 end
 
@@ -23,6 +23,9 @@ def path_to(page_name)
   case page_name.downcase
   when "gerenciamento"
     admin_gerenciamento_path
+
+  when "gerenciamento de templates"
+    templates_path
     
   when "templates"
     templates_path

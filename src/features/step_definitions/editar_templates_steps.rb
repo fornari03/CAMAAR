@@ -1,9 +1,5 @@
 # features/step_definitions/editar_templates_steps.rb
 
-Dado('que estou na página de gerenciamento') do
-  visit templates_path
-end
-
 Dado('seleciono o template com o campo nome {string} e o campo semestre {string}') do |nome, semestre|
   # Assuming the template exists or creating it if not found to satisfy the test context
   # Concatenating semester to title if needed, or just finding by name part
