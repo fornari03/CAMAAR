@@ -1,3 +1,7 @@
+Dado('que o sigaa contém o usuário {string} \({int}) com e-mail {string}') do |string, int, string2|
+# Dado('que o sigaa contém o usuário {string} \({float}) com e-mail {string}') do |string, float, string2|
+  pending # Write code here that turns the phrase above into concrete actions
+end
 Dado('que o sigaa contém o usuário {string} \({string}) com e-mail {string}') do |nome, matricula, email|
   codigo_materia = "CIC0097"
   codigo_turma = "TA"

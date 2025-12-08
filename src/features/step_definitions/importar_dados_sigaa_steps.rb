@@ -1,11 +1,3 @@
-require 'json'
-
-Before do
-  # mock dos jsons retornados pelo sigaa
-  @fake_classes = []
-  @fake_members = []
-
-end
 
 Dado('que o sistema não possui nenhuma turma cadastrada') do
   Turma.destroy_all

@@ -1,5 +1,9 @@
 # features/step_definitions/editar_templates_steps.rb
 
+Dado('que estou na página de gerenciamento') do
+  visit templates_path
+end
+
 Dado('seleciono o template com o campo nome {string} e o campo semestre {string}') do |nome, semestre|
   # Assuming the template exists or creating it if not found to satisfy the test context
   # Concatenating semester to title if needed, or just finding by name part
@@ -113,26 +117,35 @@ Quando('preencho o campo texto com {string}') do |texto|
 end
 
 Quando('preencho o campo Opções com {string}') do |opcoes|
-  options_list = opcoes.split(',').map(&:strip)
+  # This implies adding alternatives or editing existing ones.
+  # Since the UI requires adding them one by one, this is tricky if they don't exist.
+  # But if we changed type to radio, we might not have inputs yet.
+  # So we should add them.
   
-  options_list.each_with_index do |option, index|
-    # Check if we have an empty input available from previous steps (type change or add alternative)
-    inputs = all('.question-form')[@current_question_index].all('input[name="alternatives[]"]')
-    target_input = inputs[index]
+  within all('.question-form')[@current_question_index] do
+    # First, clear existing? Or assume empty?
+    # If we just changed type, it's empty.
+    # But we can't easily clear inputs that don't exist.
     
-    unless target_input
-      within all('.question-form')[@current_question_index] do
-        click_button "Adicionar Alternativa"
-      end
-      # Page reloads (form submitted, saved, and new input added)
-      inputs = all('.question-form')[@current_question_index].all('input[name="alternatives[]"]')
-      target_input = inputs.last
+    # We need to click "Adicionar Alternativa" for each option.
+    # But we can't do that inside this `within` if we want to fill them all at once without saving.
+    # Wait, as discussed, we need to save after each add?
+    # Or we can add N alternatives then fill them?
+    # No, adding alternative reloads page.
+    # So this step needs to handle the reload loop.
+    # But `preencho` usually implies just filling fields.
+    # If the implementation requires clicking buttons, we should do it.
+  end
+  
+  opcoes.split(',').each do |option|
+    within all('.question-form')[@current_question_index] do
+      click_button "Adicionar Alternativa"
     end
-
-    target_input.set(option)
-    # Note: We do not save after simply setting text. 
-    # Logic relies on "Adicionar Alternativa" saving previously set values if clicked.
-    # If this is the last option, the next step (e.g. "E clico em salvar") will persist it.
+    # Page reloads
+    within all('.question-form')[@current_question_index] do
+      all('input[name="alternatives[]"]').last.set(option.strip)
+      click_button "Salvar Questão"
+    end
   end
 end
 
