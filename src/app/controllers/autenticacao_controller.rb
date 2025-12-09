@@ -1,37 +1,30 @@
 class AutenticacaoController < ApplicationController
   skip_before_action :require_login, only: [:new, :create], raise: false
-  layout "auth"
-  # tela de login
+  layout "auth" # Mantendo o layout que configuramos antes
+
   def new
-    @usuario = Usuario.new
+    # Renderiza a página de login
   end
 
-  # processa login
   def create
-    usuario_param  = params[:usuario][:usuario]
-    password_param = params[:usuario][:password]
+    email = params[:email]
+    password = params[:password]
 
-    @usuario = Usuario.authenticate(usuario_param, password_param)
+    @usuario = Usuario.find_by(email: email)
 
-    # se não levantou erro, login ok
-    session[:usuario_id] = @usuario.id
-
-    if @usuario.admin?
-      # ajuste aqui para a rota correta da página de admin
-      redirect_to "/admin", notice: "Login de admin realizado com sucesso."
+    if @usuario && @usuario.authenticate(password)
+      
+      session[:usuario_id] = @usuario.id 
+      
+      redirect_to root_path, notice: "Login realizado com sucesso!"
     else
-      redirect_to root_path, notice: "Login realizado com sucesso."
+      flash.now[:alert] = "Email ou senha incorretos."
+      render :new, status: :unprocessable_entity
     end
-  rescue AuthenticationError => e
-    # se der erro de usuário/senha, volta pra tela de login com mensagem
-    @usuario = Usuario.new(usuario: usuario_param)
-    flash.now[:alert] = e.message
-    render :new, status: :unauthorized
   end
 
-  # logout
   def destroy
-    reset_session
-    redirect_to login_path, notice: "Logout realizado com sucesso."
+    session[:usuario_id] = nil
+    redirect_to login_path, notice: "Deslogado com sucesso."
   end
 end
