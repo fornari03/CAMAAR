@@ -3,8 +3,10 @@ class UserMailer < ApplicationMailer
 
   def definicao_senha
     @user = params[:user]
-    
-    @url = "http://localhost:3000/definir_senha?email=#{@user.email}"
+
+    token = @user.signed_id(purpose: :definir_senha, expires_in: 24.hours)
+
+    @url = definir_senha_url(token: token)
 
     mail(to: @user.email, subject: 'Definição de Senha - Sistema CAMAAR')
   end

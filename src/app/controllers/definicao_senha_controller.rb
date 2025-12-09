@@ -1,10 +1,17 @@
 class DefinicaoSenhaController < ApplicationController
-  # permite acesso sem estar logado
-  skip_before_action :require_login, raise: false 
+  skip_before_action :require_login, raise: false
+  
+  before_action :reset_session_before_start, only: [:new]
+
   layout "auth"
 
   def new
     token = params[:token]
+    
+    if token.blank?
+      redirect_to login_path, alert: "Link inválido (token ausente)."
+      return
+    end
     
     @usuario = Usuario.find_signed(token, purpose: :definir_senha)
 
@@ -20,12 +27,13 @@ class DefinicaoSenhaController < ApplicationController
     @usuario = Usuario.find_signed(token, purpose: :definir_senha)
 
     if @usuario.nil?
-      redirect_to login_path, alert: "Link inválido."
+      redirect_to login_path, alert: "Link inválido ou expirado."
       return
     end
 
     if @usuario.update(user_params.merge(status: true))
-      redirect_to login_path, notice: "Senha definida com sucesso! Você já pode fazer o login."
+      session[:usuario_id] = @usuario.id 
+      redirect_to root_path, notice: "Senha definida com sucesso! Bem-vindo."
     else
       flash.now[:alert] = @usuario.errors.full_messages.to_sentence
       render :new, status: :unprocessable_entity
@@ -36,5 +44,12 @@ class DefinicaoSenhaController < ApplicationController
 
   def user_params
     params.require(:usuario).permit(:password, :password_confirmation)
+  end
+
+  def reset_session_before_start
+    if session[:usuario_id].present?
+      session[:usuario_id] = nil
+      flash[:notice] = "Sessão anterior encerrada para configurar nova conta."
+    end
   end
 end
