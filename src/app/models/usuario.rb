@@ -8,6 +8,9 @@ class Usuario < ApplicationRecord
   #define a senha atual
   attr_accessor :current_password
 
+  #define a senha atual
+  attr_accessor :current_password
+
   enum :ocupacao, { discente: 0, docente: 1, admin: 2 }
 
   # Validações de campos básicos
@@ -36,6 +39,35 @@ class Usuario < ApplicationRecord
     raise AuthenticationError, "Senha incorreta"        unless user.authenticate(password)
     user
   end
+
+  # método de autenticação para login (usando :usuario)
+  def self.authenticate(login, password)
+    # tenta achar pelo campo usuario, email ou matricula
+    user = find_by(usuario: login) ||
+           find_by(email: login)   ||
+           find_by(matricula: login)
+
+    # usuário não encontrado
+    raise AuthenticationError, "Login ou senha inválidos" unless user
+
+    # usuário pendente (ajuste conforme seu tipo de status)
+    if user.status == false  # supondo boolean: false = pendente, true = ativo
+      raise AuthenticationError,
+            "Sua conta está pendente. Por favor, redefina sua senha para ativar."
+    end
+
+    # senha incorreta
+    unless user.authenticate(password)
+      raise AuthenticationError, "Login ou senha inválidos"
+    end
+
+    user
+  end
+
+  def admin?
+  ocupacao == "admin"
+  end
+
 
   private
 

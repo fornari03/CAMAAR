@@ -7,6 +7,31 @@ RSpec.describe Usuario, type: :model do
     end
   end
 
+  describe 'attributes' do
+    it "persists attributes correctly" do
+      u = Usuario.create!(
+        nome: 'usuario',
+        email: 'usuario@email.com',
+        matricula: '1234',
+        usuario: 'usuario',
+        password: 'senha123',
+        ocupacao: 'discente',
+        status: true
+      )
+
+      expect(u).to have_attributes(
+        nome: 'usuario',
+        email: 'usuario@email.com',
+        matricula: '1234',
+        usuario: 'usuario',
+        ocupacao: 'discente',
+        status: true
+      )
+
+      expect(u.authenticate('senha123')).to be_truthy if u.respond_to?(:authenticate)
+    end
+  end
+
   describe '#pendencias' do
     let(:aluno) { Usuario.create!(nome: 'Aluno', email: 'a@test.com', matricula: '123', usuario: 'aluno', password: 'password', ocupacao: :discente, status: true) }
     let(:template) { Template.create!(name: 'T1', id_criador: aluno.id, titulo: 'T', participantes: 'todos') }

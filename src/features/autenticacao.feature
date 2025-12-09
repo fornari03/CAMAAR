@@ -6,7 +6,7 @@ Funcionalidade: Autenticação de Usuário
   A fim de responder formulários ou gerenciar o sistema
 
   Contexto:
-    Dado que eu estou na página de login
+    Dado que eu estou na página de login 
     E existe um usuário "aluno" cadastrado com email "aluno@teste.com", matrícula "123456" e senha "senha123"
     E existe um usuário "admin" cadastrado com email "admin@teste.com", matrícula "987654", senha "admin123" e com permissão de administrador
 

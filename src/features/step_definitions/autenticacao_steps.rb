@@ -17,9 +17,8 @@ Dado(
   )
 end
 
-Dado(
-  'existe um usuário {string} cadastrado com email {string}, matrícula {string}, senha {string} e com permissão de administrador'
-) do |nome, email, matricula, senha|
+
+Dado('existe um usuário {string} cadastrado com email {string}, matrícula {string}, senha {string} e com permissão de administrador') do |nome, email, matricula, senha|
   Usuario.create!(
     nome: nome,
     email: email,
@@ -39,6 +38,7 @@ end
 Quando('eu clico no botão {string}') do |texto|
   click_button texto, visible: :all
 end
+
 
 Então('eu devo ser redirecionado para a página inicial') do
   expect(page).to have_current_path("/")

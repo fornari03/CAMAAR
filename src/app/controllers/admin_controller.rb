@@ -1,4 +1,9 @@
 class AdminController < ApplicationController
+  before_action :authenticate_admin
+
+  def index
+  end
+
   def importar_dados
     begin
       SigaaImporter.call
