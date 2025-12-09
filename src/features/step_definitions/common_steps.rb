@@ -1,18 +1,21 @@
 Dado('que eu estou logado como Administrador') do
-  # Mocking admin login for now
   @admin = Usuario.find_by(usuario: 'admin') || Usuario.create!(
     nome: 'Admin', 
     email: 'admin@test.com', 
     matricula: '123456', 
     usuario: 'admin', 
-    password: 'password', 
+    password: 'senha123', 
     ocupacao: :admin, 
     status: true
   )
-  # Assuming ApplicationController bypasses login or we need to visit login page
-  # For now, just ensuring the user exists might be enough if using the hack,
-  # but if we want to be "correct" for future, we might visit login.
-  # However, the other steps might have had implementation. Let's check one.
+  visit "/login"
+  
+  fill_in "Email", with: @admin.email
+  fill_in "Senha", with: "senha123"
+  
+  click_on "Entrar"
+  
+  expect(page).to have_content("Bem-vindo")
 end
 
 Dado(/^(?:que )?(?:eu )?estou na página(?: de)? "([^"]*)"$/) do |page_name|
