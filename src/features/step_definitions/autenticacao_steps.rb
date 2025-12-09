@@ -48,11 +48,6 @@ Então('eu devo ser redirecionado para a página de administrador') do
   expect(page).to have_current_path('/admin')
 end
 
-Então('eu devo ver a mensagem {string}') do |mensagem|
-  texto = mensagem.sub(/\.$/, '') 
-  expect(page).to have_content(texto)
-end
-
 Então('eu devo ver a mensagem de Login {string}') do |mensagem|
   texto = mensagem.sub(/\.$/, '')
   expect(page).to have_content(texto)

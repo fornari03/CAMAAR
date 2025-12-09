@@ -1,6 +1,7 @@
 class Questao < ApplicationRecord
+  self.table_name = "questoes"
   belongs_to :template
-  has_many :opcoes
+  has_many :opcoes, class_name: 'Opcao'
   has_many :resposta_items
 
   enum :tipo, { texto: 0, multipla_escolha: 1 }

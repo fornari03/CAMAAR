@@ -11,9 +11,7 @@ Dado('eu já respondi apenas o formulário {string}') do |formulario|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Quando('eu acesso a página {string}') do |pagina|
-  pending # Write code here that turns the phrase above into concrete actions
-end
+
 
 Então('eu devo ver o formulário {string}') do |formulario|
   pending # Write code here that turns the phrase above into concrete actions
@@ -39,7 +37,7 @@ Dado('não estou matriculado em nenhuma turma') do
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('devo permanecer na página {string}') do |pagina|
-  pending # Write code here that turns the phrase above into concrete actions
+Então('devo permanecer na página {string}') do |page_name|
+  expect(current_path).to eq(path_to(page_name))
 end
 

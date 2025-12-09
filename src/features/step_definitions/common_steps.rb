@@ -22,6 +22,11 @@ Dado(/^(?:que )?(?:eu )?estou na página(?: de)? "([^"]*)"$/) do |page_name|
   visit path_to(page_name)
 end
 
+Quando('eu acesso a página {string}') do |page_name|
+  visit path_to(page_name)
+end
+
+
 def path_to(page_name)
   case page_name.downcase
   when "gerenciamento"
@@ -39,8 +44,18 @@ def path_to(page_name)
   when "formularios/new"
     new_formulario_path
     
-  when "home", "inicial"
+  when "home", "inicial", "dashboard"
     root_path
+
+  when "formularios"
+    # Assuming this is the results index page for admin
+    resultados_path
+
+  when /^formularios\/(.+)$/
+    titulo = $1
+    form = Formulario.find_by(titulo_envio: titulo)
+    form ? resultado_path(form.id) : "/resultados/99999"
+
     
   else
     raise "Não sei o caminho para a página '#{page_name}'. Adicione no step definition."
@@ -70,8 +85,18 @@ Dado('que eu sou um {string} logado no sistema') do |role|
   click_on 'Entrar'
 
   expect(page).to have_no_content("Entrar") 
+  # Removed duplicate step definition because it caused ambiguity
 end
+
+# Removed duplicate 'que eu sou um {string} logado no sistema' if it exists here or elsewhere.
+# common_steps.rb:50 has it.
+
 
 Então('eu devo ver a mensagem de erro {string}') do |mensagem|
   expect(page).to have_content(mensagem)
+end
+
+Então('eu devo ver a mensagem {string}') do |mensagem|
+  texto = mensagem.sub(/\.$/, '')
+  expect(page).to have_content(texto)
 end
