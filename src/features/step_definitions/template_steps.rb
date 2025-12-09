@@ -1,15 +1,5 @@
 Dado('que eu estou logado como administrador') do
-  @admin = Usuario.find_by(usuario: 'admin') || Usuario.create!(
-    nome: 'Admin', 
-    email: 'admin@test.com', 
-    matricula: '123456', 
-    usuario: 'admin', 
-    password: 'password', 
-    ocupacao: :admin, 
-    status: true
-  )
-  
-  # Login bypassed via ApplicationController#current_usuario
+  step 'que eu estou logado como Administrador'
 end
 
 Dado('que eu estou na página de novo template') do

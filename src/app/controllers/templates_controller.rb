@@ -11,10 +11,7 @@
 
   def create
     @template = Template.new(template_params)
-    @template.criador = current_usuario # Assuming current_usuario is available
-    # If current_usuario is nil (e.g. in tests without auth), we might need a fallback or ensure auth is mocked.
-    # For now, we assume auth is handled or we might need to relax the constraint if no user.
-    # But schema says null: false.
+    @template.id_criador = session[:usuario_id]
     
     if @template.save
       redirect_to edit_template_path(@template), notice: 'Template criado com sucesso'

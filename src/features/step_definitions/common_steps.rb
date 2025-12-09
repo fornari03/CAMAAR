@@ -3,7 +3,7 @@ Dado('que eu estou logado como Administrador') do
     nome: 'Admin', 
     email: 'admin@test.com', 
     matricula: '123456', 
-    usuario: 'admin', 
+    usuario: '123456', 
     password: 'senha123', 
     ocupacao: :admin, 
     status: true
@@ -48,17 +48,28 @@ def path_to(page_name)
 end
 
 Dado('que eu sou um {string} logado no sistema') do |role|
-  # Mocking login based on role
-  # This is a placeholder for now, similar to the admin login step
-  @user = Usuario.find_by(usuario: role) || Usuario.create!(
+  ocupacao = role.downcase.to_sym
+
+  email_teste = "#{role}@test.com"
+  
+  @user = Usuario.find_by(email: email_teste) || Usuario.create!(
     nome: role.capitalize, 
-    email: "#{role}@test.com", 
-    matricula: '123456', 
+    email: email_teste, 
+    matricula: "99#{rand(1000..9999)}",
     usuario: role, 
     password: 'password', 
-    ocupacao: role.to_sym, # Assuming enum matches role string
+    password_confirmation: 'password',
+    ocupacao: ocupacao, 
     status: true
   )
+  visit '/login'
+
+  fill_in 'Email', with: @user.email 
+  fill_in 'Senha', with: 'password'
+
+  click_on 'Entrar'
+
+  expect(page).to have_no_content("Entrar") 
 end
 
 Então('eu devo ver a mensagem de erro {string}') do |mensagem|

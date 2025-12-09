@@ -54,7 +54,7 @@ Funcionalidade: Autenticação de Usuário
 
   @sad_path
   Cenário: Tentativa de login de usuário pré-cadastrado (pendente)
-    Dado que existe um usuário "José Novo" (111222) pré-cadastrado via SIGAA, mas com status "pendente"
+    Dado que existe um usuário "José Novo" ("111222") pré-cadastrado via SIGAA, mas com status "pendente"
     E eu estou na página de login
     Quando eu preencho o campo "Usuário" com "111222"
     E eu preencho o campo "Senha" com "qualquercoisa"
@@ -64,7 +64,7 @@ Funcionalidade: Autenticação de Usuário
 
   @happy_path
   Cenário: Usuário pendente solicita redefinição de senha para ativar a conta
-    Dado que existe um usuário "José Novo" (111222) pré-cadastrado via SIGAA, mas com status "pendente"
+    Dado que existe um usuário "José Novo" ("111222") pré-cadastrado via SIGAA, mas com status "pendente"
     E eu estou na página de "Esqueci minha senha"
     Quando eu preencho "Email ou Matrícula" com "111222"
     E eu clico no botão "Solicitar redefinição"
