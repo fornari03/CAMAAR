@@ -61,4 +61,4 @@ Funcionalidade: Sistema de definição de senha
     E eu deixo o campo "Confirme a senha" em branco
     E eu clico no botão Alterar Senha
     Então eu devo permanecer na página "Defina sua Senha"
-    E eu devo ver a mensagem de erro "O campo 'Todos os campos devem ser preenchidos."
+    E eu devo ver a mensagem de erro "Todos os campos devem ser preenchidos."

@@ -67,8 +67,8 @@ RSpec.describe "DefinicaoSenha", type: :request do
         expect(usuario_pendente.status).to be_truthy
         expect(usuario_pendente.authenticate("NovaSenhaForte123!")).to be_truthy
         
-        expect(response).to redirect_to(root_path)
-        expect(session[:usuario_id]).to eq(usuario_pendente.id)
+        expect(response).to redirect_to(login_path)
+        expect(session[:usuario_id]).to be_nil
       end
     end
 

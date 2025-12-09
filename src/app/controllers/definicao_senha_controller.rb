@@ -31,11 +31,22 @@ class DefinicaoSenhaController < ApplicationController
       return
     end
 
+    p = user_params
+    if p[:password].blank? || p[:password_confirmation].blank?
+      flash.now[:alert] = "Todos os campos devem ser preenchidos."
+      render :new, status: :unprocessable_entity
+      return
+    end
+
     if @usuario.update(user_params.merge(status: true))
-      session[:usuario_id] = @usuario.id 
-      redirect_to root_path, notice: "Senha definida com sucesso! Bem-vindo."
+      # session[:usuario_id] = @usuario.id
+      redirect_to login_path, notice: "Senha definida com sucesso! Você já pode fazer o login."
     else
-      flash.now[:alert] = @usuario.errors.full_messages.to_sentence
+      if @usuario.errors[:password_confirmation].present?
+        flash.now[:alert] = "As senhas não conferem."
+      else
+        flash.now[:alert] = @usuario.errors.full_messages.to_sentence
+      end
       render :new, status: :unprocessable_entity
     end
   end
