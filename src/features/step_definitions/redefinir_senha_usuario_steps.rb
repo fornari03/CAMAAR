@@ -10,15 +10,7 @@ Quando('eu clico em {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Então('eu devo ser redirecionado para a página de {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('que eu estou na página de {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Dado('eu deixo o campo {string} em branco') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
@@ -35,10 +27,6 @@ Dado('que o e-mail {string} não está cadastrado no sistema') do |string|
 end
 
 Dado('que o usuário {string} solicitou um link de redefinição válido') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
-Quando('eu acesso a página {string} usando o link válido') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
 

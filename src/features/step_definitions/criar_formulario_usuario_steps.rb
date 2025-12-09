@@ -33,7 +33,3 @@ end
 Então('eu devo ser redirecionado para a página {string}') do |pagina|
   pending # Write code here that turns the phrase above into concrete actions
 end
-
-Então('eu devo permanecer na página {string}') do |pagina|
-  pending # Write code here that turns the phrase above into concrete actions
-end
