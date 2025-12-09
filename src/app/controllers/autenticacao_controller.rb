@@ -13,10 +13,14 @@ class AutenticacaoController < ApplicationController
     @usuario = Usuario.find_by(email: email)
 
     if @usuario && @usuario.authenticate(password)
-      
-      session[:usuario_id] = @usuario.id 
-      
-      redirect_to root_path, notice: "Login realizado com sucesso!"
+      session[:usuario_id] = @usuario.id
+
+      if @usuario.admin?
+        redirect_to admin_gerenciamento_path, notice: "Bem-vindo, Administrador!"
+      else
+        redirect_to root_path, notice: "Login realizado com sucesso!"
+      end
+
     else
       flash.now[:alert] = "Email ou senha incorretos."
       render :new, status: :unprocessable_entity
