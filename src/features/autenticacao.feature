@@ -12,51 +12,51 @@ Funcionalidade: Autenticação de Usuário
 
   @happy_path
   Cenário: Login com email válido (Usuário Padrão)
-    Quando eu preencho o campo "Login" com "aluno@teste.com"
+    Quando eu preencho o campo "Usuário" com "aluno@teste.com"
     E eu preencho o campo "Senha" com "senha123"
     E eu clico no botão "Entrar"
     Então eu devo ser redirecionado para a página inicial
-    E eu devo ver a mensagem "Login realizado com sucesso"
+    E eu devo ver a mensagem "bem-vindo usuario comum"
     E eu NÃO devo ver a opção "Gerenciamento" no menu lateral
 
   @happy_path
   Cenário: Login com email válido (Usuário Admin)
-    Quando eu preencho o campo "Login" com "admin@teste.com"
+    Quando eu preencho o campo "Usuário" com "admin@teste.com"
     E eu preencho o campo "Senha" com "admin123"
     E eu clico no botão "Entrar"
-    Então eu devo ser redirecionado para a página inicial
-    E eu devo ver a mensagem "Login realizado com sucesso"
+    Então eu devo ser redirecionado para a página de administrador
+    E eu devo ver a mensagem "bem vindo admin, você é admin!!!"
     E eu devo ver a opção "Gerenciamento" no menu lateral
 
   @happy_path
   Cenário: Login com matrícula válida
-    Quando eu preencho o campo "Login" com "123456"
+    Quando eu preencho o campo "Usuário" com "123456"
     E eu preencho o campo "Senha" com "senha123"
     E eu clico no botão "Entrar"
     Então eu devo ser redirecionado para a página inicial
-    E eu devo ver a mensagem "Login realizado com sucesso"
+    E eu devo ver a mensagem de Login "bem-vindo usuario comum"
 
   @sad_path
   Cenário: Login com senha incorreta
-    Quando eu preencho o campo "Login" com "aluno@teste.com"
+    Quando eu preencho o campo "Usuário" com "aluno@teste.com"
     E eu preencho o campo "Senha" com "senhaErrada"
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
-    E eu devo ver a mensagem "Login ou senha inválidos"
+    E eu devo ver a mensagem "Senha incorreta"
 
   @sad_path
   Cenário: Login com usuário inexistente
-    Quando eu preencho o campo "Login" com "naoexisto@teste.com"
+    Quando eu preencho o campo "Usuário" com "naoexisto@teste.com"
     E eu preencho o campo "Senha" com "qualquercoisa"
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
-    E eu devo ver a mensagem "Login ou senha inválidos"
+    E eu devo ver a mensagem "Usuário não encontrado"
 
   @sad_path
   Cenário: Tentativa de login de usuário pré-cadastrado (pendente)
     Dado que existe um usuário "José Novo" (111222) pré-cadastrado via SIGAA, mas com status "pendente"
     E eu estou na página de login
-    Quando eu preencho o campo "Login" com "111222"
+    Quando eu preencho o campo "Usuário" com "111222"
     E eu preencho o campo "Senha" com "qualquercoisa"
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
