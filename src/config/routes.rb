@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   post "/redefinir_senha" , to: "usuarios#redefinir_senha"
 
+  get  '/esqueci_senha', to: 'redefinicao_senha#new', as: :esqueci_senha
+  post '/esqueci_senha', to: 'redefinicao_senha#create'
 
   get "admin/gerenciamento" => "admin#gerenciamento", as: :admin_gerenciamento
   
