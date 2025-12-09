@@ -41,10 +41,21 @@ def path_to(page_name)
     
   when "home", "inicial"
     root_path
+
+  when "defina sua senha"
+    "/definir_senha"
+
+  when "login"
+    login_path
     
   else
     raise "Não sei o caminho para a página '#{page_name}'. Adicione no step definition."
   end
+end
+
+Então('eu devo permanecer na página {string}') do |page_name|
+  caminho_esperado = path_to(page_name)
+  expect(page.current_path).to eq(caminho_esperado)
 end
 
 Dado('que eu sou um {string} logado no sistema') do |role|

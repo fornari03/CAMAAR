@@ -57,11 +57,6 @@ Então('eu devo ser redirecionado para a página de {string}') do |page_name|
   expect(page).to have_current_path(path_to(page_name))
 end
 
-Então('eu devo permanecer na página {string}') do |page_name|
-  caminho_esperado = "/definir_senha"
-  expect(page.current_path).to eq(caminho_esperado)
-end
-
 Então('o status do usuário {string} no sistema deve ser {string}') do |email, status_esperado|
   user = Usuario.find_by(email: email)
   
