@@ -16,8 +16,6 @@ Rails.application.routes.draw do
   post "/redefinir_senha" , to: "usuarios#redefinir_senha"
 
 
-  root "autenticacao#new"
-
   get "admin/gerenciamento" => "admin#gerenciamento", as: :admin_gerenciamento
   
   get "up" => "rails/health#show", as: :rails_health_check

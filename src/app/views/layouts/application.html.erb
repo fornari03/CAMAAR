@@ -25,36 +25,65 @@
         <h1 class="text-xl font-semibold text-gray-800">
           Gerenciamento
         </h1>
-
       </div>
 
-      <nav class="flex-1 px-2 py-4 space-y-2">
-        <%= link_to "Gerenciamento",
-                    "/admin",
-                    class: "block px-4 py-2 rounded hover:bg-gray-700" %>
-      </nav>
-    </aside>
-  <% end %>
+      <div class="flex items-center space-x-4">
+        <!-- Barra de Pesquisa -->
+        <div class="relative hidden md:block">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="fas fa-search"></i>
+          </span>
+          <input type="text" 
+                 placeholder="Pesquisar..." 
+                 class="w-64 pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm">
+        </div>
 
-  <!-- CONTEÚDO PRINCIPAL -->
-  <section class="flex-1 flex items-center justify-center">
-    <div class="w-full max-w-4xl mx-auto px-6 py-10">
+        <!-- Avatar do Usuário -->
+        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-purple-800 text-white font-bold text-lg cursor-pointer">
+          U
+        </div>
+      </div>
+    </header>
 
-      <!-- Flash Messages -->
-      <% flash.each do |type, msg| %>
-        <% classes = case type.to_s %>
-          <% when 'notice' then 'bg-green-100 border-green-400 text-green-700' %>
-          <% when 'alert'  then 'bg-red-100 border-red-400 text-red-700' %>
-          <% else               'bg-blue-100 border-blue-400 text-blue-700' %>
+    <div class="flex pt-16 h-screen overflow-hidden">
+      
+      <!-- SIDEBAR (Barra Lateral Fixa) -->
+      <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col h-full">
+        <nav class="flex-1 py-4">
+          <ul class="space-y-1">
+            <!-- Link: Avaliações -->
+            <li>
+              <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                Avaliações
+              </a>
+            </li>
+            
+            <!-- Link: Gerenciamento (Ativo) -->
+            <li>
+              <a href="#" class="block px-6 py-3 bg-purple-800 text-white font-medium">
+                Gerenciamento
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- CONTEÚDO PRINCIPAL (Área Cinza) -->
+      <main class="flex-1 bg-gray-200 overflow-y-auto p-8 relative">
+        
+        <!-- Flash Messages -->
+        <% flash.each do |type, msg| %>
+          <% color = type == 'notice' ? 'green' : 'red' %>
+          <div class="mb-4 px-4 py-3 rounded relative bg-<%= color %>-100 border border-<%= color %>-400 text-<%= color %>-700" role="alert">
+            <span class="block sm:inline"><%= msg %></span>
+          </div>
         <% end %>
 
-        <div class="mb-4 px-4 py-3 rounded relative border <%= classes %>" role="alert">
-          <span class="block sm:inline"><%= msg %></span>
-        </div>
-      <% end %>
+        <!-- Conteúdo dinâmico das views -->
+        <%= yield %>
 
-      <!-- Conteúdo dinâmico das views -->
-      <%= yield %>
+      </main>
     </div>
-  </section>
-</main>
+
+  </body>
+</html>

@@ -1,4 +1,6 @@
 class AutenticacaoController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create], raise: false
+  layout "auth"
   # tela de login
   def new
     @usuario = Usuario.new
