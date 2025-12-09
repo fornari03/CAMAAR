@@ -26,10 +26,6 @@ Quando('eu vejo {string} na minha lista de {string}') do |string, string2|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Quando('eu clico em {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Então('eu sou redirecionado para a página do formulário') do
   pending # Write code here that turns the phrase above into concrete actions
 end
