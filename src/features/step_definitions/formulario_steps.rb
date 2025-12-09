@@ -37,7 +37,3 @@ end
 Dado('eu sou responsável pelas turmas {string}') do |turmas|
   pending "Step to assign responsibility for turmas #{turmas} not implemented"
 end
-
-Então('eu devo permanecer na página {string}') do |string|
-  pending # Write code here that turns the phrase above into concrete actions
-end

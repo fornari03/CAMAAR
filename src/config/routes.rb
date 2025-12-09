@@ -22,6 +22,10 @@ Rails.application.routes.draw do
 
   post 'admin/gerenciamento/importar_dados', to: 'admin#importar_dados', as: 'importar_dados'
 
+  get  '/definir_senha', to: 'definicao_senha#new', as: :definir_senha
+  patch '/definir_senha', to: 'definicao_senha#create'
+  post '/definir_senha', to: 'definicao_senha#create'
+
   resources :templates do
     resources :template_questions, only: [:create, :update, :destroy] do
       post 'add_alternative', on: :member
