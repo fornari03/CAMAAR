@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   # Autenticação
   get    "/login",  to: "autenticacao#new"
   post   "/login",  to: "autenticacao#create"
@@ -35,6 +36,13 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :formularios, only: [:index, :create]
   end
+
+  resources :formularios do
+    resources :respostas, only: [:new, :create]
+  end
+
+  resources :resultados, only: [:index, :show]
+
   resources :avaliacoes, only: [:index]
   root "home#index"
 end

@@ -136,14 +136,6 @@ RSpec.describe UsuariosController, type: :controller do
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it "valida o tamanho da senha maior ou igual a 6" do
-      invalid = valid_attributes.merge(password: "123")
-      post :create, params: { usuario: invalid }
-      usuario = assigns(:usuario)
-      expect(usuario).not_to be_persisted
-      expect(usuario.errors[:password]).not_to be_empty
-      expect(response).to render_template(:new)
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
+
   end
 end

@@ -188,13 +188,16 @@ Então('nenhum usuário duplicado deve ser criado') do
 end
 
 Então('os outro botões na página devem ser liberados') do
-  botoes_para_verificar = ["Editar Templates", "Enviar Formularios", "Resultados"]
-
-  botoes_para_verificar.each do |texto_botao|
-    botao = find_button(texto_botao)
-    
-    expect(botao).not_to be_disabled
-    expect(botao[:class]).to include("bg-green-500")
+  # "Editar Templates" é um button_to, os outros são link_to
+  botao_editar = find_button("Editar Templates")
+  expect(botao_editar).not_to be_disabled
+  expect(botao_editar[:class]).to include("bg-green-500")
+  
+  # Os outros são links
+  ["Enviar Formularios", "Resultados"].each do |texto_link|
+    link = find_link(texto_link)
+    expect(link).to be_present
+    expect(link[:class]).to include("bg-green-500")
   end
 end
 

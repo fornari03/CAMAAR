@@ -24,11 +24,9 @@ end
 Quando('eu preencho o campo do template {string} com {string}') do |campo, valor|
   fill_in campo, with: valor
 end
-
 Quando('eu clico no botão do template {string}') do |botao|
   click_button botao
 end
-
 
 
 Quando('eu clico em {string} para {string}') do |link_text, template_titulo|

@@ -1,6 +1,6 @@
 class Template < ApplicationRecord
   belongs_to :criador, class_name: 'Usuario', foreign_key: 'id_criador', optional: true
-  has_many :questoes
+  has_many :questoes, class_name: 'Questao'
   has_many :formularios
   has_many :template_questions, dependent: :destroy
 

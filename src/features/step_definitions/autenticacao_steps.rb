@@ -35,9 +35,7 @@ Quando('eu preencho o campo {string} com {string}') do |campo, valor|
   fill_in campo, with: valor
 end
 
-Quando('eu clico no botão {string}') do |texto|
-  click_button texto, visible: :all
-end
+
 
 
 Então('eu devo ser redirecionado para a página inicial') do
@@ -46,11 +44,6 @@ end
 
 Então('eu devo ser redirecionado para a página de administrador') do 
   expect(page).to have_current_path('/admin')
-end
-
-Então('eu devo ver a mensagem {string}') do |mensagem|
-  texto = mensagem.sub(/\.$/, '') 
-  expect(page).to have_content(texto)
 end
 
 Então('eu devo ver a mensagem de Login {string}') do |mensagem|

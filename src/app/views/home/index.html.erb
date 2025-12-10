@@ -1,2 +1,48 @@
-<h1>bem-vindo usuario comum</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<div class="container mx-auto px-4 py-8">
+  <% if current_usuario %>
+    <h1 class="text-3xl font-bold mb-6">Bem-vindo, <%= current_usuario.nome %></h1>
+
+    <% if current_usuario.discente? %>
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-blue-600">Formulários Pendentes</h2>
+        <% if @pendencias&.any? %>
+          <ul class="space-y-4">
+            <% @pendencias.each do |resposta| %>
+              <li class="bg-white shadow rounded-lg p-4 border-l-4 border-yellow-500 flex justify-between items-center">
+                <div>
+                  <h3 class="font-bold text-lg"><%= resposta.formulario.titulo_envio %></h3>
+                  <p class="text-gray-600">Turma: <%= resposta.formulario.turma.codigo %></p>
+                </div>
+                <%= link_to "Responder", new_formulario_resposta_path(resposta.formulario), class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", style: "display: inline-block; background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: bold; text-decoration: none;" %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-gray-500">Nenhum formulário pendente.</p>
+        <% end %>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold mb-4 text-green-600">Formulários Respondidos</h2>
+        <% if @respondidos&.any? %>
+          <ul class="space-y-4">
+            <% @respondidos.each do |form| %>
+              <li class="bg-white shadow rounded-lg p-4 border-l-4 border-green-500">
+                <h3 class="font-bold text-lg"><%= form.titulo_envio %></h3>
+                <% resposta = Resposta.find_by(formulario: form, participante: current_usuario) %>
+                <p class="text-gray-600">Respondido em <%= resposta&.data_submissao ? l(resposta.data_submissao, format: :short) : 'Data não disponível' %></p>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-gray-500">Nenhum formulário respondido ainda.</p>
+        <% end %>
+      </section>
+    <% elsif current_usuario.admin? %>
+      <p>Painel Administrativo</p>
+      <%= link_to "Gerenciar Formulários", resultados_path, class: "text-blue-600 underline" %>
+    <% end %>
+  <% else %>
+    <p>Por favor, faça login para continuar.</p>
+  <% end %>
+</div>

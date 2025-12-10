@@ -1,0 +1,48 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800"><%= @formulario.titulo_envio %></h1>
+    <% if @respostas.any? %>
+      <%= link_to "Baixar CSV", resultado_path(@formulario, format: :csv), class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+    <% end %>
+  </div>
+
+  <p class="mb-4 text-gray-600">Total de respostas: <%= @respostas.count %></p>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-semibold mb-4">Amostra de Respostas</h2>
+    
+    <% if @respostas.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left">Data</th>
+              <% @formulario.template.questoes.limit(3).each do |q| %>
+                <th class="px-4 py-2 text-left"><%= q.enunciado.truncate(30) %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @respostas.limit(5).each do |resposta| %>
+              <tr>
+                <td class="px-4 py-2"><%= resposta.data_submissao ? l(resposta.data_submissao, format: :short) : 'Pendente' %></td>
+                <% @formulario.template.questoes.limit(3).each do |q| %>
+                  <td class="px-4 py-2">
+                    <% item = resposta.resposta_items.find { |i| i.questao_id == q.id } %>
+                    <%= item ? (item.texto_resposta.presence || item.opcao_escolhida&.texto_opcao) : "-" %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-gray-500">Nenhuma resposta registrada para este formulário</p>
+    <% end %>
+  </div>
+  
+  <div class="mt-6">
+    <%= link_to "Voltar", resultados_path, class: "text-blue-600 hover:underline" %>
+  </div>
+</div>

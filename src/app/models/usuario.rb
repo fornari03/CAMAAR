@@ -15,13 +15,15 @@ class Usuario < ApplicationRecord
 
   # Validações de campos básicos
   validates :nome,      presence: true
-  validates :email,     presence: true, uniqueness: true
+  validates :email,     presence: true, uniqueness: true, allow_nil: true
   validates :matricula, presence: true
   validates :usuario,   presence: true, uniqueness: true
   validates :ocupacao,  presence: true
   validates :status,    inclusion: { in: [true, false] }
 
   def pendencias
+    # Returns pending responses (Resposta objects with data_submissao: nil)
+    # This matches the expectation of avaliacoes/index.html.erb
     respostas.where(data_submissao: nil)
   end
 
@@ -32,15 +34,7 @@ class Usuario < ApplicationRecord
   has_many :matriculas, foreign_key: 'id_usuario'
   has_many :turmas, through: :matriculas
 
-  # método de autenticação para login (usando :usuario)
-  def self.authenticate(usuario, password)
-    user = find_by(usuario: usuario)
-    raise AuthenticationError, "Usuário não encontrado" unless user
-    raise AuthenticationError, "Senha incorreta"        unless user.authenticate(password)
-    user
-  end
-
-  # método de autenticação para login (usando :usuario)
+  # método de autenticação para login (usando :usuario, :email ou :matricula)
   def self.authenticate(login, password)
     # tenta achar pelo campo usuario, email ou matricula
     user = find_by(usuario: login) ||
@@ -48,17 +42,17 @@ class Usuario < ApplicationRecord
            find_by(matricula: login)
 
     # usuário não encontrado
-    raise AuthenticationError, "Login ou senha inválidos" unless user
+    raise AuthenticationError, "Usuário não encontrado" unless user
 
-    # usuário pendente (ajuste conforme seu tipo de status)
-    if user.status == false  # supondo boolean: false = pendente, true = ativo
+    # usuário pendente
+    if user.status == false
       raise AuthenticationError,
             "Sua conta está pendente. Por favor, redefina sua senha para ativar."
     end
 
     # senha incorreta
     unless user.authenticate(password)
-      raise AuthenticationError, "Login ou senha inválidos"
+      raise AuthenticationError, "Senha incorreta"
     end
 
     user
