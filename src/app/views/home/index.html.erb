@@ -13,7 +13,7 @@
                   <h3 class="font-bold text-lg"><%= resposta.formulario.titulo_envio %></h3>
                   <p class="text-gray-600">Turma: <%= resposta.formulario.turma.codigo %></p>
                 </div>
-                <%= link_to "Responder", new_formulario_resposta_path(resposta.formulario), class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+                <%= link_to "Responder", new_formulario_resposta_path(resposta.formulario), class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", style: "display: inline-block; background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: bold; text-decoration: none;" %>
               </li>
             <% end %>
           </ul>
@@ -29,7 +29,8 @@
             <% @respondidos.each do |form| %>
               <li class="bg-white shadow rounded-lg p-4 border-l-4 border-green-500">
                 <h3 class="font-bold text-lg"><%= form.titulo_envio %></h3>
-                <p class="text-gray-600">Respondido em <%= l Resposta.find_by(formulario: form, participante: current_usuario).data_submissao, format: :short %></p>
+                <% resposta = Resposta.find_by(formulario: form, participante: current_usuario) %>
+                <p class="text-gray-600">Respondido em <%= resposta&.data_submissao ? l(resposta.data_submissao, format: :short) : 'Data não disponível' %></p>
               </li>
             <% end %>
           </ul>

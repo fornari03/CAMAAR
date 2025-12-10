@@ -25,7 +25,7 @@
           <tbody class="divide-y divide-gray-200">
             <% @respostas.limit(5).each do |resposta| %>
               <tr>
-                <td class="px-4 py-2"><%= l resposta.data_submissao, format: :short %></td>
+                <td class="px-4 py-2"><%= resposta.data_submissao ? l(resposta.data_submissao, format: :short) : 'Pendente' %></td>
                 <% @formulario.template.questoes.limit(3).each do |q| %>
                   <td class="px-4 py-2">
                     <% item = resposta.resposta_items.find { |i| i.questao_id == q.id } %>

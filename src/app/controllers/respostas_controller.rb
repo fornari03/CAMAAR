@@ -8,7 +8,11 @@ class RespostasController < ApplicationController
   end
 
   def create
-    @resposta = Resposta.new(formulario: @formulario, participante: current_usuario)
+    # Find existing empty response or create new one
+    @resposta = Resposta.find_or_initialize_by(
+      formulario: @formulario, 
+      participante: current_usuario
+    )
     
     # Using specific logic for items creation based on params
     # structure: params[:respostas] = { questao_id => valor }
@@ -74,8 +78,10 @@ class RespostasController < ApplicationController
       return
     end
 
-    # Check if already answered
-    if Resposta.exists?(formulario: @formulario, participante: current_usuario)
+
+    # Check if already answered (data_submissao present means it was submitted)
+    resposta_existente = Resposta.find_by(formulario: @formulario, participante: current_usuario)
+    if resposta_existente&.data_submissao.present?
        redirect_to root_path, alert: "Você já respondeu este formulário."
     end
   end

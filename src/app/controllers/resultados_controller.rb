@@ -10,7 +10,7 @@ class ResultadosController < ApplicationController
 
   def show
     @formulario = Formulario.find(params[:id])
-    @respostas = @formulario.respostas.includes(resposta_items: [:questao, :opcao_escolhida])
+    @respostas = @formulario.respostas.where.not(data_submissao: nil).includes(resposta_items: [:questao, :opcao_escolhida])
 
     respond_to do |format|
       format.html
