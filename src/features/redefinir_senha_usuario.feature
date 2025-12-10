@@ -38,7 +38,7 @@ Funcionalidade: Redefinição de Senha
     Dado que o usuário "fulano.ativo@email.com" solicitou um link de redefinição válido
     Quando eu acesso a página "Redefina sua Senha" usando o link válido
     E eu preencho o campo "Nova Senha" com "novaSenhaSuperForte"
-    E eu preencho o campo "Confirmar Senha" com "novaSenhaSuperForte"
+    E eu preencho o campo "Confirme a senha" com "novaSenhaSuperForte"
     E eu clico no botão "Salvar Nova Senha"
     Então eu devo ser redirecionado para a página de "Login"
     E eu devo ver a mensagem "Senha redefinida com sucesso! Você já pode fazer o login."
