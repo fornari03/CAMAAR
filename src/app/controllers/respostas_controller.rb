@@ -68,6 +68,12 @@ class RespostasController < ApplicationController
     # Simple check: is user student?
     redirect_to root_path, alert: "Acesso negado." unless current_usuario && current_usuario.discente?
     
+    # Check if form is expired
+    if @formulario.data_encerramento.present? && @formulario.data_encerramento < Time.current
+      redirect_to root_path, alert: "Este formulário não está mais aceitando respostas."
+      return
+    end
+
     # Check if already answered
     if Resposta.exists?(formulario: @formulario, participante: current_usuario)
        redirect_to root_path, alert: "Você já respondeu este formulário."

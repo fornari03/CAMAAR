@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_05_210703) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_10_003357) do
   create_table "formularios", force: :cascade do |t|
     t.string "titulo_envio"
     t.datetime "data_criacao"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_05_210703) do
     t.integer "turma_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "data_encerramento"
     t.index ["template_id"], name: "index_formularios_on_template_id"
     t.index ["turma_id"], name: "index_formularios_on_turma_id"
   end
