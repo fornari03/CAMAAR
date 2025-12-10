@@ -38,9 +38,7 @@ Quando('eu acesso a página {string} usando o link válido') do |page_name|
   visit @link_definicao
 end
 
-Quando('eu clico no botão Alterar Senha') do
-  click_on "Alterar Senha"
-end
+
 
 Quando('eu acesso a página {string} usando o link antigo') do |page_name|
   user = @user

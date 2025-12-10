@@ -33,7 +33,3 @@ end
 Quando('eu tento acessar diretamente a URL de gerenciamento da turma {string}') do |string|
   pending # Write code here that turns the phrase above into concrete actions
 end
-
-Então('eu devo ser redirecionado para a minha página inicial') do
-  pending # Write code here that turns the phrase above into concrete actions
-end

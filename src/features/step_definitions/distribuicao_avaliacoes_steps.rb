@@ -52,9 +52,7 @@ Quando('eu seleciono as turmas para distribuição {string} e {string}') do |tur
   check "turma_#{t2.id}"
 end
 
-Quando('eu clico no botão de distribuição {string}') do |botao|
-  click_button botao
-end
+
 
 Então('eu devo ver a mensagem de sucesso de distribuição {string}') do |mensagem|
   expect(page).to have_content(mensagem)
