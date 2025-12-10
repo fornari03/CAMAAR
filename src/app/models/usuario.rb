@@ -15,7 +15,7 @@ class Usuario < ApplicationRecord
 
   # Validações de campos básicos
   validates :nome,      presence: true
-  validates :email,     presence: true, uniqueness: true
+  validates :email,     presence: true, uniqueness: true, allow_nil: true
   validates :matricula, presence: true
   validates :usuario,   presence: true, uniqueness: true
   validates :ocupacao,  presence: true
