@@ -8,7 +8,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
       it "envia e-mail e redireciona para login" do
         expect {
           post esqueci_senha_path, params: { email: usuario.email }
-        }.to have_enqueued_mail(UserMailer, :redefinicao_senha)
+        }.to change { ActionMailer::Base.deliveries.count }.by(1)
 
         expect(response).to redirect_to(login_path)
         follow_redirect!
@@ -29,11 +29,12 @@ RSpec.describe "RedefinicaoSenha", type: :request do
     end
 
     context "com campo vazio" do
-      it "exibe erro e não envia email" do
+      it "redireciona para login com erro" do
         post esqueci_senha_path, params: { email: "" }
         
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("O campo de e-mail não pode estar vazio")
+        expect(response).to redirect_to(login_path)
+        follow_redirect!
+        expect(response.body).to include("O campo de e-mail não pode estar vazio.")
       end
     end
   end
