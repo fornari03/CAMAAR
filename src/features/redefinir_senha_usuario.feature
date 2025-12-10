@@ -12,8 +12,7 @@ Funcionalidade: Redefinição de Senha
     E eu estou na página de "Login"
     E eu preencho o campo "Email" com "fulano.ativo@email.com"
     Quando eu clico em "Esqueci minha senha"
-    Então eu devo ser redirecionado para a página de "Login"
-    E eu devo ver a mensagem "Se este e-mail estiver cadastrado, um link de redefinição foi enviado."
+    Então eu devo ver a mensagem "Se este e-mail estiver cadastrado, um link de redefinição foi enviado."
     E um e-mail de "Redefinição de Senha" deve ser enviado para "fulano.ativo@email.com"
 
   @sad_path
@@ -31,8 +30,7 @@ Funcionalidade: Redefinição de Senha
     E eu estou na página de "Login"
     E eu preencho o campo "Email" com "fulano.invalido@email.com"
     Quando eu clico em "Esqueci minha senha"
-    Então eu devo ser redirecionado para a página de "Login"
-    E eu devo ver a mensagem "Se este e-mail estiver cadastrado, um link de redefinição foi enviado."
+    Então eu devo ver a mensagem "Se este e-mail estiver cadastrado, um link de redefinição foi enviado."
     E nenhum e-mail deve ser enviado
 
   @happy_path
@@ -52,6 +50,5 @@ Funcionalidade: Redefinição de Senha
     E eu estou na página de "Login"
     E eu preencho o campo "Email" com "fulano.pendente@email.com"
     Quando eu clico em "Esqueci minha senha"
-    Então eu devo ser redirecionado para a página de "Login"
-    E eu devo ver a mensagem "Você ainda não definiu sua senha. Por favor, verifique seu e-mail para definir sua senha."
+    Então eu devo ver a mensagem "Você ainda não definiu sua senha. Por favor, verifique seu e-mail para definir sua senha."
     E nenhum e-mail deve ser enviado

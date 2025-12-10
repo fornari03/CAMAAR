@@ -13,7 +13,9 @@ Rails.application.routes.draw do
   # Página inicial Home
   get "/home", to: "home#index"
 
-  post "/redefinir_senha" , to: "usuarios#redefinir_senha"
+  get   '/redefinir_senha/edit', to: 'redefinicao_senha#edit', as: :edit_redefinir_senha
+  
+  patch '/redefinir_senha',      to: 'redefinicao_senha#update', as: :redefinir_senha
 
   get  '/esqueci_senha', to: 'redefinicao_senha#new', as: :esqueci_senha
   post '/esqueci_senha', to: 'redefinicao_senha#create'
