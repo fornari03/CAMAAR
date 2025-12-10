@@ -35,7 +35,7 @@ Dado('que o usuário {string} solicitou um link de redefinição válido') do |e
 
   token = user.signed_id(purpose: :redefinir_senha, expires_in: 15.minutes)
   
-  @link_valido = "/redefinir_senha/edit?token=#{token}"
+  @link_definicao = "/redefinir_senha/edit?token=#{token}"
 end
 
 Então('o usuário {string} deve conseguir logar com a senha {string}') do |email, nova_senha|

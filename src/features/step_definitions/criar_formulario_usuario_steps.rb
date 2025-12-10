@@ -26,8 +26,6 @@ Dado('eu defino a data de encerramento para {string}') do |data|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-
-
 Então('eu devo ser redirecionado para a página {string}') do |pagina|
   pending # Write code here that turns the phrase above into concrete actions
 end

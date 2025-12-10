@@ -2,31 +2,29 @@ class RedefinicaoSenhaController < ApplicationController
   skip_before_action :require_login, raise: false
   layout "auth"
 
-  # GET /esqueci_senha
-  def new
-    # Renderiza o formulário de email
-  end
-
   # POST /esqueci_senha
   def create
     email = params[:email]
 
     if email.blank?
-      flash.now[:alert] = "O campo de e-mail não pode estar vazio."
-      render :new, status: :unprocessable_entity
+      redirect_to login_path, alert: "O campo de e-mail não pode estar vazio."
       return
     end
 
     user = Usuario.find_by(email: email)
 
     if user
-      UserMailer.with(user: user).redefinicao_senha.deliver_later
+      if user.status == false
+        redirect_to login_path, alert: "Você ainda não definiu sua senha. Por favor, verifique seu e-mail para definir sua senha."
+        return
+      end
+      UserMailer.with(user: user).redefinicao_senha.deliver_now
     end
 
     redirect_to login_path, notice: "Se este e-mail estiver cadastrado, um link de redefinição foi enviado."
   end
 
-  # GET /redefinir_senha/edit?token=...
+  # GET /redefinir_senha/edit
   def edit
     @token = params[:token]
     @usuario = Usuario.find_signed(@token, purpose: :redefinir_senha)
