@@ -14,10 +14,6 @@ Dado('que eu seleciono o tipo de formulário {string}') do |tipo|
   pending # Write code here that turns the phrase above into concrete actions
 end
 
-Dado('eu seleciono o template {string}') do |template|
-  pending # Write code here that turns the phrase above into concrete actions
-end
-
 Dado('eu seleciono a turma {string}') do |turma|
   pending # Write code here that turns the phrase above into concrete actions
 end

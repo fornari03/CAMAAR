@@ -37,11 +37,7 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :admin do
-    resources :formularios, only: [:index, :create]
-  end
-
-  resources :formularios do
+  resources :formularios, only: [:index, :new, :create] do
     resources :respostas, only: [:new, :create]
   end
 
