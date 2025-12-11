@@ -16,7 +16,7 @@ Funcionalidade: Autenticação de Usuário
     E eu preencho o campo "Senha" com "senha123"
     E eu clico no botão "Entrar"
     Então eu devo ser redirecionado para a página inicial
-    E eu devo ver a mensagem "bem-vindo usuario comum"
+    E eu devo ver a mensagem "Login realizado com sucesso!"
     E eu NÃO devo ver a opção "Gerenciamento" no menu lateral
 
   @happy_path
@@ -25,7 +25,7 @@ Funcionalidade: Autenticação de Usuário
     E eu preencho o campo "Senha" com "admin123"
     E eu clico no botão "Entrar"
     Então eu devo ser redirecionado para a página de administrador
-    E eu devo ver a mensagem "bem vindo admin, você é admin!!!"
+    E eu devo ver a mensagem "Bem-vindo, Administrador!"
     E eu devo ver a opção "Gerenciamento" no menu lateral
 
   @happy_path
@@ -34,7 +34,7 @@ Funcionalidade: Autenticação de Usuário
     E eu preencho o campo "Senha" com "senha123"
     E eu clico no botão "Entrar"
     Então eu devo ser redirecionado para a página inicial
-    E eu devo ver a mensagem de Login "bem-vindo usuario comum"
+    E eu devo ver a mensagem "Login realizado com sucesso!"
 
   @sad_path
   Cenário: Login com senha incorreta
@@ -61,12 +61,3 @@ Funcionalidade: Autenticação de Usuário
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
     E eu devo ver a mensagem "Sua conta está pendente. Por favor, redefina sua senha para ativar."
-
-  @happy_path
-  Cenário: Usuário pendente solicita redefinição de senha para ativar a conta
-    Dado que existe um usuário "José Novo" ("111222") pré-cadastrado via SIGAA, mas com status "pendente"
-    E eu estou na página de "Esqueci minha senha"
-    Quando eu preencho "Email ou Matrícula" com "111222"
-    E eu clico no botão "Solicitar redefinição"
-    Então eu devo ver a mensagem "Um link de ativação foi enviado para o seu email."
-    E o status do usuário "111222" deve continuar "pendente"

@@ -47,7 +47,7 @@ Então('eu devo ser redirecionado para a página inicial') do
 end
 
 Então('eu devo ser redirecionado para a página de administrador') do 
-  expect(page).to have_current_path('/admin')
+  expect(page.current_path).to eq(admin_gerenciamento_path)
 end
 
 Então('eu devo ver a mensagem de Login {string}') do |mensagem|
@@ -55,8 +55,10 @@ Então('eu devo ver a mensagem de Login {string}') do |mensagem|
   expect(page).to have_content(texto)
 end
 
-Então('eu NÃO devo ver a opção {string} no menu lateral') do |texto|
-  expect(page).not_to have_content(texto)
+Então('eu NÃO devo ver a opção {string} no menu lateral') do |opcao|
+  within('aside') do
+    expect(page).not_to have_content(opcao)
+  end
 end
 
 Então('eu devo ver a opção {string} no menu lateral') do |texto|
@@ -68,10 +70,16 @@ Então('eu devo permanecer na página de login') do
   expect(page).to have_current_path("/login")
 end
 
-# ------------- Steps pendentes (ainda OK ficar assim) -------------
-
-Dado('que existe um usuário {string} \({int}) pré-cadastrado via SIGAA, mas com status {string}') do |string, int, string2|
-  pending # implementar caso de usuário pré-cadastrado pendente
+Dado('que existe um usuário {string} \({string}) pré-cadastrado via SIGAA, mas com status {string}') do |nome, matricula, status_desc|
+  Usuario.create!(
+    nome: nome,
+    matricula: matricula,
+    usuario: matricula,
+    email: "#{matricula}@aluno.unb.br",
+    password: "SenhaTemporaria123!",
+    ocupacao: :discente,
+    status: false
+  )
 end
 
 # este step é redundante com "que eu estou na página de login",
