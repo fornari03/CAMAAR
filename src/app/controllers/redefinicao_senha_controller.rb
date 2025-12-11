@@ -48,7 +48,7 @@ class RedefinicaoSenhaController < ApplicationController
       redirect_to login_path, notice: "Senha redefinida com sucesso! Você já pode fazer o login."
     else
       flash.now[:alert] = @usuario.errors.full_messages.to_sentence
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

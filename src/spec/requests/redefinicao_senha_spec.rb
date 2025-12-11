@@ -61,7 +61,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
           usuario: { password: "123", password_confirmation: "456" }
         }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(usuario.reload.authenticate("oldPass")).to be_truthy # Senha antiga mantida
       end
     end

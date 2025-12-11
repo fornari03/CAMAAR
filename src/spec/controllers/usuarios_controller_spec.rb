@@ -100,7 +100,7 @@ RSpec.describe UsuariosController, type: :controller do
       expect(usuario).not_to be_persisted
       expect(usuario.errors).not_to be_empty
       expect(response).to render_template(:new)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "rejeita e-mail duplicado" do
@@ -111,7 +111,7 @@ RSpec.describe UsuariosController, type: :controller do
       expect(usuario).not_to be_persisted
       expect(usuario.errors[:email]).to be_present
       expect(response).to render_template(:new)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "rejeita usuario duplicado" do
@@ -122,7 +122,7 @@ RSpec.describe UsuariosController, type: :controller do
       expect(usuario).not_to be_persisted
       expect(usuario.errors[:usuario]).to be_present
       expect(response).to render_template(:new)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "rejeita senha inválida (vazia)" do
@@ -133,7 +133,7 @@ RSpec.describe UsuariosController, type: :controller do
       # Evita depender de mensagem exata; só verificamos que existe erro na senha
       expect(usuario.errors[:password]).not_to be_empty
       expect(response).to render_template(:new)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
 

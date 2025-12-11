@@ -57,7 +57,7 @@ class RespostasController < ApplicationController
       redirect_to root_path, notice: "Avaliação enviada com sucesso. Obrigado!"
     else
       @questions = @formulario.template.questoes
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
