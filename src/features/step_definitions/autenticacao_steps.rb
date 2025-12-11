@@ -76,10 +76,6 @@ Dado('eu estou na página de login') do
   visit "/login"
 end
 
-Dado('eu estou na página de {string}') do |string|
-  pending # implementar navegação genérica por nome de página, se precisar
-end
-
 Quando('eu preencho {string} com {string}') do |string, string2|
   pending # implementar se for usar esses steps nos cenários de esqueci senha
 end
