@@ -32,7 +32,11 @@ Dado('existe um usuário {string} cadastrado com email {string}, matrícula {str
 end
 
 Quando('eu preencho o campo {string} com {string}') do |campo, valor|
-  fill_in campo, with: valor
+  if campo == 'Email'
+    fill_in 'Usuário', with: valor
+  else
+    fill_in campo, with: valor
+  end
 end
 
 

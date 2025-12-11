@@ -40,7 +40,7 @@ end
 
 Então('o usuário {string} deve conseguir logar com a senha {string}') do |email, nova_senha|
   visit '/login'
-  fill_in 'Email', with: email
+  fill_in 'Usuário', with: email
   fill_in 'Senha', with: nova_senha
   click_on 'Entrar'
   expect(page).to have_no_content("Entrar")
