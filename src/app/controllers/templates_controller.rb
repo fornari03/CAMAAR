@@ -23,7 +23,7 @@
       # "Nome do Template não pode ficar em branco"
       # And `form_template_creation.feature`: "Titulo can't be blank"
       # We should probably standardize. But for now, let's output the errors.
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -35,7 +35,7 @@
     if @template.update(template_params)
       redirect_to edit_template_path(@template), notice: 'Template atualizado com sucesso.'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

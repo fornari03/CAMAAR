@@ -48,7 +48,11 @@ Quando('eu acesso a página {string} usando o link antigo') do |page_name|
 end
 
 Quando('eu deixo o campo {string} em branco') do |campo|
-  fill_in campo, with: ""
+  if campo == 'Email'
+    fill_in 'Usuário', with: ""
+  else
+    fill_in campo, with: ""
+  end
 end
 
 Então('eu devo ser redirecionado para a página de {string}') do |page_name|

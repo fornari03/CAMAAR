@@ -30,6 +30,14 @@
         <%= form.password_field :password, 
             class: "w-full px-4 py-2 border border-gray-300 rounded focus:ring-purple-500 focus:border-purple-500", 
             placeholder: "Password" %>
+        
+        <div class="flex justify-end mt-1">
+          <button type="submit" 
+                  formaction="<%= esqueci_senha_path %>" 
+                  class="text-sm text-purple-600 hover:text-purple-800 hover:underline bg-transparent border-none cursor-pointer p-0">
+            Esqueci minha senha
+          </button>
+        </div>
       </div>
 
       <div>

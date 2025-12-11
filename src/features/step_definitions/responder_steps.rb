@@ -104,8 +104,6 @@ Quando('eu vejo {string} na minha lista de {string}') do |texto, lista_nome|
   # Ideally check within a specific section, e.g. "Formulários Pendentes" header
 end
 
-
-
 Então('eu sou redirecionado para a página do formulário') do
   # expect current path to match form path
   expect(current_path).to match(/respostas\/new/)

@@ -1,0 +1,6 @@
+<%= render partial: "shared/form_senha", locals: { 
+    titulo: "Redefina sua Senha",
+    modelo: @usuario,
+    url_destino: redefinir_senha_path(token: params[:token]),
+    texto_botao: "Salvar Nova Senha"
+} %>

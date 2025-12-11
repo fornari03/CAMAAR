@@ -34,7 +34,7 @@ class DefinicaoSenhaController < ApplicationController
     p = user_params
     if p[:password].blank? || p[:password_confirmation].blank?
       flash.now[:alert] = "Todos os campos devem ser preenchidos."
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
       return
     end
 
@@ -47,7 +47,7 @@ class DefinicaoSenhaController < ApplicationController
       else
         flash.now[:alert] = @usuario.errors.full_messages.to_sentence
       end
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

@@ -25,7 +25,7 @@ class UsuariosController < ApplicationController
     if @usuario.save
       redirect_to @usuario, notice: "Usuário criado com sucesso."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -39,7 +39,7 @@ class UsuariosController < ApplicationController
     if @usuario.update(usuario_params)
       redirect_to @usuario, notice: "Usuário atualizado com sucesso."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
