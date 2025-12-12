@@ -1,6 +1,6 @@
 class FormulariosController < ApplicationController
   before_action :require_login
-  before_action :authorize_admin, only: [:new, :create]
+  before_action :authorize_admin, only: [:new, :create, :index]
 
   def index
     @templates = Template.all
@@ -23,7 +23,7 @@ class FormulariosController < ApplicationController
     data_encerramento = params[:data_encerramento]
 
     if template_id.blank?
-      flash[:alert] = "Selecione um template" # Ajuste se necessário
+      flash[:alert] = "Selecione um template"
       redirect_to new_formulario_path
       return
     end
@@ -61,6 +61,16 @@ class FormulariosController < ApplicationController
   rescue ActiveRecord::RecordInvalid => e
     flash[:alert] = "Erro ao distribuir: #{e.message}"
     redirect_to new_formulario_path
+  end
+
+  def pendentes
+    if current_usuario.matriculas.empty?
+      flash.now[:alert] = "Você não possui turmas cadastradas"
+      @respostas_pendentes = []
+    else
+      @respostas_pendentes = Resposta.where(participante: current_usuario, data_submissao: nil)
+                                     .includes(formulario: [:template, { turma: :materia }])
+    end
   end
 
   private

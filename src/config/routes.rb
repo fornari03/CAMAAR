@@ -38,6 +38,9 @@ Rails.application.routes.draw do
   end
 
   resources :formularios, only: [:index, :new, :create, :show] do
+    collection do
+      get 'pendentes'
+    end
     resources :respostas, only: [:new, :create]
   end
 

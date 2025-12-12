@@ -1,0 +1,39 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">Formulários Pendentes</h1>
+
+  <% if flash[:alert] %>
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
+      <p><%= flash[:alert] %></p>
+    </div>
+  <% end %>
+
+  <% if @respostas_pendentes.any? %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+      <ul class="divide-y divide-gray-200">
+        <% @respostas_pendentes.each do |resposta| %>
+          <% form = resposta.formulario %>
+          <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-purple-600 truncate">
+                <%= form.template.titulo %>
+              </p>
+              <p class="ml-2 flex-shrink-0 flex text-gray-500 text-sm">
+                <%= form.turma.materia.nome %> (<%= form.turma.semestre %>)
+              </p>
+              <p class="text-xs text-red-500 mt-1">
+                Encerra em: <%= form.data_encerramento&.strftime("%d/%m/%Y") %>
+              </p>
+            </div>
+            <div class="ml-5 flex-shrink-0">
+               <%= link_to "Responder", new_formulario_resposta_path(form), class: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% elsif !flash[:alert] %> 
+    <div class="text-center py-10 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+      <p class="text-gray-500 text-lg">Nenhum formulário pendente</p>
+    </div>
+  <% end %>
+</div>
