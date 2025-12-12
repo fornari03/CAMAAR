@@ -20,7 +20,7 @@ class ResultadosController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to resultados_path, alert: "Formulário não encontrado"
+    redirect_to formularios_path, alert: "Formulário não encontrado"
   end
 
   private

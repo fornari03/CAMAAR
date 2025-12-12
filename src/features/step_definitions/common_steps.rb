@@ -52,8 +52,7 @@ def path_to(page_name)
     root_path
 
   when "formularios"
-    # Assuming this is the results index page for admin
-    resultados_path
+    formularios_path
 
   when /^formularios\/(.+)$/
     titulo = $1.strip
