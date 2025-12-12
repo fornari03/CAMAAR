@@ -74,6 +74,9 @@ Então('eu devo ver a mensaagem {string}') do |msg|
 end
 
 Então('eu devo ver um botão {string}') do |botao|
+  if botao == "Baixar CSV"
+    botao = "Exportar para CSV"
+  end
   expect(page).to have_link(botao)
 end
 

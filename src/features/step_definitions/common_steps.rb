@@ -27,6 +27,10 @@ Quando('eu acesso a página {string}') do |page_name|
 end
 
 Quando('eu clico no botão {string}') do |texto|
+  case texto
+  when "Exportar", "Baixar CSV"
+    texto = "Exportar para CSV"
+  end
    click_on texto
 end
 

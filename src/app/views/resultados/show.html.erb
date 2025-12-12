@@ -1,9 +1,15 @@
 <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+  
+  <% if flash[:alert] %>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-gray-800"><%= @formulario.titulo_envio %></h1>
-    <% if @respostas.any? %>
-      <%= link_to "Baixar CSV", resultado_path(@formulario, format: :csv), class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
-    <% end %>
+    
+    <%= link_to "Exportar para CSV", resultado_path(@formulario, format: :csv), class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 
   <p class="mb-4 text-gray-600">Total de respostas: <%= @respostas.count %></p>
@@ -43,6 +49,6 @@
   </div>
   
   <div class="mt-6">
-    <%= link_to "Voltar", resultados_path, class: "text-blue-600 hover:underline" %>
+    <%= link_to "Voltar", formularios_path, class: "text-blue-600 hover:underline" %>
   </div>
 </div>
