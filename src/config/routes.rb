@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :formularios, only: [:index, :new, :create] do
+  resources :formularios, only: [:index, :new, :create, :show] do
     resources :respostas, only: [:new, :create]
   end
 

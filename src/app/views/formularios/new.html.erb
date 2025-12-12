@@ -1,6 +1,6 @@
 <h1>Novo Formulário</h1>
 
-<%= form_with url: admin_formularios_path, local: true, method: :post do |form| %>
+<%= form_with url: formularios_path, local: true, method: :post do |form| %>
   <% if flash[:alert] %>
     <div style="color: red"><%= flash[:alert] %></div>
   <% end %>
@@ -22,7 +22,7 @@
 
   <div>
     <%= form.label :data_encerramento, "Data de Encerramento" %>
-    <%= form.date_field :data_encerramento %> <!-- or text_field if step sends explicit format -->
+    <%= form.date_field :data_encerramento %>
   </div>
 
   <div>
@@ -30,4 +30,4 @@
   </div>
 <% end %>
 
-<%= link_to "Voltar", admin_formularios_path %>
+<%= link_to "Voltar", formularios_path %>

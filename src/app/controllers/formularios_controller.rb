@@ -3,6 +3,8 @@ class FormulariosController < ApplicationController
   before_action :authorize_admin, only: [:new, :create]
 
   def index
+    @templates = Template.all
+    @turmas = Turma.includes(:materia).all
     @formularios = Formulario.all.includes(:template, :turma)
   end
 
@@ -11,24 +13,22 @@ class FormulariosController < ApplicationController
     @turmas = Turma.includes(:materia).all
   end
 
+  def show
+    @formulario = Formulario.find(params[:id])
+  end
+
   def create
-    turmas_ids = params[:turmas] || []
-    template_id = params[:template]
+    turmas_ids = params[:turma_ids] || []
+    template_id = params[:template_id]
     data_encerramento = params[:data_encerramento]
 
-    erro_msg = nil
-    
     if template_id.blank?
-      erro_msg = "É necessário selecionar um template"
-    elsif turmas_ids.empty?
-      erro_msg = "É necessário selecionar pelo menos uma turma"
+      redirect_to new_formulario_path, alert: "É necessário selecionar um template"
+      return
     end
 
-    if erro_msg
-      flash.now[:alert] = erro_msg
-      @templates = Template.all
-      @turmas = Turma.includes(:materia).all
-      render :new, status: :unprocessable_entity
+    if turmas_ids.empty?
+      redirect_to new_formulario_path, alert: "É necessário selecionar pelo menos uma turma"
       return
     end
 
@@ -46,11 +46,15 @@ class FormulariosController < ApplicationController
 
     redirect_to formularios_path, notice: "Formulário criado com sucesso e associado a #{turmas_ids.count} turma(s)"
   rescue ActiveRecord::RecordInvalid => e
-    flash.now[:alert] = "Erro ao criar formulário: #{e.message}"
-    render :new, status: :unprocessable_entity
+    redirect_to new_formulario_path, alert: "Erro ao criar formulário: #{e.message}"
   end
 
   private
+
+  def reload_view_data
+    @templates = Template.all
+    @turmas = Turma.includes(:materia).all
+  end
 
   def authorize_admin
     redirect_to root_path, alert: "Acesso restrito." unless current_usuario&.admin?
