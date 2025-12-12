@@ -19,7 +19,7 @@ Cenário: Admin cria um formulário para múltiplas turmas
   E eu defino a data de encerramento para "31/12/2025"
   E eu clico no botão "Gerar Formulário"
   Então eu devo ser redirecionado para a página "formularios"
-  E eu devo ver a mensagem "Formulário criado com sucesso e associado a 2 turma(s)"
+  E eu devo ver a mensagem "Formulário distribuído com sucesso para 2 turmas"
 
 @sad_path
 Cenário: Admin tenta criar um formulário sem selecionar um template
@@ -27,7 +27,7 @@ Cenário: Admin tenta criar um formulário sem selecionar um template
   Quando eu seleciono as turmas "Engenharia de Software - TA"
   E eu clico no botão "Gerar Formulário"
   Então eu devo permanecer na página "formularios/new"
-  E eu devo ver a mensagem de erro "É necessário selecionar um template"
+  E eu devo ver a mensagem de erro "Selecione um template"
 
 @sad_path
 Cenário: Admin tenta criar um formulário sem selecionar turmas
@@ -35,4 +35,4 @@ Cenário: Admin tenta criar um formulário sem selecionar turmas
   Quando eu seleciono o template "Avaliação de Meio de Semestre"
   E eu clico no botão "Gerar Formulário"
   Então eu devo permanecer na página "formularios/new"
-  E eu devo ver a mensagem de erro "É necessário selecionar pelo menos uma turma"
+  E eu devo ver a mensagem de erro "Selecione pelo menos uma turma"

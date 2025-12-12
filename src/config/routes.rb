@@ -37,11 +37,10 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :admin do
-    resources :formularios, only: [:index, :create]
-  end
-
-  resources :formularios do
+  resources :formularios, only: [:index, :new, :create, :show] do
+    collection do
+      get 'pendentes'
+    end
     resources :respostas, only: [:new, :create]
   end
 

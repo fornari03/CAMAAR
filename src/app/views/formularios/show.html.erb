@@ -3,6 +3,6 @@
 <p>Template: <%= @formulario.template.titulo %></p>
 <p>Turma: <%= @formulario.turma.materia.nome %> - <%= @formulario.turma.codigo %></p>
 
-<%= link_to "Exportar para CSV", admin_formulario_path(@formulario, format: :csv), class: "btn btn-primary" %>
+<%= link_to "Exportar para CSV", formulario_path(@formulario, format: :csv), class: "btn btn-primary" %>
 
-<%= link_to "Voltar", admin_formularios_path %>
+<%= link_to "Voltar", formularios_path %>

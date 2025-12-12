@@ -15,7 +15,7 @@ Contexto:
 Cenário: Admin baixa o relatório de um formulário com respostas
   Dado que eu estou na página de resultados do formulário "Avaliação EngSoft 2025.1"
   Quando eu clico no botão "Exportar para CSV"
-  Então um download de um arquivo "relatorio_engsoft_2025.1.csv" deve ser iniciado
+  Então um download de um arquivo "relatorio_avaliacao_engsoft_2025_1.csv" deve ser iniciado
   # Testar o conteúdo do CSV é muito complexo para BDD,
   # então testamos apenas a ação de download.
 

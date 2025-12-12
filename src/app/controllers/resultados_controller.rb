@@ -15,12 +15,16 @@ class ResultadosController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data generate_csv(@formulario, @respostas), 
-                  filename: "avaliacao_#{@formulario.id}_#{Date.today}.csv"
+        if @respostas.empty?
+          redirect_to resultado_path(@formulario), alert: "Não é possível gerar um relatório, pois não há respostas."
+        else
+          filename = "relatorio_#{@formulario.titulo_envio.parameterize.underscore}.csv"
+          send_data generate_csv(@formulario, @respostas), filename: filename
+        end
       end
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to resultados_path, alert: "Formulário não encontrado"
+    redirect_to formularios_path, alert: "Formulário não encontrado"
   end
 
   private

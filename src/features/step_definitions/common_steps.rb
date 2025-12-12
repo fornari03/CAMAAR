@@ -27,6 +27,10 @@ Quando('eu acesso a página {string}') do |page_name|
 end
 
 Quando('eu clico no botão {string}') do |texto|
+  case texto
+  when "Exportar", "Baixar CSV"
+    texto = "Exportar para CSV"
+  end
    click_on texto
 end
 
@@ -47,13 +51,15 @@ def path_to(page_name)
     
   when "formularios/new"
     new_formulario_path
+
+  when "formularios/pendentes"
+    pendentes_formularios_path
     
   when "home", "inicial", "dashboard"
     root_path
 
   when "formularios"
-    # Assuming this is the results index page for admin
-    resultados_path
+    formularios_path
 
   when /^formularios\/(.+)$/
     titulo = $1.strip
@@ -88,7 +94,14 @@ Então('eu devo permanecer na página {string}') do |page_name|
 end
 
 Dado('que eu sou um {string} logado no sistema') do |role|
-  ocupacao = role.downcase.to_sym
+  ocupacao_map = {
+    'participante' => :discente,
+    'aluno' => :discente,
+    'professor' => :docente,
+    'admin' => :admin
+  }
+  
+  ocupacao = ocupacao_map[role.downcase] || role.downcase.to_sym
 
   email_teste = "#{role}@test.com"
   
@@ -110,12 +123,7 @@ Dado('que eu sou um {string} logado no sistema') do |role|
   click_on 'Entrar'
 
   expect(page).to have_no_content("Entrar") 
-  # Removed duplicate step definition because it caused ambiguity
 end
-
-# Removed duplicate 'que eu sou um {string} logado no sistema' if it exists here or elsewhere.
-# common_steps.rb:50 has it.
-
 
 Então('eu devo ver a mensagem de erro {string}') do |mensagem|
   expect(page).to have_content(mensagem)

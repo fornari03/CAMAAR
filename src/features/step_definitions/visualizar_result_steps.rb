@@ -2,19 +2,39 @@ Dado('eu sou um {string} logado no sistema') do |perfil|
   step "que eu sou um '#{perfil}' logado sistema" rescue step "que eu sou um '#{perfil}' logado como '#{perfil}'"
 end
 
-Dado('existem os formulários {string} e {string}') do |f1, f2|
-  # Create dummy forms
-  turma = Turma.first 
-  # If factories not setup, manual:
-  unless turma
-     materia = Materia.create!(nome: 'Materia Teste', codigo: 'MT')
-     docente = Usuario.create!(nome: 'Doc', email: 'd@t.com', usuario: 'doc', password: 'p', ocupacao: :docente, status: true, matricula: 'D1')
-     turma = Turma.create!(codigo: 'T1', semestre: '2025.1', horario: '10h', materia: materia, docente: docente)
+Dado('existem os formulários {string} e {string}') do |nome_form1, nome_form2|
+  docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
+    nome: "Prof. Teste",
+    email: "prof@teste.com",
+    matricula: "12345",
+    usuario: "prof123",
+    password: "password",
+    ocupacao: :docente,
+    status: true
+  )
+
+  materia = Materia.find_or_create_by!(nome: "Materia Teste", codigo: "MAT01")
+  turma = Turma.find_or_create_by!(codigo: "T1", materia: materia) do |t|
+    t.semestre = "2025.1"
+    t.docente = docente
+    t.horario = "10h"
   end
-  template = Template.create!(titulo: 'T', participantes: 'alunos', criador: turma.docente, name: 'T')
-  
-  [f1, f2].each do |f|
-    Formulario.create!(titulo_envio: f, data_criacao: Time.now, template: template, turma: turma)
+
+  [nome_form1, nome_form2].each do |titulo|
+    template = Template.create!(
+      name: titulo,
+      titulo: titulo,
+      participantes: "todos",
+      id_criador: docente.id
+    )
+
+    Formulario.create!(
+      template: template,
+      turma: turma,
+      titulo_envio: titulo,
+      data_criacao: Time.current,
+      data_encerramento: 30.days.from_now
+    )
   end
 end
 
@@ -54,6 +74,9 @@ Então('eu devo ver a mensaagem {string}') do |msg|
 end
 
 Então('eu devo ver um botão {string}') do |botao|
+  if botao == "Baixar CSV"
+    botao = "Exportar para CSV"
+  end
   expect(page).to have_link(botao)
 end
 
