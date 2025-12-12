@@ -51,21 +51,29 @@
       <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col h-full">
         <nav class="flex-1 py-4">
           <ul class="space-y-1">
-            <!-- Link: Avaliações -->
+            
+            <% 
+               base_classes = "block px-6 py-3 transition-colors"
+               active_classes = "bg-purple-800 text-white font-medium"
+               inactive_classes = "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            %>
+
             <li>
-              <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                Avaliações
-              </a>
+              <% is_avaliacoes_active = current_page?(root_path) || request.path.start_with?('/formularios/pendentes') %>
+              <%= link_to "Avaliações", root_path, 
+                  class: "#{base_classes} #{is_avaliacoes_active ? active_classes : inactive_classes}" %>
             </li>
             
-            <!-- Link: Gerenciamento (Ativo) -->
             <% if current_usuario&.admin? %>
               <li>
-                <a href="<%= admin_gerenciamento_path %>" class="block px-6 py-3 bg-purple-800 text-white font-medium">
-                  Gerenciamento
-                </a>
+                <% 
+                   is_mgmt_active = current_page?(admin_gerenciamento_path) || (request.path.include?('/admin') && !current_page?(root_path)) 
+                %>
+                <%= link_to "Gerenciamento", admin_gerenciamento_path, 
+                    class: "#{base_classes} #{is_mgmt_active ? active_classes : inactive_classes}" %>
               </li>
             <% end %>
+
           </ul>
         </nav>
       </aside>
