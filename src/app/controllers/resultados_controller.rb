@@ -19,7 +19,6 @@ class ResultadosController < ApplicationController
           redirect_to resultado_path(@formulario), alert: "Não é possível gerar um relatório, pois não há respostas."
         else
           filename = "relatorio_#{@formulario.titulo_envio.parameterize.underscore}.csv"
-          puts "NOME DO ARQUIVO GERADO: #{filename}"
           send_data generate_csv(@formulario, @respostas), filename: filename
         end
       end
