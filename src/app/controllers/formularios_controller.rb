@@ -23,30 +23,44 @@ class FormulariosController < ApplicationController
     data_encerramento = params[:data_encerramento]
 
     if template_id.blank?
-      redirect_to new_formulario_path, alert: "É necessário selecionar um template"
+      flash[:alert] = "Selecione um template" # Ajuste se necessário
+      redirect_to new_formulario_path
       return
     end
 
     if turmas_ids.empty?
-      redirect_to new_formulario_path, alert: "É necessário selecionar pelo menos uma turma"
+      flash[:alert] = "Selecione pelo menos uma turma" 
+      redirect_to new_formulario_path
       return
     end
 
     ActiveRecord::Base.transaction do
       turmas_ids.each do |turma_id|
-        Formulario.create!(
+        turma = Turma.find(turma_id)
+        
+        form = Formulario.create!(
           template_id: template_id,
           turma_id: turma_id,
           titulo_envio: Template.find(template_id).titulo,
           data_criacao: Time.current,
           data_encerramento: data_encerramento
         )
+
+        turma.matriculas.each do |matricula|
+          Resposta.create!(
+            formulario: form,
+            participante: matricula.usuario,
+            data_submissao: nil
+          )
+        end
       end
     end
 
-    redirect_to formularios_path, notice: "Formulário criado com sucesso e associado a #{turmas_ids.count} turma(s)"
+    redirect_to formularios_path, notice: "Formulário distribuído com sucesso para #{turmas_ids.count} turmas"
+  
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to new_formulario_path, alert: "Erro ao criar formulário: #{e.message}"
+    flash[:alert] = "Erro ao distribuir: #{e.message}"
+    redirect_to new_formulario_path
   end
 
   private
