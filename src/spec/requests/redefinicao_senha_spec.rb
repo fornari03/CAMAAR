@@ -2,9 +2,11 @@ require 'rails_helper'
 
 RSpec.describe "RedefinicaoSenha", type: :request do
   let!(:usuario) { Usuario.create!(nome: "User", email: "teste@email.com", usuario: "user", matricula: "123", ocupacao: :discente, status: true, password: "oldPass", password_confirmation: "oldPass") }
+  
+  let!(:usuario_pendente) { Usuario.create!(nome: "Pendente", email: "pendente@email.com", usuario: "pendente", matricula: "456", ocupacao: :discente, status: false, password: "temp", password_confirmation: "temp") }
 
   describe "POST /esqueci_senha" do
-    context "com e-mail válido" do
+    context "com e-mail válido e usuário ativo" do
       it "envia e-mail e redireciona para login" do
         expect {
           post esqueci_senha_path, params: { email: usuario.email }
@@ -13,6 +15,18 @@ RSpec.describe "RedefinicaoSenha", type: :request do
         expect(response).to redirect_to(login_path)
         follow_redirect!
         expect(response.body).to include("Se este e-mail estiver cadastrado")
+      end
+    end
+
+    context "com usuário inativo (status false)" do
+      it "impede o reset e avisa que precisa definir a senha primeiro" do
+        expect {
+          post esqueci_senha_path, params: { email: usuario_pendente.email }
+        }.not_to change { ActionMailer::Base.deliveries.count }
+
+        expect(response).to redirect_to(login_path)
+        follow_redirect!
+        expect(flash[:alert]).to include("Você ainda não definiu sua senha")
       end
     end
 
@@ -35,6 +49,28 @@ RSpec.describe "RedefinicaoSenha", type: :request do
         expect(response).to redirect_to(login_path)
         follow_redirect!
         expect(response.body).to include("O campo de e-mail não pode estar vazio.")
+      end
+    end
+  end
+
+  describe "GET /redefinir_senha/edit" do
+    let(:token) { usuario.signed_id(purpose: :redefinir_senha) }
+
+    context "com token válido" do
+      it "acessa a página de redefinição com sucesso" do
+        get edit_redefinir_senha_path(token: token)
+        
+        expect(response).to have_http_status(:success)
+        expect(assigns(:usuario)).to eq(usuario)
+      end
+    end
+
+    context "com token inválido ou expirado" do
+      it "redireciona para login com alerta" do
+        get edit_redefinir_senha_path(token: "token_invalido_123")
+        
+        expect(response).to redirect_to(login_path)
+        expect(flash[:alert]).to include("Link inválido ou expirado")
       end
     end
   end
@@ -62,7 +98,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
         }
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(usuario.reload.authenticate("oldPass")).to be_truthy # Senha antiga mantida
+        expect(usuario.reload.authenticate("oldPass")).to be_truthy 
       end
     end
 

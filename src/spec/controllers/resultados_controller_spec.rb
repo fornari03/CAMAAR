@@ -31,7 +31,7 @@ RSpec.describe ResultadosController, type: :controller do
   let(:formulario) { Formulario.create!(titulo_envio: 'F1', data_criacao: Time.now, template: template, turma: turma, data_encerramento: Time.now + 1.day) }
 
   before do
-    session[:usuario_id] = admin.id # Login as admin
+    session[:usuario_id] = admin.id
   end
 
   describe "GET #index" do
@@ -41,34 +41,55 @@ RSpec.describe ResultadosController, type: :controller do
     end
   end
 
-  describe "GET #show (CSV export)" do
-    before do
-      aluno = Usuario.create!(
-        nome: 'Aluno', 
-        email: "aluno_#{Time.now.to_f}@test.com", 
-        usuario: "aluno_#{Time.now.to_f}", 
-        password: 'p', 
-        ocupacao: :discente, 
-        status: true, 
-        matricula: "A#{rand(9999)}"
-      )
-      
-      Resposta.create!(
-        formulario: formulario,
-        participante: aluno,
-        data_submissao: Time.now
-      )
+  describe "GET #show" do
+    
+    context "quando existem respostas" do
+      before do
+        aluno = Usuario.create!(
+          nome: 'Aluno', 
+          email: "aluno_#{Time.now.to_f}@test.com", 
+          usuario: "aluno_#{Time.now.to_f}", 
+          password: 'p', 
+          ocupacao: :discente, 
+          status: true, 
+          matricula: "A#{rand(9999)}"
+        )
+        
+        Resposta.create!(
+          formulario: formulario,
+          participante: aluno,
+          data_submissao: Time.now
+        )
+      end
+
+      it "retorna formato csv com sucesso" do
+        get :show, params: { id: formulario.id, format: :csv }
+        expect(response.content_type).to include("text/csv")
+      end
+
+      it "inclui cabeçalhos no CSV" do
+        Questao.create!(enunciado: 'Questão Teste', tipo: 0, template: template)
+        get :show, params: { id: formulario.id, format: :csv }
+        expect(response.body).to include("Questão Teste")
+      end
     end
 
-    it "returns csv format" do
-      get :show, params: { id: formulario.id, format: :csv }
-      expect(response.content_type).to include("text/csv")
+    context "quando NÃO existem respostas (Download CSV)" do
+      it "redireciona com alerta" do
+        get :show, params: { id: formulario.id, format: :csv }
+
+        expect(response).to redirect_to(resultado_path(formulario))
+        expect(flash[:alert]).to eq("Não é possível gerar um relatório, pois não há respostas.")
+      end
     end
 
-    it "includes headers in CSV" do
-      Questao.create!(enunciado: 'Q1', tipo: 0, template: template)
-      get :show, params: { id: formulario.id, format: :csv }
-      expect(response.body).to include("Q1")
+    context "quando o formulário não é encontrado" do
+      it "captura RecordNotFound e redireciona para index de formulários" do
+        get :show, params: { id: 999999 }
+
+        expect(response).to redirect_to(formularios_path)
+        expect(flash[:alert]).to eq("Formulário não encontrado")
+      end
     end
   end
 end

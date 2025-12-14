@@ -1,8 +1,5 @@
 source "https://rubygems.org"
 
-# para rodar o has_secure_password do user
-gem "bcrypt", "~> 3.1.7"
-
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.3"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
@@ -56,8 +53,6 @@ group :development, :test do
   gem 'cucumber-rails', require: false
   gem 'rspec-rails'
   gem 'rails-controller-testing'
-  gem 'capybara'
-  gem 'selenium-webdriver'
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
   gem 'factory_bot_rails'
@@ -74,6 +69,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "simplecov", require: false
 end
 
 gem "tailwindcss-rails", "~> 4.4"

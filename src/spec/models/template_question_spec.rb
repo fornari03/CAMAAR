@@ -1,10 +1,47 @@
 require 'rails_helper'
 
 RSpec.describe TemplateQuestion, type: :model do
+  let(:user) { Usuario.create!(nome: 'User', email: 'user@test.com', matricula: '123', usuario: 'user', password: 'password', ocupacao: :admin, status: true) }
+  let(:template) { Template.create!(titulo: 'Test Template', id_criador: user.id) }
+
+  describe 'validations' do
+    it 'is valid with valid attributes' do
+      question = TemplateQuestion.new(
+        title: 'Valid Question',
+        question_type: 'text',
+        template: template
+      )
+      expect(question).to be_valid
+    end
+
+    context 'when type is radio or checkbox' do
+      it 'adds error if content (alternatives) contains blank values' do
+        question = TemplateQuestion.new(
+          title: 'Invalid Radio',
+          question_type: 'radio',
+          content: ['Opção A', ''],
+          template: template
+        )
+
+        expect(question).not_to be_valid
+        expect(question.errors[:base]).to include("Todas as alternativas devem ser preenchidas")
+      end
+
+      it 'adds error if content is empty' do
+        question = TemplateQuestion.new(
+          title: 'Invalid Checkbox',
+          question_type: 'checkbox',
+          content: [],
+          template: template
+        )
+
+        expect(question).not_to be_valid
+        expect(question.errors[:base]).to include("Todas as alternativas devem ser preenchidas")
+      end
+    end
+  end
+
   describe 'content serialization' do
-    let(:user) { Usuario.create!(nome: 'User', email: 'user@test.com', matricula: '123', usuario: 'user', password: 'password', ocupacao: :admin, status: true) }
-    let(:template) { Template.create!(titulo: 'Test Template', id_criador: user.id) }
-    
     it 'can save and retrieve an array of strings as JSON' do
       question = TemplateQuestion.create!(
         title: 'Question 1',

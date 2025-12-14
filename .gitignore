@@ -85,3 +85,6 @@
 # Ignore vendor/bundle
 /vendor/bundle
 /src/vendor/bundle
+
+# Ignore simplecov
+coverage
