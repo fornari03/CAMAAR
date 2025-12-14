@@ -307,5 +307,67 @@ RSpec.describe SigaaImporter do
         expect { described_class.call }.to raise_error(StandardError, /Não foi possível buscar os dados/)
       end
     end
+
+    context 'Cenários de Erro e Cobertura de Borda' do
+      before do
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('classes.json') }).and_return(classes_json)
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('class_members.json') }).and_return(members_json)
+      end
+
+      it 'recria a turma se ela não for encontrada durante o processamento de membros' do
+
+        allow(Turma).to receive(:create!).and_call_original
+        
+        allow(Turma).to receive(:find_by).with(hash_including(codigo: "TA")).and_return(nil)
+
+        expect(Turma).to receive(:create!).with(hash_including(codigo: "TA", semestre: "2024.1"))
+        
+        described_class.call
+      end
+
+      it 'registra erro no log quando o envio de e-mail falha' do
+        new_members_json = [
+          {
+            "code" => "CIC0097", "classCode" => "TA",
+            "dicente" => [{ "nome" => "Novo", "matricula" => "NEW", "usuario" => "NEW", "email" => "n@n.com", "ocupacao" => "dicente" }],
+            "docente" => { "nome" => "P", "usuario" => "P", "email" => "p@p.com", "ocupacao" => "docente" }
+          }
+        ].to_json
+        
+        allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('class_members.json') }).and_return(new_members_json)
+        
+        allow(UserMailer).to receive(:with).and_raise(StandardError, "Erro SMTP Simulado")
+        
+        expect(Rails.logger).to receive(:error).with(/Falha ao enviar e-mail para.*Erro SMTP Simulado/)
+        
+        described_class.call
+      end
+
+      it 'inativa o usuário em vez de deletar se ocorrer erro de chave estrangeira' do
+        usuario_para_remover = Usuario.create!(
+          nome: "User Old", matricula: "OLD123", usuario: "OLD123",
+          email: "old@email.com", password: "123", ocupacao: :discente, status: true
+        )
+
+        allow_any_instance_of(Usuario).to receive(:destroy).and_wrap_original do |method, *args|
+          usuario_atual = method.receiver 
+          
+          if usuario_atual.id == usuario_para_remover.id
+            raise ActiveRecord::InvalidForeignKey.new("Erro FK simulado")
+          else
+            method.call(*args)
+          end
+        end
+
+        allow(Rails.logger).to receive(:info)
+
+        described_class.call
+        
+        expect(Rails.logger).to have_received(:info).with(/Usuário OLD123 inativado/)
+        
+        expect(usuario_para_remover.reload.status).to be(false)
+        expect(Usuario.exists?(usuario_para_remover.id)).to be(true)
+      end
+    end
   end
 end
