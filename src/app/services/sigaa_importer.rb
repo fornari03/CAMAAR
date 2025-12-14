@@ -78,89 +78,93 @@ class SigaaImporter
   def process_enrollments
     @members_data.each do |turma_data|
       materia = Materia.find_by(codigo: turma_data['code'])
-      
       next unless materia
 
-      codigo_turma = turma_data['classCode']
-      turma = Turma.find_by(codigo: codigo_turma, materia: materia)
-
-      if !turma
-        turma = Turma.create!(
-          codigo: codigo_turma,
-          materia: materia,
-          semestre: @classes_data.find { |c| c['code'] == turma_data['code'] }['class']['semester'],
-          horario: @classes_data.find { |c| c['code'] == turma_data['code'] }['class']['time'],
-          docente: @docente_padrao
-        )
-      end
-      
+      turma = ensure_turma_fallback(turma_data, materia)
       @active_turma_ids << turma.id
 
       if turma_data['docente']
-        doc_data = turma_data['docente']
-        docente_real = Usuario.find_or_initialize_by(matricula: doc_data['usuario'].to_s)
-        eh_novo_docente = docente_real.new_record?
-        
-        docente_real.assign_attributes(
-          nome: doc_data['nome'],
-          email: doc_data['email'],
-          usuario: doc_data['usuario'],
-          ocupacao: :docente
-        )
-        
-        if eh_novo_docente
-          docente_real.password = SecureRandom.hex(8) 
-          docente_real.status = false
-        end
-
-        docente_real.save!
-        @active_user_ids << docente_real.id
-        turma.update!(docente: docente_real)
+        process_teacher(turma, turma_data['docente'])
       end
 
       if turma_data['dicente']
-        turma_data['dicente'].each do |aluno_data|
-          
-          email_aluno = aluno_data['email']
-          
-          if email_aluno.nil? || email_aluno.to_s.strip.empty?
-            raise StandardError, "Falha ao importar usuário '#{aluno_data['matricula']}': e-mail ausente."
-          end
-
-          next if email_aluno.nil? || email_aluno.to_s.strip.empty?
-
-          user = Usuario.find_or_initialize_by(matricula: aluno_data['matricula'].to_s)
-          eh_novo_usuario = user.new_record?
-
-          user.assign_attributes(
-            nome: aluno_data['nome'],
-            email: email_aluno,
-            usuario: aluno_data['usuario'],
-            ocupacao: :discente
-          )
-
-          if eh_novo_usuario
-            user.password = SecureRandom.hex(8) 
-            user.status = false 
-          end
-
-          user.save!
-          @active_user_ids << user.id
-
-          if eh_novo_usuario
-            begin
-              UserMailer.with(user: user).definicao_senha.deliver_now
-            rescue => e
-              Rails.logger.error "Falha ao enviar e-mail para #{user.email}: #{e.message}"
-            end
-          end
-
-          unless user.turmas.exists?(turma.id)
-            user.turmas << turma
-          end
-        end
+        process_students_list(turma, turma_data['dicente'])
       end
     end
+  end
+
+  def ensure_turma_fallback(turma_data, materia)
+    codigo = turma_data['classCode']
+    turma = Turma.find_by(codigo: codigo, materia: materia)
+    return turma if turma
+
+    original_cls = @classes_data.find { |c| c['code'] == turma_data['code'] }['class']
+    
+    Turma.create!(
+      codigo: codigo,
+      materia: materia,
+      semestre: original_cls['semester'],
+      horario: original_cls['time'],
+      docente: @docente_padrao
+    )
+  end
+
+  def process_teacher(turma, doc_data)
+    docente, _ = persist_user_common(doc_data['usuario'], doc_data, :docente)
+    turma.update!(docente: docente)
+  end
+
+  def process_students_list(turma, students_list)
+    students_list.each do |student_data|
+      import_single_student(turma, student_data)
+    end
+  end
+
+  def import_single_student(turma, data)
+    validate_email!(data)
+
+    user, is_new = persist_user_common(data['matricula'], data, :discente)
+
+    if is_new
+      send_welcome_email(user)
+    end
+
+    user.turmas << turma unless user.turmas.exists?(turma.id)
+  end
+
+  def validate_email!(data)
+    email = data['email'].to_s.strip
+    if email.empty?
+      raise StandardError, "Falha ao importar usuário '#{data['matricula']}': e-mail ausente."
+    end
+  end
+
+  def send_welcome_email(user)
+    UserMailer.with(user: user).definicao_senha.deliver_now
+  rescue => e
+    Rails.logger.error "Falha ao enviar e-mail para #{user.email}: #{e.message}"
+  end
+
+  def persist_user_common(identifier, data, role)
+    user = Usuario.find_or_initialize_by(matricula: identifier.to_s)
+    is_new = user.new_record?
+
+    user.assign_attributes(
+      nome: data['nome'],
+      email: data['email'],
+      usuario: data['usuario'],
+      ocupacao: role
+    )
+
+    if is_new
+      user.password = SecureRandom.hex(8)
+      user.status = false
+    end
+
+    user.save!
+    @active_user_ids << user.id
+
+    [user, is_new]
   end
 
   def cleanup_data
