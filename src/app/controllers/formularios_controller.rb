@@ -1,6 +1,6 @@
 class FormulariosController < ApplicationController
   before_action :require_login
-  before_action :authorize_admin, only: [:new, :create, :index]
+  before_action :authorize_admin, only: %i[new create index]
 
   def index
     @templates = Template.all
@@ -18,49 +18,13 @@ class FormulariosController < ApplicationController
   end
 
   def create
-    turmas_ids = params[:turma_ids] || []
-    template_id = params[:template_id]
-    data_encerramento = params[:data_encerramento]
+    return unless valid_params?
 
-    if template_id.blank?
-      flash[:alert] = "Selecione um template"
-      redirect_to new_formulario_path
-      return
-    end
+    distribute_forms_transaction
 
-    if turmas_ids.empty?
-      flash[:alert] = "Selecione pelo menos uma turma" 
-      redirect_to new_formulario_path
-      return
-    end
-
-    ActiveRecord::Base.transaction do
-      turmas_ids.each do |turma_id|
-        turma = Turma.find(turma_id)
-        
-        form = Formulario.create!(
-          template_id: template_id,
-          turma_id: turma_id,
-          titulo_envio: Template.find(template_id).titulo,
-          data_criacao: Time.current,
-          data_encerramento: data_encerramento
-        )
-
-        turma.matriculas.each do |matricula|
-          Resposta.create!(
-            formulario: form,
-            participante: matricula.usuario,
-            data_submissao: nil
-          )
-        end
-      end
-    end
-
-    redirect_to formularios_path, notice: "Formulário distribuído com sucesso para #{turmas_ids.count} turmas"
-  
+    redirect_to formularios_path, notice: success_message
   rescue ActiveRecord::RecordInvalid => e
-    flash[:alert] = "Erro ao distribuir: #{e.message}"
-    redirect_to new_formulario_path
+    handle_error(e)
   end
 
   def pendentes
@@ -77,5 +41,71 @@ class FormulariosController < ApplicationController
 
   def authorize_admin
     redirect_to root_path, alert: "Acesso restrito." unless current_usuario&.admin?
+  end
+
+  def valid_params?
+    if params[:template_id].blank?
+      redirect_with_alert("Selecione um template")
+      return false
+    end
+
+    if (params[:turma_ids] || []).empty?
+      redirect_with_alert("Selecione pelo menos uma turma")
+      return false
+    end
+
+    true
+  end
+
+  def redirect_with_alert(msg)
+    flash[:alert] = msg
+    redirect_to new_formulario_path
+  end
+
+  def distribute_forms_transaction
+    template = Template.find(params[:template_id])
+    
+    ActiveRecord::Base.transaction do
+      params[:turma_ids].each do |turma_id|
+        process_single_distribution(turma_id, template)
+      end
+    end
+  end
+
+  def process_single_distribution(turma_id, template)
+    turma = Turma.find(turma_id)
+    
+    form = create_formulario!(turma, template)
+    generate_empty_responses!(form, turma)
+  end
+
+  def create_formulario!(turma, template)
+    Formulario.create!(
+      template_id: template.id,
+      turma_id: turma.id,
+      titulo_envio: template.titulo,
+      data_criacao: Time.current,
+      data_encerramento: params[:data_encerramento]
+    )
+  end
+
+  def generate_empty_responses!(form, turma)
+    turma.matriculas.each do |matricula|
+      Resposta.create!(
+        formulario: form,
+        participante: matricula.usuario,
+        data_submissao: nil
+      )
+    end
+  end
+
+  def success_message
+    count = params[:turma_ids]&.count || 0
+    "Formulário distribuído com sucesso para #{count} turmas"
+  end
+
+  def handle_error(exception)
+    flash[:alert] = "Erro ao distribuir: #{exception.message}"
+    redirect_to new_formulario_path
   end
 end
