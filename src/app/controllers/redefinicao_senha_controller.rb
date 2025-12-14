@@ -1,49 +1,27 @@
 class RedefinicaoSenhaController < ApplicationController
   skip_before_action :require_login, raise: false
+  before_action :resolve_user_from_token, only: %i[edit update]
+
   layout "auth"
 
   # POST /esqueci_senha
   def create
-    email = params[:email]
+    return handle_missing_email if params[:email].blank?
 
-    if email.blank?
-      redirect_to login_path, alert: "O campo de e-mail não pode estar vazio."
-      return
-    end
+    user = Usuario.find_by(email: params[:email])
+    
+    process_reset_request(user) if user
 
-    user = Usuario.find_by(email: email)
-
-    if user
-      if user.status == false
-        redirect_to login_path, alert: "Você ainda não definiu sua senha. Por favor, verifique seu e-mail para definir sua senha."
-        return
-      end
-      UserMailer.with(user: user).redefinicao_senha.deliver_now
-    end
-
-    redirect_to login_path, notice: "Se este e-mail estiver cadastrado, um link de redefinição foi enviado."
+    redirect_to login_path, notice: "Se este e-mail estiver cadastrado, um link de redefinição foi enviado." unless performed?
   end
 
   # GET /redefinir_senha/edit
   def edit
-    @token = params[:token]
-    @usuario = Usuario.find_signed(@token, purpose: :redefinir_senha)
-
-    if @usuario.nil?
-      redirect_to login_path, alert: "Link inválido ou expirado."
-    end
+    # @usuario já carregado pelo before_action
   end
 
   # PATCH /redefinir_senha
   def update
-    @token = params[:token]
-    @usuario = Usuario.find_signed(@token, purpose: :redefinir_senha)
-
-    if @usuario.nil?
-      redirect_to login_path, alert: "Link inválido ou expirado."
-      return
-    end
-
     if @usuario.update(user_params)
       redirect_to login_path, notice: "Senha redefinida com sucesso! Você já pode fazer o login."
     else
@@ -56,5 +34,26 @@ class RedefinicaoSenhaController < ApplicationController
 
   def user_params
     params.require(:usuario).permit(:password, :password_confirmation)
+  end
+
+  def handle_missing_email
+    redirect_to login_path, alert: "O campo de e-mail não pode estar vazio."
+  end
+
+  def process_reset_request(user)
+    if user.status == false
+      redirect_to login_path, alert: "Você ainda não definiu sua senha. Por favor, verifique seu e-mail para definir sua senha."
+    else
+      UserMailer.with(user: user).redefinicao_senha.deliver_now
+    end
+  end
+
+  def resolve_user_from_token
+    @token = params[:token]
+    @usuario = Usuario.find_signed(@token, purpose: :redefinir_senha)
+
+    return if @usuario
+
+    redirect_to login_path, alert: "Link inválido ou expirado."
   end
 end
