@@ -46,25 +46,33 @@ class SigaaImporter
 
   def process_definitions
     @classes_data.each do |cls|
-      materia = Materia.find_or_initialize_by(codigo: cls['code'])
-      materia.nome = cls['name']
-      materia.save!
-
-      codigo_turma = cls['class']['classCode']
-
-      turma = Turma.find_or_initialize_by(codigo: codigo_turma, materia: materia)
-      
-      turma.docente = @docente_padrao unless turma.docente
-      
-      if cls['class']
-        turma.semestre = cls['class']['semester']
-        turma.horario  = cls['class']['time']
-      end
-      
-      turma.save!
-      
-      @active_turma_ids << turma.id
+      materia = persist_materia(cls)
+      persist_turma(cls, materia)
     end
+  end
+
+  def persist_materia(cls)
+    materia = Materia.find_or_initialize_by(codigo: cls['code'])
+    materia.nome = cls['name']
+    materia.save!
+    materia
+  end
+
+  def persist_turma(cls, materia)
+    class_info = cls['class']
+    codigo_turma = class_info['classCode']
+
+    turma = Turma.find_or_initialize_by(codigo: codigo_turma, materia: materia)
+    
+    turma.docente ||= @docente_padrao
+    
+    if class_info
+      turma.semestre = class_info['semester']
+      turma.horario  = class_info['time']
+    end
+    
+    turma.save!
+    @active_turma_ids << turma.id
   end
 
   def process_enrollments
