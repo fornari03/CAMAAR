@@ -75,11 +75,6 @@ class FormulariosController < ApplicationController
 
   private
 
-  def reload_view_data
-    @templates = Template.all
-    @turmas = Turma.includes(:materia).all
-  end
-
   def authorize_admin
     redirect_to root_path, alert: "Acesso restrito." unless current_usuario&.admin?
   end

@@ -58,7 +58,7 @@ class RespostasController < ApplicationController
     else
       @questions = @formulario.template.questoes.includes(:opcoes).order(:id)
       flash.now[:alert] = "Houve um erro ao enviar suas respostas. Verifique os campos abaixo."
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content  
     end
   end
 
