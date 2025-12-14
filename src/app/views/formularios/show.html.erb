@@ -1,7 +1,7 @@
 <h1>Resultados do Formulário</h1>
 
 <p>Template: <%= @formulario.template.titulo %></p>
-<p>Turma: <%= @formulario.turma.materia.nome_completo %></p>
+<p>Turma: <%= @formulario.turma.nome_completo %></p>
 
 <%= link_to "Exportar para CSV", formulario_path(@formulario, format: :csv), class: "btn btn-primary" %>
 
