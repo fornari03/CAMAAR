@@ -36,6 +36,12 @@ class DefinicaoSenhaController < ApplicationController
 
   def resolve_user_from_token
     token = params[:token]
+    
+    if token.blank?
+      redirect_to login_path, alert: "Link inválido (token ausente)."
+      return
+    end
+
     @usuario = Usuario.find_signed(token, purpose: :definir_senha)
 
     return if @usuario
