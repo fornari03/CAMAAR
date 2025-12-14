@@ -17,7 +17,7 @@
     <% @turmas.each do |turma| %>
       <div style="margin-bottom: 5px;">
         <%= check_box_tag "turma_ids[]", turma.id, false, id: "turma_#{turma.id}" %>
-        <%= label_tag "turma_#{turma.id}", "#{turma.materia.nome} - #{turma.codigo}" %>
+        <%= label_tag "turma_#{turma.id}", "#{turma.nome_completo}" %>
       </div>
     <% end %>
   </div>

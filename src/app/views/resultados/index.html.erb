@@ -8,16 +8,23 @@
           <tr>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Formulário</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Turma</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Respostas</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Respostas Submetidas</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <% @formularios.each do |formulario| %>
             <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= formulario.titulo_envio %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= formulario.turma.try(:codigo) %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= formulario.respostas.count %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <%= formulario.titulo_envio %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= "#{formulario.turma.materia.nome_completo}" %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= formulario.respostas.where.not(data_submissao: nil).count %>
+                <span class="text-xs text-gray-400">/ <%= formulario.respostas.count %></span>
+              </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <%= link_to "Ver Resultados", resultado_path(formulario), class: "text-blue-600 hover:text-blue-900" %>
               </td>

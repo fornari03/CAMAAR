@@ -28,4 +28,8 @@ class Turma < ApplicationRecord
       end
     end
   end
+
+  def nome_completo
+    "#{materia&.nome} - #{codigo}"
+  end
 end

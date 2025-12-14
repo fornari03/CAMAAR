@@ -1,21 +1,19 @@
 class RespostasController < ApplicationController
+  before_action :require_login 
+  
   before_action :set_formulario
   before_action :verifica_participacao
 
   def new
-    @questions = @formulario.template.questoes
+    @questions = @formulario.template.questoes.includes(:opcoes).order(:id)
     @resposta = Resposta.new
   end
 
   def create
-    # Find existing empty response or create new one
     @resposta = Resposta.find_or_initialize_by(
       formulario: @formulario, 
       participante: current_usuario
     )
-    
-    # Using specific logic for items creation based on params
-    # structure: params[:respostas] = { questao_id => valor }
     
     saved_successfully = true
     
@@ -26,38 +24,41 @@ class RespostasController < ApplicationController
       end
 
       if params[:respostas].present?
-        params[:respostas].each do |questao_id, valor|
+        params[:respostas].each do |questao_id, valor_enviado|
           questao = Questao.find(questao_id)
-          item = RespostaItem.new(resposta: @resposta, questao: questao)
           
-          if questao.tipo == 0 # Texto
-             item.texto_resposta = valor
-          elsif questao.tipo == 1 # Multipla Escolha - Not fully implemented in params spec yet
-             # Assuming valor is option_id
-             # item.opcao_escolhida_id = valor
-             # Need to handle this logic carefully
+          item = RespostaItem.find_or_initialize_by(resposta: @resposta, questao: questao)
+          
+          if questao.multipla_escolha?
+            opcao_encontrada = questao.opcoes.find_by(texto_opcao: valor_enviado)
+            
+            if opcao_encontrada
+              item.opcao_escolhida = opcao_encontrada
+            else
+              item.errors.add(:base, "Opção inválida selecionada.")
+            end
+          else
+            item.texto_resposta = valor_enviado
+            item.opcao_escolhida = nil
           end
-          # Check Questao model for proper enum validatio or usage
-          
-          # Simplified saving for prototype:
-          item.texto_resposta = valor # Fallback
           
           unless item.save
-             @resposta.errors.add(:base, "Erro na questão #{questao.enunciado}: #{item.errors.full_messages.join(', ')}")
+             @resposta.errors.add(:base, "Questão '#{questao.enunciado}': #{item.errors.full_messages.join(', ')}")
              saved_successfully = false
              raise ActiveRecord::Rollback
           end
         end
       end
       
-      @resposta.update!(data_submissao: Time.now)
+      @resposta.update!(data_submissao: Time.current)
     end
 
     if saved_successfully
       redirect_to root_path, notice: "Avaliação enviada com sucesso. Obrigado!"
     else
-      @questions = @formulario.template.questoes
-      render :new, status: :unprocessable_content
+      @questions = @formulario.template.questoes.includes(:opcoes).order(:id)
+      flash.now[:alert] = "Houve um erro ao enviar suas respostas. Verifique os campos abaixo."
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -68,18 +69,16 @@ class RespostasController < ApplicationController
   end
 
   def verifica_participacao
-    # Ensure user is matriculated in the class or has right to answer
-    # Simple check: is user student?
-    redirect_to root_path, alert: "Acesso negado." unless current_usuario && current_usuario.discente?
+    unless current_usuario && current_usuario.discente?
+      redirect_to root_path, alert: "Acesso negado."
+      return
+    end
     
-    # Check if form is expired
     if @formulario.data_encerramento.present? && @formulario.data_encerramento < Time.current
       redirect_to root_path, alert: "Este formulário não está mais aceitando respostas."
       return
     end
 
-
-    # Check if already answered (data_submissao present means it was submitted)
     resposta_existente = Resposta.find_by(formulario: @formulario, participante: current_usuario)
     if resposta_existente&.data_submissao.present?
        redirect_to root_path, alert: "Você já respondeu este formulário."

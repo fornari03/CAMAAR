@@ -136,7 +136,17 @@ class SigaaImporter
       end
       
       Turma.where.not(id: active_turma_ids).destroy_all
-      Usuario.where(ocupacao: [:discente, :docente]).where.not(id: active_user_ids).destroy_all
+
+      users_to_remove = Usuario.where(ocupacao: [:discente, :docente]).where.not(id: active_user_ids)
+      
+      users_to_remove.find_each do |user|
+        begin
+          user.destroy
+        rescue ActiveRecord::InvalidForeignKey, ActiveRecord::StatementInvalid => e
+          user.update_column(:status, false)
+          Rails.logger.info "Usuário #{user.matricula} inativado."
+        end
+      end
     end
   end
 end
