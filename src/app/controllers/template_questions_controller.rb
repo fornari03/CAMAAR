@@ -1,9 +1,11 @@
 class TemplateQuestionsController < ApplicationController
   before_action :set_template
-  before_action :set_question, only: [:update, :destroy, :add_alternative]
+  before_action :set_question, only: %i[update destroy add_alternative]
+
+  CHOICE_TYPES = %w[radio checkbox].freeze
 
   def create
-    @question = @template.template_questions.create(
+    @template.template_questions.create(
       title: "Nova Questão",
       question_type: "text",
       content: []
@@ -12,67 +14,29 @@ class TemplateQuestionsController < ApplicationController
   end
 
   def update
-    # Handle alternatives if present
-    if params[:alternatives]
-      @question.content = params[:alternatives] # params[:alternatives] is an array from name="alternatives[]"
+    prepare_attributes
+
+    return handle_add_alternative_action if adding_alternative_button?
+
+    if type_changed_or_autosave?
+      return handle_type_change
     end
 
-    @question.assign_attributes(question_params)
-    
-    # Handle "Adicionar Alternativa" button click
-    if params[:commit] == "Adicionar Alternativa"
-      @question.content ||= []
-      @question.content << "" # Add empty option
-      @question.save(validate: false)
-      redirect_to edit_template_path(@template) # Reload page to show new input
-      return
-    end
-
-    type_changing = @question.question_type_changed?
-    
-    if params[:commit].nil? || type_changing
-      @question.save(validate: false)
-      
-      # Clear content if type changed to text
-      if @question.question_type == 'text'
-        @question.content = []
-        @question.save(validate: false)
-      # Add empty alternative if type changed to radio/checkbox and content is empty
-      elsif ['radio', 'checkbox'].include?(@question.question_type) && (@question.content.nil? || @question.content.empty?)
-        @question.content = ['']
-        @question.save(validate: false)
-      end
-      redirect_to edit_template_path(@template), notice: 'Tipo de questão atualizado.'
-    else
-      # Normal save with validation
-      if @question.save
-        if @question.question_type == 'text'
-          @question.content = []
-          @question.save
-        end
-        redirect_to edit_template_path(@template), notice: 'template alterado com sucesso'
-      else
-        redirect_to edit_template_path(@template), alert: @question.errors.full_messages.join(', ')
-      end
-    end
+    perform_standard_save
   end
 
   def destroy
     if @template.template_questions.count <= 1
       redirect_to edit_template_path(@template), alert: 'não é possível salvar template sem questões'
-      return
+    else
+      @question.destroy
+      redirect_to edit_template_path(@template), notice: 'template alterado com sucesso'
     end
-
-    @question.destroy
-    redirect_to edit_template_path(@template), notice: 'template alterado com sucesso'
   end
 
   def add_alternative
-    current_content = @question.content || []
-    current_content << "" # Add empty option
-    @question.content = current_content
-    @question.save(validate: false) # Bypass validation to allow adding empty option
-    redirect_to edit_template_path(@template)
+    append_empty_option
+    save_without_validation_and_redirect
   end
 
   private
@@ -87,5 +51,59 @@ class TemplateQuestionsController < ApplicationController
 
   def question_params
     params.require(:template_question).permit(:title, :question_type)
+  end
+
+  def prepare_attributes
+    @question.content = params[:alternatives] if params[:alternatives]
+    @question.assign_attributes(question_params)
+  end
+
+  def adding_alternative_button?
+    params[:commit] == "Adicionar Alternativa"
+  end
+
+  def type_changed_or_autosave?
+    params[:commit].nil? || @question.question_type_changed?
+  end
+
+  def handle_add_alternative_action
+    append_empty_option
+    save_without_validation_and_redirect
+  end
+
+  def handle_type_change
+    ensure_content_consistency
+    save_without_validation_and_redirect('Tipo de questão atualizado.')
+  end
+
+  def perform_standard_save
+    @question.content = [] if @question.question_type == 'text'
+
+    if @question.save
+      redirect_to edit_template_path(@template), notice: 'template alterado com sucesso'
+    else
+      redirect_to edit_template_path(@template), alert: @question.errors.full_messages.join(', ')
+    end
+  end
+
+  def append_empty_option
+    @question.content ||= []
+    @question.content << ""
+  end
+
+  def save_without_validation_and_redirect(msg = nil)
+    @question.save(validate: false)
+    redirect_opts = {}
+    redirect_opts[:notice] = msg if msg
+    redirect_to edit_template_path(@template), redirect_opts
+  end
+
+  def ensure_content_consistency
+    case @question.question_type
+    when 'text'
+      @question.content = []
+    when *CHOICE_TYPES
+      @question.content = [''] if @question.content.blank?
+    end
   end
 end
