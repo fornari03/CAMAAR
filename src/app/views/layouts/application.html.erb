@@ -39,8 +39,27 @@
         </div>
 
         <!-- Avatar do Usuário -->
-        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-purple-800 text-white font-bold text-lg cursor-pointer">
-          U
+        <div class="relative ml-3">
+          <details class="group">
+            <summary class="list-none cursor-pointer focus:outline-none">
+              <div class="flex items-center justify-center w-10 h-10 rounded-full bg-purple-800 text-white font-bold text-lg hover:bg-purple-900 transition-colors shadow-md">
+                <%= current_usuario.nome&.first&.upcase || 'U' %>
+              </div>
+            </summary>
+
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+              
+              <%= button_to logout_path, method: :delete, class: "block w-full text-left px-2 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-800 transition-colors" do %>
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                  </svg>
+                  Sair
+                </div>
+              <% end %>
+              
+            </div>
+          </details>
         </div>
       </div>
     </header>
@@ -94,6 +113,25 @@
 
       </main>
     </div>
-
+    <style>
+      /* Remove a seta padrão do elemento summary */
+      details > summary {
+        list-style: none;
+      }
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+    </style>
+    <script>
+      // Fecha o dropdown se clicar fora dele
+      document.addEventListener('click', function(e) {
+        const details = document.querySelectorAll('details');
+        details.forEach((detail) => {
+          if (detail.hasAttribute('open') && !detail.contains(e.target)) {
+            detail.removeAttribute('open');
+          }
+        });
+      });
+    </script>
   </body>
 </html>

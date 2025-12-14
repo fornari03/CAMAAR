@@ -22,7 +22,10 @@ class AutenticacaoController < ApplicationController
   end
 
   def destroy
-    session[:usuario_id] = nil
+    reset_session
+    
+    cookies.delete(:auth_token) if cookies[:auth_token]
+    
     redirect_to login_path, notice: "Deslogado com sucesso."
   end
 end
