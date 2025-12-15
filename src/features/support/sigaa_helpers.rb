@@ -1,5 +1,12 @@
 # --- Helpers para Mock de Dados Externos ---
 
+# Encontra ou cria estrutura de turma baseada na matrícula.
+#
+# Argumentos:
+#   - matricula (String): Matrícula para busca.
+#
+# Retorno:
+#   - (Hash): Dados da turma mockada.
 def find_or_create_mock_class_for(matricula)
   # Tenta achar turma onde o aluno já está
   existing_class = @fake_members.find { |m| m["dicente"]&.any? { |d| d["matricula"].to_s == matricula } }
@@ -12,6 +19,13 @@ def find_or_create_mock_class_for(matricula)
   default_class
 end
 
+# Garante a existência da definição de uma classe no mock.
+#
+# Argumentos:
+#   - code (String): Código da disciplina.
+#
+# Efeitos Colaterais:
+#   - Adiciona entrada em @fake_classes.
 def ensure_class_definition_exists(code)
   return if @fake_classes.any? { |c| c["code"] == code }
 
@@ -22,6 +36,15 @@ def ensure_class_definition_exists(code)
   }
 end
 
+# Atualiza email do aluno no mock.
+#
+# Argumentos:
+#   - turma_mock (Hash): Estrutura da turma.
+#   - matricula (String): Matrícula alvo.
+#   - email (String): Novo email.
+#
+# Efeitos Colaterais:
+#   - Modifica a lista de discentes da turma.
 def update_mock_student_email(turma_mock, matricula, email)
   # Remove ocorrências antigas para evitar duplicidade
   @fake_members.each do |t|
@@ -34,6 +57,10 @@ end
 
 # --- Construtores de Estrutura de Dados (Factory Methods) ---
 
+# Constrói estrutura padrão de membro.
+#
+# Retorno:
+#   - (Hash): Estrutura mock.
 def build_default_member_structure
   {
     "code" => "CIC0097",
@@ -44,6 +71,14 @@ def build_default_member_structure
   }
 end
 
+# Constrói estrutura de dados de aluno.
+#
+# Argumentos:
+#   - matricula (String): Matrícula.
+#   - email (String): Email.
+#
+# Retorno:
+#   - (Hash): Dados do aluno.
 def build_student_structure(matricula, email)
   {
     "nome" => "Nome Genérico",
@@ -54,6 +89,10 @@ def build_student_structure(matricula, email)
   }
 end
 
+# Verifica se o botão de editar templates está ativo.
+#
+# Efeitos Colaterais:
+#   - Realiza asserções de UI.
 def verify_edit_button_active
   # Verifica especificamente o botão de formulário (button_to)
   botao = find_button("Editar Templates")
@@ -61,6 +100,10 @@ def verify_edit_button_active
   expect(botao[:class]).to include("bg-green-500")
 end
 
+# Verifica links de navegação.
+#
+# Efeitos Colaterais:
+#   - Realiza asserções de UI.
 def verify_navigation_links_active
   # Verifica os elementos de navegação (link_to)
   links = ["Enviar Formularios", "Resultados"]
@@ -73,6 +116,10 @@ def verify_navigation_links_active
 end
 
 # Atualiza o nome do aluno no mock de membros
+#
+# Argumentos:
+#   - matricula (String): Matrícula do aluno.
+#   - novo_nome (String): Novo nome a ser definido.
 def update_mock_student_name(matricula, novo_nome)
   # Procura o aluno em @fake_members. Se não achar, cria um padrão (reuso da lógica anterior)
   turma_mock = find_or_create_mock_class_for(matricula)
@@ -92,6 +139,10 @@ def update_mock_student_name(matricula, novo_nome)
   end
 end
 
+# Garante que um membro padrão existe na lista mockada.
+#
+# Retorno:
+#   - (Hash): Dados da turma.
 def ensure_default_class_member_exists
   code = "CIC0097"
   class_code = "TA"
@@ -113,7 +164,12 @@ def ensure_default_class_member_exists
   new_turma
 end
 
-# Remove o aluno antigo (se houver) e adiciona o novo com o nome atualizado
+# Atualiza ou insere aluno com novo nome.
+#
+# Argumentos:
+#   - turma_mock (Hash): Turma alvo.
+#   - matricula (String): Matrícula.
+#   - novo_nome (String): Nome atualizado.
 def upsert_student_with_name(turma_mock, matricula, novo_nome)
   matricula_str = matricula.to_s
 
@@ -130,6 +186,10 @@ def upsert_student_with_name(turma_mock, matricula, novo_nome)
   }
 end
 
+# Resolve contexto atual da classe.
+#
+# Retorno:
+#   - (Hash): { code, class_code }.
 def resolve_current_class_context
   last_class = @fake_classes.last
   {
@@ -140,6 +200,14 @@ end
 
 # --- Infraestrutura (Membros) ---
 
+# Encontra ou cria registro de membro.
+#
+# Argumentos:
+#   - code (String): Código da disciplina.
+#   - class_code (String): Código da turma.
+#
+# Retorno:
+#   - (Hash): Dados do membro.
 def find_or_create_member_record(code, class_code)
   record = @fake_members.find { |m| m["code"] == code && m["classCode"] == class_code }
   return record if record
@@ -147,6 +215,14 @@ def find_or_create_member_record(code, class_code)
   create_default_member_record(code, class_code)
 end
 
+# Cria registro padrão de membro.
+#
+# Argumentos:
+#   - code (String): Disciplina.
+#   - class_code (String): Turma.
+#
+# Retorno:
+#   - (Hash): Dados criados.
 def create_default_member_record(code, class_code)
   new_record = {
     "code" => code,
@@ -159,6 +235,10 @@ def create_default_member_record(code, class_code)
   new_record
 end
 
+# Estrutura padrão de docente.
+#
+# Retorno:
+#   - (Hash): Dados do docente.
 def default_teacher_structure
   {
     "nome" => "Professor Mock",
@@ -170,6 +250,12 @@ end
 
 # --- Ação (Adicionar Aluno) ---
 
+# Adiciona aluno ao registro de membro.
+#
+# Argumentos:
+#   - record (Hash): Registro alvo.
+#   - nome (String): Nome do aluno.
+#   - matricula (String): Matrícula.
 def add_student_to_member_record(record, nome, matricula)
   # Evita duplicatas removendo registro anterior se existir
   record["dicente"].reject! { |d| d["matricula"] == matricula }
@@ -178,6 +264,10 @@ def add_student_to_member_record(record, nome, matricula)
   record["dicente"] << build_student_hash(nome, matricula)
 end
 
+# Constrói hash de aluno.
+#
+# Retorno:
+#   - (Hash): Dados do aluno.
 def build_student_hash(nome, matricula)
   {
     "nome" => nome,
@@ -188,11 +278,19 @@ def build_student_hash(nome, matricula)
   }
 end
 
+# Captura contagens iniciais do banco.
+#
+# Efeitos Colaterais:
+#   - Define variáveis de instância @quantidade_inicial_*.
 def capture_initial_database_counts
   @quantidade_inicial_turmas = Turma.count 
   @quantidade_inicial_usuarios = Usuario.count
 end
 
+# Configura mock de sistema de arquivos.
+#
+# Efeitos Colaterais:
+#   - Mocka File.read para retornar JSONs falsos.
 def setup_file_system_mocking
   # Usa and_wrap_original para interceptar apenas os arquivos que queremos
   allow(File).to receive(:read).and_wrap_original do |original_method, *args|
@@ -200,6 +298,14 @@ def setup_file_system_mocking
   end
 end
 
+# Interceptador de leitura de arquivo.
+#
+# Argumentos:
+#   - original_method (Method): Método original File.read.
+#   - args (Array): Argumentos da chamada.
+#
+# Retorno:
+#   - (String): Conteúdo JSON ou resultado original.
 def handle_file_read_interception(original_method, args)
   # 1. Simulação de Erro (se flag estiver ativa)
   raise Errno::ENOENT if @simular_erro_arquivo
@@ -219,6 +325,11 @@ end
 
 # --- Manipulação de @fake_classes ---
 
+# Garante definição de classe importada.
+#
+# Argumentos:
+#   - codigo_materia (String): Código da matéria.
+#   - codigo_turma (String): Código da turma.
 def ensure_imported_class_definition(codigo_materia, codigo_turma)
   return if @fake_classes.any? { |c| c["code"] == codigo_materia }
 
@@ -231,6 +342,12 @@ end
 
 # --- Manipulação de @fake_members ---
 
+# Cria classe com aluno se faltar.
+#
+# Argumentos:
+#   - codigo_materia (String): Disciplina.
+#   - codigo_turma (String): Turma.
+#   - matricula (String): Aluno.
 def create_class_with_student_if_missing(codigo_materia, codigo_turma, matricula)
   # Verifica se a turma já existe
   exists = @fake_members.any? { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
@@ -248,6 +365,10 @@ end
 
 # --- Builders (Fábricas de Hash) ---
 
+# Estrutura base de membro.
+#
+# Retorno:
+#   - (Hash): Dados da turma.
 def build_import_member_structure(code, class_code)
   {
     "code" => code,
@@ -258,6 +379,10 @@ def build_import_member_structure(code, class_code)
   }
 end
 
+# Estrutura base de aluno importado.
+#
+# Retorno:
+#   - (Hash): Dados do aluno.
 def build_imported_student_hash(matricula)
   matricula_str = matricula.to_s
   {
@@ -269,6 +394,10 @@ def build_imported_student_hash(matricula)
   }
 end
 
+# Remove dados mockados de classe.
+#
+# Argumentos:
+#   - code (String): Código da matéria.
 def remove_mock_class_data(code)
   # Remove a definição da classe
   @fake_classes.reject! { |c| c["code"] == code }
@@ -277,6 +406,10 @@ def remove_mock_class_data(code)
   @fake_members.reject! { |m| m["code"] == code }
 end
 
+# Remove dados de aluno de todos os pontos.
+#
+# Argumentos:
+#   - matricula (String): Matrícula.
 def remove_mock_student_data(matricula)
   id_str = matricula.to_s
   
@@ -287,6 +420,12 @@ def remove_mock_student_data(matricula)
   end
 end
 
+# Verifica consistência de matrículas.
+#
+# Argumentos:
+#   - matricula (String): Aluno.
+#   - codigo_turma (String): Turma.
+#   - codigo_materia (String): Matéria.
 def verify_enrollment_consistency(matricula, codigo_turma, codigo_materia)
   # 1. Busca os registros (Assignments)
   user = Usuario.find_by(matricula: matricula)
@@ -298,6 +437,10 @@ end
 
 # --- Helpers de Busca ---
 
+# Encontra turma por código completo.
+#
+# Retorno:
+#   - (Turma): Turma encontrada.
 def find_turma_by_full_code(codigo_turma, codigo_materia)
   # Usa joins para buscar a turma garantindo que pertence à matéria correta
   Turma.joins(:materia).find_by(
@@ -308,6 +451,10 @@ end
 
 # --- Helpers de Asserção ---
 
+# Valida expectativas de matrícula.
+#
+# Efeitos Colaterais:
+#   - Realiza asserções RSpec.
 def validate_enrollment_expectations(user, turma)
   expect(user).to be_present, "Usuário não encontrado."
   expect(turma).to be_present, "Turma não encontrada."
@@ -318,6 +465,10 @@ end
 
 # --- Orquestrador de Contexto ---
 
+# Configura contexto SIGAA fake.
+#
+# Retorno:
+#   - (Hash): Turma mockada.
 def setup_sigaa_context
   codigo_materia = "CIC0097"
   codigo_turma = "TA"
@@ -331,6 +482,10 @@ end
 
 # --- Helpers de Infraestrutura ---
 
+# Garante existência da classe no array fake.
+#
+# Efeitos Colaterais:
+#   - Modifica @fake_classes.
 def ensure_class_exists(code, class_code)
   return if @fake_classes.any? { |c| c["code"] == code }
 
@@ -346,6 +501,10 @@ def ensure_class_exists(code, class_code)
   }
 end
 
+# Encontra ou cria membro de turma.
+#
+# Retorno:
+#   - (Hash): Turma membro.
 def find_or_create_turma_member(code, class_code)
   turma = @fake_members.find { |m| m["code"] == code && m["classCode"] == class_code }
   return turma if turma
@@ -361,6 +520,10 @@ def find_or_create_turma_member(code, class_code)
   new_turma
 end
 
+# Dados mock de docente.
+#
+# Retorno:
+#   - (Hash): Dados docente.
 def mock_docente_data
   {
     "nome" => "Prof Mock",
@@ -372,6 +535,13 @@ end
 
 # --- Helper de Ação (Aluno) ---
 
+# Insere ou atualiza aluno no sigaa fake.
+#
+# Argumentos:
+#   - turma_mock (Hash): Turma.
+#   - nome (String): Nome.
+#   - matricula (String): Matrícula.
+#   - email (String): Email.
 def upsert_sigaa_student(turma_mock, nome, matricula, email)
   # Remove duplicatas baseadas na matrícula
   turma_mock["dicente"].reject! { |d| d["matricula"] == matricula }
@@ -386,6 +556,15 @@ def upsert_sigaa_student(turma_mock, nome, matricula, email)
   }
 end
 
+# Verifica dados de criação do usuário.
+#
+# Argumentos:
+#   - matricula (String): Matrícula.
+#   - nome (String): Nome esperado.
+#   - status_esperado (Boolean): Status esperado.
+#
+# Efeitos Colaterais:
+#   - Realiza asserções.
 def verify_user_creation_data(matricula, nome, status_esperado)
   user = Usuario.find_by(matricula: matricula)
   
