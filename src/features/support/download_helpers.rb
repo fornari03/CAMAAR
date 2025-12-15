@@ -1,12 +1,35 @@
 def verify_csv_download_response(filename)
-  # Captura os headers uma única vez para evitar múltiplas chamadas ao driver
+  # Captura headers uma vez
   headers = page.response_headers
   
-  # Validação do Tipo de Conteúdo
+  # Delega as validações
+  validate_csv_content_type(headers)
+  validate_attachment_disposition(headers, filename)
+end
+
+# --- Métodos Auxiliares ---
+
+def validate_csv_content_type(headers)
   expect(headers['Content-Type']).to include('text/csv')
+end
+
+def validate_attachment_disposition(headers, filename)
+  disposition = headers['Content-Disposition']
   
-  # Validação da Disposição do Conteúdo (Anexo + Nome)
-  content_disposition = headers['Content-Disposition']
-  expect(content_disposition).to include("attachment")
-  expect(content_disposition).to include(filename)
+  # Verifica se é um anexo
+  expect(disposition).to include("attachment")
+  
+  # Verifica se o nome do arquivo está correto
+  expect(disposition).to include(filename)
+end
+
+def verify_no_file_download_occurred
+  # Captura os headers apenas uma vez
+  headers = page.response_headers
+  
+  # Verifica se o conteúdo continua sendo uma página web (HTML)
+  expect(headers['Content-Type']).to include('text/html')
+  
+  # Verifica se não há instrução de anexo/download
+  expect(headers['Content-Disposition']).to be_nil
 end

@@ -1,20 +1,12 @@
 Dado('que eu sou um {string} logado como {string}') do |role, username|
-  # Reuse logic from common_steps or implement here
-  ocupacao = (role.downcase == 'participante' ? 'discente' : role.downcase).to_sym
-  @user = Usuario.find_by(usuario: username) || Usuario.create!(
-    nome: username.capitalize,
-    email: "#{username}@test.com",
-    matricula: "2021#{rand(1000..9999)}",
-    usuario: username,
-    password: 'password', 
-    ocupacao: ocupacao,
-    status: true
-  )
+  # 1. Determina a ocupação baseada no papel (string -> symbol)
+  ocupacao = resolve_responder_occupation(role)
   
-  visit '/login'
-  fill_in 'Usuário', with: @user.email
-  fill_in 'Senha', with: 'password'
-  click_on 'Entrar'
+  # 2. Garante que o usuário existe no banco
+  @user = find_or_create_responder_user(username, ocupacao)
+  
+  # 3. Realiza o login na interface
+  perform_ui_login(@user.email, 'password')
 end
 
 Dado('eu estou matriculado na turma {string}') do |turma_nome|

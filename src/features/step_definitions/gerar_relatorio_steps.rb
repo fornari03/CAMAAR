@@ -25,6 +25,5 @@ Então('um download de um arquivo {string} deve ser iniciado') do |nome_arquivo|
 end
 
 Então('nenhum download deve ser iniciado') do
-  expect(page.response_headers['Content-Type']).to include('text/html')
-  expect(page.response_headers['Content-Disposition']).to be_nil
+  verify_no_file_download_occurred
 end

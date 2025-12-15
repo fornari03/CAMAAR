@@ -13,35 +13,11 @@ Dado('que existe um template de avaliação {string}') do |nome_template|
 end
 
 Dado('que existe a turma {string} com {int} alunos matriculados') do |nome_turma, num_alunos|
-  materia = Materia.find_or_create_by!(nome: nome_turma) do |m|
-    m.codigo = "MAT#{rand(1000..9999)}"
-  end
-  
-  docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
-    nome: "Docente #{rand(999)}", email: "doc#{rand(999)}@test.com", 
-    matricula: "DOC#{rand(999)}", usuario: "doc#{rand(999)}", 
-    password: 'password', ocupacao: :docente, status: true
-  )
+  # 1. Prepara Matéria, Docente e Turma
+  turma = setup_academic_structure(nome_turma)
 
-  turma = Turma.find_or_create_by!(materia: materia) do |t|
-    t.codigo = "T#{rand(100..999)}"
-    t.semestre = '2024.1'
-    t.horario = '35T'
-    t.docente = docente
-  end
-  
-  num_alunos.times do |i|
-    aluno = Usuario.create!(
-      nome: "Aluno #{i} da #{nome_turma}",
-      email: "aluno#{i}_#{turma.id}_#{rand(9999)}@test.com",
-      matricula: "2024#{turma.id}#{i}",
-      usuario: "user#{turma.id}#{i}",
-      password: 'password',
-      ocupacao: :discente,
-      status: true
-    )
-    Matricula.find_or_create_by!(usuario: aluno, turma: turma)
-  end
+  # 2. Cria os alunos e gera as matrículas
+  enroll_batch_students(turma, num_alunos)
 end
 
 Dado('que eu estou na página de distribuição de formulários') do

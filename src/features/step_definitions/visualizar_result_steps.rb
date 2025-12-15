@@ -3,38 +3,12 @@ Dado('eu sou um {string} logado no sistema') do |perfil|
 end
 
 Dado('existem os formulários {string} e {string}') do |nome_form1, nome_form2|
-  docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
-    nome: "Prof. Teste",
-    email: "prof@teste.com",
-    matricula: "12345",
-    usuario: "prof123",
-    password: "password",
-    ocupacao: :docente,
-    status: true
-  )
+  # 1. Prepara a infraestrutura (Docente, Matéria, Turma)
+  contexto = setup_result_view_context
 
-  materia = Materia.find_or_create_by!(nome: "Materia Teste", codigo: "MAT01")
-  turma = Turma.find_or_create_by!(codigo: "T1", materia: materia) do |t|
-    t.semestre = "2025.1"
-    t.docente = docente
-    t.horario = "10h"
-  end
-
+  # 2. Itera criando o par Template + Formulário para cada nome
   [nome_form1, nome_form2].each do |titulo|
-    template = Template.create!(
-      name: titulo,
-      titulo: titulo,
-      participantes: "todos",
-      id_criador: docente.id
-    )
-
-    Formulario.create!(
-      template: template,
-      turma: turma,
-      titulo_envio: titulo,
-      data_criacao: Time.current,
-      data_encerramento: 30.days.from_now
-    )
+    create_linked_form_and_template(titulo, contexto)
   end
 end
 

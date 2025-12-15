@@ -17,19 +17,13 @@ Dado('seleciono o template com o campo nome {string} e o campo semestre {string}
 end
 
 Dado('o template contém duas questões, sendo:') do |table|
-  @template.template_questions.destroy_all # Clear existing
+  # 1. Limpa o estado atual
+  reset_template_questions
   
-  table.hashes.each do |row|
-    type_map = { 'texto' => 'text', 'radio' => 'radio', 'checkbox' => 'checkbox' }
-    type = type_map[row['tipo']] || 'text'
-    content = row['opções'] ? row['opções'].split(',').map(&:strip) : []
-    
-    @template.template_questions.create!(
-      title: row['texto'],
-      question_type: type,
-      content: content
-    )
-  end
+  # 2. Processa a tabela e cria os registros
+  create_questions_from_table(table)
+  
+  # 3. Atualiza a view
   visit edit_template_path(@template)
 end
 
@@ -112,27 +106,13 @@ Quando('preencho o campo texto com {string}') do |texto|
   end
 end
 
-Quando('preencho o campo Opções com {string}') do |opcoes|
-  options_list = opcoes.split(',').map(&:strip)
+Quando('preencho o campo Opções com {string}') do |opcoes_str|
+  # 1. Transforma "A, B, C" em array
+  options_list = parse_options_list(opcoes_str)
   
-  options_list.each_with_index do |option, index|
-    # Check if we have an empty input available from previous steps (type change or add alternative)
-    inputs = all('.question-form')[@current_question_index].all('input[name="alternatives[]"]')
-    target_input = inputs[index]
-    
-    unless target_input
-      within all('.question-form')[@current_question_index] do
-        click_button "Adicionar Alternativa"
-      end
-      # Page reloads (form submitted, saved, and new input added)
-      inputs = all('.question-form')[@current_question_index].all('input[name="alternatives[]"]')
-      target_input = inputs.last
-    end
-
-    target_input.set(option)
-    # Note: We do not save after simply setting text. 
-    # Logic relies on "Adicionar Alternativa" saving previously set values if clicked.
-    # If this is the last option, the next step (e.g. "E clico em salvar") will persist it.
+  # 2. Itera preenchendo cada opção
+  options_list.each_with_index do |option_text, index|
+    fill_single_option(option_text, index)
   end
 end
 

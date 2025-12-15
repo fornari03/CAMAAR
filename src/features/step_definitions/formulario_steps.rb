@@ -1,31 +1,10 @@
 Dado('existem as turmas {string} e {string} importadas do SIGAA') do |nome_turma1, nome_turma2|
-  docente = Usuario.find_by(ocupacao: :docente) || Usuario.create!(
-    nome: "Docente Padrão",
-    email: "docente@camaar.unb.br",
-    matricula: "DOC123",
-    usuario: "docente",
-    password: "password",
-    ocupacao: :docente,
-    status: true
-  )
+  # 1. Garante que existe um docente para associar
+  docente = find_or_create_default_teacher
 
+  # 2. Itera sobre os nomes e cria a estrutura para cada um
   [nome_turma1, nome_turma2].each do |nome_completo|
-    if nome_completo.include?(' - ')
-      nome_materia, codigo_turma = nome_completo.split(' - ')
-    else
-      nome_materia = nome_completo
-      codigo_turma = "A"
-    end
-
-    materia = Materia.find_or_create_by!(nome: nome_materia) do |m|
-      m.codigo = nome_materia[0..3].upcase
-    end
-
-    Turma.find_or_create_by!(codigo: codigo_turma, materia: materia) do |t|
-      t.semestre = "2025.1"
-      t.horario = "24M34"
-      t.docente = docente
-    end
+    create_sigaa_class_structure(nome_completo, docente)
   end
 end
 
