@@ -4,6 +4,7 @@ class TemplateQuestionsController < ApplicationController
   before_action :set_template
   before_action :set_question, only: %i[update destroy add_alternative]
 
+  # Tipos de questão que permitem múltiplas escolhas.
   CHOICE_TYPES = %w[radio checkbox].freeze
 
   # Adiciona uma nova questão ao template.

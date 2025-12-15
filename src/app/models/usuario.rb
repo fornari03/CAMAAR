@@ -1,3 +1,4 @@
+# Erro personalizado para falhas de autenticação.
 class AuthenticationError < StandardError; end
 
 # Representa um usuário do sistema (Discente, Docente ou Admin).
@@ -6,6 +7,7 @@ class Usuario < ApplicationRecord
   has_secure_password
   has_many :respostas, foreign_key: 'id_participante'
 
+  # Acessor virtual para a senha atual (usado na mudança de senha).
   attr_accessor :current_password
 
   enum :ocupacao, { discente: 0, docente: 1, admin: 2 }
@@ -22,14 +24,8 @@ class Usuario < ApplicationRecord
 
   # Retorna as respostas pendentes (formulários não submetidos) do usuário.
   #
-  # Argumentos:
-  #   - Nenhum
-  #
   # Retorno:
   #   - (ActiveRecord::Relation): Uma coleção de objetos Resposta com data_submissao nil.
-  #
-  # Efeitos Colaterais:
-  #   - Realiza uma consulta ao banco de dados na tabela 'respostas'.
   def pendencias
     respostas.where(data_submissao: nil)
   end
@@ -43,15 +39,15 @@ class Usuario < ApplicationRecord
   # Autentica um usuário pelo login (usuário, email ou matrícula) e senha.
   #
   # Argumentos:
-  #   - login (String): O identificador do usuário (usuário, email ou matrícula).
+  #   - login (String): O identificador do usuário.
   #   - password (String): A senha do usuário.
   #
   # Retorno:
   #   - (Usuario): O objeto do usuário autenticado se as credenciais forem válidas.
   #
   # Efeitos Colaterais:
-  #   - Realiza consultas ao banco de dados para encontrar o usuário.
-  #   - Dispara AuthenticationError se o usuário não for encontrado, estiver pendente ou a senha for inválida.
+  #   - Realiza consultas ao banco de dados.
+  #   - Dispara AuthenticationError se falhar.
   def self.authenticate(login, password)
     user = find_by(usuario: login) ||
            find_by(email: login)   ||
@@ -72,27 +68,15 @@ class Usuario < ApplicationRecord
 
   # Verifica se o usuário possui a ocupação de administrador.
   #
-  # Argumentos:
-  #   - Nenhum
-  #
   # Retorno:
-  #   - (Boolean): Retorna true se a ocupação for 'admin', false caso contrário.
-  #
-  # Efeitos Colaterais:
-  #   - Nenhum.
+  #   - (Boolean): Retorna true se a ocupação for 'admin'.
   def admin?
     ocupacao == "admin"
   end
 
   private
 
-  # Valida a senha atual do usuário (usado em atualizações de cadastro).
-  #
-  # Argumentos:
-  #   - Nenhum (usa o atributo virtual current_password)
-  #
-  # Retorno:
-  #   - (NilClass): Retorna nil se a validação passar.
+  # Valida a senha atual do usuário.
   #
   # Efeitos Colaterais:
   #   - Adiciona um erro ao modelo se a autenticação falhar.
