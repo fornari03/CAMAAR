@@ -69,31 +69,11 @@ Quando('eu adiciono uma pergunta {string} do tipo {string}') do |question_text, 
 end
 
 Quando('eu adiciono uma pergunta {string} do tipo {string} com opções {string}') do |question_text, type, options|
-  click_button "Adicionar Questão"
+  # 1. Cria a estrutura base da pergunta
+  create_base_question(question_text, type)
   
-  within all('.question-form').last do
-    fill_in "Título da Questão", with: question_text
-    
-    select_option = case type
-                    when "múltipla escolha" then "Radio"
-                    when "caixa de seleção" then "Checkbox"
-                    else type.humanize
-                    end
-    
-    select select_option, from: "Tipo da Questão"
-    click_button "Salvar Questão"
-  end
-  
-  options.split(',').each do |option|
-    within all('.question-form').last do
-      click_button "Adicionar Alternativa"
-    end
-    
-    within all('.question-form').last do
-      all('input[name="alternatives[]"]').last.set(option.strip)
-      click_button "Salvar Questão"
-    end
-  end
+  # 2. Adiciona as opções se houver
+  add_options_to_last_question(options)
 end
 
 
