@@ -10,6 +10,10 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'rails-controller-testing'
+
+# Configuração principal do Rails Helper.
+#
+# Define módulos de teste de controller do Rails e integração com RSpec.
 RSpec.configure do |config|
   config.include Rails::Controller::Testing::TestProcess, type: :controller
   config.include Rails::Controller::Testing::Integration, type: :controller
@@ -40,6 +44,8 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
+# Configurações adicionais do RSpec Rails.
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
