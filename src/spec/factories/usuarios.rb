@@ -1,4 +1,8 @@
 FactoryBot.define do
+  # Factory para Usuario.
+  #
+  # Gera usuários com sequências para email, matricula e usuario.
+  # Traits disponíveis: :admin, :docente.
   factory :usuario do
     sequence(:nome) { |n| "Usuário #{n}" }
     sequence(:email) { |n| "usuario#{n}@camaar.com" }
