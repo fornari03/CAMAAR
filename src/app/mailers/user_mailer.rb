@@ -1,6 +1,17 @@
+# Mailer responsável pelo envio de emails relacionados a usuários (senha, boas-vindas).
 class UserMailer < ApplicationMailer
   default from: 'nao-responda@camaar.unb.br'
 
+  # Envia email com link para definição da senha inicial.
+  #
+  # Argumentos:
+  #   - params[:user] (Usuario): O usuário.
+  #
+  # Retorno:
+  #   - (Mail::Message): Objeto de email para envio.
+  #
+  # Efeitos Colaterais:
+  #   - Gera token assinado.
   def definicao_senha
     @user = params[:user]
 
@@ -11,6 +22,16 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: 'Definição de Senha - Sistema CAMAAR')
   end
 
+  # Envia email com link para redefinição de senha esquecida.
+  #
+  # Argumentos:
+  #   - params[:user] (Usuario): O usuário.
+  #
+  # Retorno:
+  #   - (Mail::Message): Objeto de email para envio.
+  #
+  # Efeitos Colaterais:
+  #   - Gera token assinado.
   def redefinicao_senha
     @user = params[:user]
     
