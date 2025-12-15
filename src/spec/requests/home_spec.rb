@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de integração para a página inicial (Home).
+#
+# Cobre o acesso à root_path para diferentes tipos de usuário.
 RSpec.describe "Homes", type: :request do
   let(:password) { 'password' }
   
@@ -27,8 +30,10 @@ RSpec.describe "Homes", type: :request do
     ) 
   }
 
+  # Teste de acesso ao endpoint principal.
   describe "GET /index" do
 
+    # Cenário de Discente.
     context "quando logado como Discente" do
       before do
         post login_path, params: { email: aluno.email, password: password }
@@ -42,6 +47,7 @@ RSpec.describe "Homes", type: :request do
       end
     end
 
+    # Cenário de Admin.
     context "quando logado como Admin" do
       before do
         post login_path, params: { email: admin.email, password: password }
@@ -53,6 +59,7 @@ RSpec.describe "Homes", type: :request do
       end
     end
 
+    # Cenário sem login.
     context "sem estar logado" do
       it "não quebra a aplicação (redireciona ou falha autenticação)" do
         get home_path
