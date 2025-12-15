@@ -1,6 +1,10 @@
 require 'rails_helper'
 
+# Testes par a classe SigaaImporter.
+#
+# Cobre a importação de turmas, alunos e docentes a partir de arquivos JSON mockados.
 RSpec.describe SigaaImporter do
+  # Testa o método principal de importação.
   describe '.call' do
     # MOCK DATA
     let(:classes_json) do
@@ -49,6 +53,7 @@ RSpec.describe SigaaImporter do
       )
     end
 
+    # Contexto de sucesso na importação.
     context 'quando os arquivos JSON existem e são válidos' do
       before do
         allow(File).to receive(:read).and_call_original
@@ -93,6 +98,7 @@ RSpec.describe SigaaImporter do
       end
     end
 
+    # Contexto de atualização de dados existentes.
     context 'quando os dados já existem mas mudaram no SIGAA' do
       let(:classes_json) do
         [
@@ -216,6 +222,7 @@ RSpec.describe SigaaImporter do
       end
     end
 
+    # Contexto de testes de feature complexa (emails, criação/update).
     context 'funcionalidade de cadastro e convite por email' do
       before do
         ActionMailer::Base.deliveries.clear
@@ -298,6 +305,7 @@ RSpec.describe SigaaImporter do
       end
     end
 
+    # Contexto de erro de arquivo.
     context 'quando os arquivos não são encontrados' do
       before do
         allow(File).to receive(:read).and_raise(Errno::ENOENT)
@@ -308,6 +316,7 @@ RSpec.describe SigaaImporter do
       end
     end
 
+    # Contexto de borda e cobertura adicional.
     context 'Cenários de Erro e Cobertura de Borda' do
       before do
         allow(File).to receive(:read).with(satisfy { |p| p.to_s.include?('classes.json') }).and_return(classes_json)

@@ -1,6 +1,10 @@
 require "rails_helper"
 
+# Testes par UserMailer.
+#
+# Cobre o envio de emails de redefinição de senha.
 RSpec.describe UserMailer, type: :mailer do
+  # Teste de redefinição de senha.
   describe "redefinicao_senha" do
     let(:user) { 
       Usuario.create!(
