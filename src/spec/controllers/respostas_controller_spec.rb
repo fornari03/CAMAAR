@@ -122,6 +122,19 @@ RSpec.describe RespostasController, type: :controller do
         expect(response).to render_template(:new)
         expect(flash[:alert]).to include("Houve um erro")
       end
+
+      it "faz rollback e retorna false se houver erro de validação (RecordInvalid)" do
+        allow_any_instance_of(Resposta).to receive(:save).and_raise(ActiveRecord::RecordInvalid.new(Resposta.new))
+
+        expect {
+          post :create, params: {
+            formulario_id: formulario.id,
+            respostas: { questao_texto.id => "Teste" }
+          }
+        }.not_to change(Resposta, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
     end
   end
 end

@@ -72,6 +72,36 @@ RSpec.describe ResultadosController, type: :controller do
         get :show, params: { id: formulario.id, format: :csv }
         expect(response.body).to include("Questão Teste")
       end
+
+      it "cobre o lado direito da extração do CSV (resposta de múltipla escolha)" do
+        questao_multipla = Questao.create!(enunciado: 'Q Mult', tipo: 1, template: template)
+        opcao = Opcao.create!(texto_opcao: 'Opcao B', questao: questao_multipla)
+        
+        aluno = Usuario.create!(
+          nome: 'Aluno 2', 
+          email: "aluno2_#{Time.now.to_f}@test.com", 
+          usuario: "aluno2_#{Time.now.to_f}", 
+          password: 'p', 
+          ocupacao: :discente, 
+          status: true, 
+          matricula: "A2#{rand(9999)}"
+        )
+        
+        resposta = Resposta.create!(
+          formulario: formulario,
+          participante: aluno,
+          data_submissao: Time.now
+        )
+
+        RespostaItem.create!(
+          resposta: resposta,
+          questao: questao_multipla,
+          texto_resposta: nil, 
+          opcao_escolhida: opcao
+        )
+        get :show, params: { id: formulario.id, format: :csv }
+        expect(response.body).to include("Opcao B")
+      end
     end
 
     context "quando NÃO existem respostas (Download CSV)" do
