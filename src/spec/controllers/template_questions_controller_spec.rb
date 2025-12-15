@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de unidade para TemplateQuestionsController.
+#
+# Cobre gestão de questões dentro de um template (CRUD, adição de alternativas).
 RSpec.describe TemplateQuestionsController, type: :controller do
   let(:admin) { Usuario.create!(nome: 'Admin', email: 'admin@test.com', matricula: '123', usuario: 'admin', password: 'password', ocupacao: :admin, status: true) }
   let(:template) { Template.create!(titulo: 'Test Template', id_criador: admin.id) }
@@ -9,6 +12,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
     session[:usuario_id] = admin.id
   end
 
+  # Teste de criação de nova questão.
   describe 'POST #create' do
     it 'creates a new question with defaults and redirects to template edit' do
       expect {
@@ -22,7 +26,10 @@ RSpec.describe TemplateQuestionsController, type: :controller do
     end
   end
 
+  # Teste de atualização de questão.
   describe 'PATCH #update' do
+    
+    # Adicionar alternativa.
     context 'Quando clica em Adicionar Alternativa' do
       it 'adiciona uma opção vazia e redireciona' do
         patch :update, params: { 
@@ -38,6 +45,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
       end
     end
 
+    # Alterar tipo de questão.
     context 'Mudança de Tipo de Questão' do
       it 'limpa o conteúdo se mudar para TEXTO' do
         question.update!(question_type: 'radio', content: ['A', 'B'])
@@ -69,6 +77,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
       end
     end
 
+    # Salvar alterações.
     context 'Salvamento Normal (Botão Salvar)' do
       it 'atualiza atributos e redireciona com sucesso' do
         question.update!(question_type: 'radio', content: ['Old'])
@@ -122,6 +131,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
     end
   end
 
+  # Teste de remoção de questão.
   describe 'DELETE #destroy' do
 
     context 'Quando existe apenas 1 questão' do
@@ -155,6 +165,7 @@ RSpec.describe TemplateQuestionsController, type: :controller do
     end
   end
 
+  # Teste legado/específico de adicionar alternativa via POST.
   describe 'POST #add_alternative' do
     let(:radio_question) { TemplateQuestion.create!(template: template, title: 'Q', question_type: 'radio', content: ['A']) }
 

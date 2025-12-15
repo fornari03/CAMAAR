@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de unidade para UsuariosController.
+#
+# Cobre CRUD básico e autenticação/autorização de usuários.
 RSpec.describe UsuariosController, type: :controller do
   let(:valid_attributes) do
     {
@@ -26,10 +29,12 @@ RSpec.describe UsuariosController, type: :controller do
   end
 
   before(:each) do
+    # Simula autenticação de admin para permitir acesso ao controller.
     allow_any_instance_of(described_class).to receive(:authenticate_admin).and_return(true)
     Usuario.delete_all 
   end
 
+  # Teste de listagem.
   describe "GET #index" do
     it "retorna uma lista vazia quando não há usuários" do
       get :index
@@ -45,6 +50,7 @@ RSpec.describe UsuariosController, type: :controller do
     end
   end
 
+  # Teste de exibição.
   describe "GET #show" do
     it "retorna sucesso e atribui o usuário correto" do
       usuario = Usuario.create!(valid_attributes)
@@ -54,6 +60,7 @@ RSpec.describe UsuariosController, type: :controller do
     end
   end
 
+  # Teste de formulário de novo usuário.
   describe "GET #new" do
     it "atribui um novo usuário a @usuario" do
       get :new
@@ -62,6 +69,7 @@ RSpec.describe UsuariosController, type: :controller do
     end
   end
 
+  # Teste de formulário de edição.
   describe "GET #edit" do
     it "atribui o usuário requisitado a @usuario" do
       usuario = Usuario.create!(valid_attributes)
@@ -71,6 +79,7 @@ RSpec.describe UsuariosController, type: :controller do
     end
   end
 
+  # Teste de criação.
   describe "POST #create" do
     context "com parâmetros válidos" do
       it "cria um novo Usuario" do
@@ -97,6 +106,7 @@ RSpec.describe UsuariosController, type: :controller do
     end
   end
 
+  # Teste de atualização.
   describe "PATCH #update" do
     let(:usuario) { Usuario.create!(valid_attributes) }
     
@@ -126,6 +136,7 @@ RSpec.describe UsuariosController, type: :controller do
     end
   end
 
+  # Teste de exclusão.
   describe "DELETE #destroy" do
     it "destrói o usuário solicitado" do
       usuario = Usuario.create!(valid_attributes)

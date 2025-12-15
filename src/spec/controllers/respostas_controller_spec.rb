@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de unidade para RespostasController.
+#
+# Cobre envio de avaliações, validações de acesso e tratamento de erros.
 RSpec.describe RespostasController, type: :controller do
   # Configuração dos dados de teste
   let(:aluno) { Usuario.create!(nome: 'Aluno', email: 'aluno@test.com', usuario: 'aluno', password: 'p', ocupacao: :discente, status: true, matricula: '1234') }
@@ -19,6 +22,7 @@ RSpec.describe RespostasController, type: :controller do
     session[:usuario_id] = aluno.id
   end
 
+  # Testes de filtros de acesso.
   describe "Restrições de Acesso (before_actions)" do
     it "redireciona se o usuário não for discente" do
       session[:usuario_id] = docente.id
@@ -46,6 +50,7 @@ RSpec.describe RespostasController, type: :controller do
     end
   end
 
+  # Testes de exibição do formulário.
   describe "GET #new" do
     it "retorna sucesso para aluno elegível" do
       get :new, params: { formulario_id: formulario.id }
@@ -54,8 +59,10 @@ RSpec.describe RespostasController, type: :controller do
     end
   end
 
+  # Testes de submissão de respostas.
   describe "POST #create" do
     
+    # Sucesso.
     context "Caminho Feliz" do
       it "cria resposta com texto simples" do
         expect {
@@ -81,6 +88,7 @@ RSpec.describe RespostasController, type: :controller do
       end
     end
 
+    # Erros e Transações.
     context "Caminhos de Erro (Cobre as imagens image_c081db.png)" do
       
       it "faz rollback e renderiza new se falhar ao salvar o cabeçalho da Resposta" do
