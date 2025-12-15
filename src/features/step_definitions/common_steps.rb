@@ -1,3 +1,7 @@
+# =========================================
+# Contexto (Dado)
+# =========================================
+
 Dado('que eu estou logado como Administrador') do
   @admin = Usuario.find_by(usuario: 'admin') || Usuario.create!(
     nome: 'Admin', 
@@ -22,6 +26,17 @@ Dado(/^(?:que )?(?:eu )?estou na página(?: de)? "([^"]*)"$/) do |page_name|
   visit path_to(page_name)
 end
 
+Dado('que eu sou um {string} logado no sistema') do |role|
+  ocupacao = resolve_occupation_from_role(role)
+  @user = find_or_create_auth_user(role, ocupacao)
+  perform_ui_login(@user.email, 'password')
+  verify_login_success
+end
+
+# =========================================
+# Ações (Quando)
+# =========================================
+
 Quando('eu acesso a página {string}') do |page_name|
   visit path_to(page_name)
 end
@@ -34,17 +49,43 @@ Quando('eu clico no botão {string}') do |texto|
    click_on texto
 end
 
+Quando('eu clico em {string}') do |link_or_button|
+  click_on link_or_button
+end
+
+# =========================================
+# Verificações (Então)
+# =========================================
+
+Então('eu devo permanecer na página {string}') do |page_name|
+  caminho_esperado = path_to(page_name)
+  expect(page.current_path).to eq(caminho_esperado)
+end
+
+Então('eu devo ver a mensagem de erro {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
+end
+
+Então('eu devo ver a mensagem {string}') do |mensagem|
+  texto = mensagem.sub(/\.$/, '')
+  expect(page).to have_content(texto)
+end
+
+Então('eu devo ser redirecionado para a minha página inicial') do
+  expect(current_path).to eq(root_path)
+end
+
+# =========================================
+# Métodos Auxiliares (Helpers)
+# =========================================
 
 def path_to(page_name)
-  # 1. Tenta resolver rotas estáticas (mapeamento simples)
   path = resolve_static_path(page_name.downcase)
   return path if path
 
-  # 2. Tenta resolver rotas dinâmicas (regex / banco de dados)
   path = resolve_dynamic_path(page_name)
   return path if path
 
-  # 3. Falha se não encontrar nada
   raise "Não sei o caminho para a página '#{page_name}'. Adicione no step definition."
 end
 
@@ -74,10 +115,8 @@ def resolve_dynamic_path(page_name)
 end
 
 def resolve_formulario_result_path(titulo)
-  # Tenta busca exata
   form = Formulario.find_by(titulo_envio: titulo)
   
-  # Se falhar, tenta busca case-insensitive
   form ||= Formulario.where("lower(titulo_envio) = ?", titulo.downcase).first
 
   if form
@@ -86,40 +125,4 @@ def resolve_formulario_result_path(titulo)
     # Retorna caminho inválido para fins de teste/debug (comportamento original)
     "/resultados/99999"
   end
-end
-
-Então('eu devo permanecer na página {string}') do |page_name|
-  caminho_esperado = path_to(page_name)
-  expect(page.current_path).to eq(caminho_esperado)
-end
-
-Dado('que eu sou um {string} logado no sistema') do |role|
-  # 1. Resolve o nome do papel para um símbolo de ocupação (:discente, :admin, etc)
-  ocupacao = resolve_occupation_from_role(role)
-  
-  # 2. Busca ou cria o usuário no banco de dados
-  @user = find_or_create_auth_user(role, ocupacao)
-  
-  # 3. Executa a ação de login no navegador
-  perform_ui_login(@user.email, 'password')
-
-  # 4. Valida se o login funcionou
-  verify_login_success
-end
-
-Então('eu devo ver a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
-Então('eu devo ver a mensagem {string}') do |mensagem|
-  texto = mensagem.sub(/\.$/, '')
-  expect(page).to have_content(texto)
-end
-
-Então('eu devo ser redirecionado para a minha página inicial') do
-  expect(current_path).to eq(root_path)
-end
-
-Quando('eu clico em {string}') do |link_or_button|
-  click_on link_or_button
 end

@@ -1,19 +1,15 @@
+# =========================================
+# Contexto (Dado)
+# =========================================
+
 Dado('que o sigaa contém o usuário {string} \({string}) com e-mail {string}') do |nome, matricula, email|
-  # 1. Configura a turma padrão (CIC0097/TA)
   turma_mock = setup_sigaa_context
-  
-  # 2. Adiciona o aluno com o e-mail informado
   upsert_sigaa_student(turma_mock, nome, matricula, email)
 end
 
 Dado('que o sigaa contém o usuário {string} \({string})') do |nome, matricula|
-  # 1. Configura a turma padrão
   turma_mock = setup_sigaa_context
-  
-  # 2. Gera um e-mail temporário
   email_temp = "#{matricula}@temp.com"
-  
-  # 3. Adiciona o aluno
   upsert_sigaa_student(turma_mock, nome, matricula, email_temp)
 end
 
@@ -38,11 +34,12 @@ Dado('o usuário {string} não possui um endereço de e-mail') do |matricula|
   end
 end
 
-Então('o usuário {string} \({string}) deve ser criado no sistema com o status {string}') do |nome, matricula, status_texto|
-  # 1. Converte a string "ativo"/"inativo" para booleano real
-  status_booleano = (status_texto == "ativo")
+# =========================================
+# Verificações (Então)
+# =========================================
 
-  # 2. Delega a verificação para o helper
+Então('o usuário {string} \({string}) deve ser criado no sistema com o status {string}') do |nome, matricula, status_texto|
+  status_booleano = (status_texto == "ativo")
   verify_user_creation_data(matricula, nome, status_booleano)
 end
 

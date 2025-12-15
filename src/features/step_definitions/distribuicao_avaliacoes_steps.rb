@@ -1,3 +1,7 @@
+# =========================================
+# Contexto (Dado)
+# =========================================
+
 Dado('que existe um template de avaliação {string}') do |nome_template|
   admin = Usuario.find_by(ocupacao: :admin) || Usuario.create!(
     nome: 'Admin', email: 'admin@test.com', matricula: '000', 
@@ -13,16 +17,17 @@ Dado('que existe um template de avaliação {string}') do |nome_template|
 end
 
 Dado('que existe a turma {string} com {int} alunos matriculados') do |nome_turma, num_alunos|
-  # 1. Prepara Matéria, Docente e Turma
   turma = setup_academic_structure(nome_turma)
-
-  # 2. Cria os alunos e gera as matrículas
   enroll_batch_students(turma, num_alunos)
 end
 
 Dado('que eu estou na página de distribuição de formulários') do
   visit formularios_path
 end
+
+# =========================================
+# Ações (Quando)
+# =========================================
 
 Quando('eu seleciono o template de avaliação {string}') do |nome_template|
   select nome_template, from: 'template_id'
@@ -42,6 +47,15 @@ end
 Quando('eu clico no botão de distribuição {string}') do |nome_botao|
   click_button nome_botao
 end
+
+Quando('eu seleciono o template {string} e clico em Distribuir') do |template|
+  select template, from: 'template_id'
+  click_button 'Distribuir Formulário'
+end
+
+# =========================================
+# Verificações (Então)
+# =========================================
 
 Então('eu devo ver a mensagem de sucesso de distribuição {string}') do |mensagem|
   expect(page).to have_content(mensagem)
@@ -65,9 +79,4 @@ Então('todos os {int} alunos da turma {string} devem ter uma resposta pendente 
   
   form = turma.formularios.last
   expect(Resposta.where(formulario: form, data_submissao: nil).count).to be >= num_alunos
-end
-
-Quando('eu seleciono o template {string} e clico em Distribuir') do |template|
-  select template, from: 'template_id'
-  click_button 'Distribuir Formulário'
 end
