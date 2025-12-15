@@ -1,3 +1,7 @@
+# =========================================
+# Contexto (Dado)
+# =========================================
+
 Dado('que o usuário {string} foi importado e está com o status {string}') do |email, status_desc|
   is_ativo = (status_desc.downcase == 'ativo')
   
@@ -28,22 +32,21 @@ end
 
 Dado('um link de definição de senha válido foi enviado para {string}') do |email|
   user = Usuario.find_by!(email: email)
-  
   token = user.signed_id(purpose: :definir_senha, expires_in: 24.hours)
-  
   @link_definicao = "/definir_senha?token=#{token}"
 end
+
+# =========================================
+# Ações (Quando)
+# =========================================
 
 Quando('eu acesso a página {string} usando o link válido') do |page_name|
   visit @link_definicao
 end
 
-
-
 Quando('eu acesso a página {string} usando o link antigo') do |page_name|
   user = @user
   token = user.signed_id(purpose: :definir_senha)
-  
   visit "/definir_senha?token=#{token}"
 end
 
@@ -55,13 +58,16 @@ Quando('eu deixo o campo {string} em branco') do |campo|
   end
 end
 
+# =========================================
+# Verificações (Então)
+# =========================================
+
 Então('eu devo ser redirecionado para a página de {string}') do |page_name|
   expect(page).to have_current_path(path_to(page_name))
 end
 
 Então('o status do usuário {string} no sistema deve ser {string}') do |email, status_esperado|
   user = Usuario.find_by(email: email)
-  
   user.reload 
   
   if status_esperado == "ativo"
@@ -70,4 +76,3 @@ Então('o status do usuário {string} no sistema deve ser {string}') do |email, 
     expect(user.status).to be_falsey
   end
 end
-
