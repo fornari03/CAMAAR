@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de modelo para Turma.
+#
+# Cobre associações e lógica de distribuição de formulários.
 RSpec.describe Turma, type: :model do
   describe 'associations' do
     it 'has many formularios' do
@@ -15,6 +18,7 @@ RSpec.describe Turma, type: :model do
     end
   end
 
+  # Teste do método de distribuição.
   describe '#distribuir_formulario' do
     let(:docente) { Usuario.create!(nome: 'Prof', email: 'prof@test.com', matricula: '111', usuario: 'prof', password: 'password', ocupacao: 'docente', status: true) }
     let(:turma) { Turma.create!(codigo: 'T1', semestre: '2024.1', horario: '35T', materia: Materia.create!(codigo: 'M1', nome: 'Mat'), docente: docente) }

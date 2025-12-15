@@ -1,9 +1,13 @@
 require 'rails_helper'
 
+# Testes de modelo para TemplateQuestion.
+#
+# Cobre validações de tipo de pergunta e serialização de conteúdo.
 RSpec.describe TemplateQuestion, type: :model do
   let(:user) { Usuario.create!(nome: 'User', email: 'user@test.com', matricula: '123', usuario: 'user', password: 'password', ocupacao: :admin, status: true) }
   let(:template) { Template.create!(titulo: 'Test Template', id_criador: user.id) }
 
+  # Testes de validação.
   describe 'validations' do
     it 'is valid with valid attributes' do
       question = TemplateQuestion.new(
@@ -14,6 +18,7 @@ RSpec.describe TemplateQuestion, type: :model do
       expect(question).to be_valid
     end
 
+    # Validações para perguntas de escolha (radio/checkbox).
     context 'when type is radio or checkbox' do
       it 'adds error if content (alternatives) contains blank values' do
         question = TemplateQuestion.new(
@@ -41,6 +46,7 @@ RSpec.describe TemplateQuestion, type: :model do
     end
   end
 
+  # Testes de serialização JSON.
   describe 'content serialization' do
     it 'can save and retrieve an array of strings as JSON' do
       question = TemplateQuestion.create!(

@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de modelo para Usuario.
+#
+# Cobre autenticação, validação de senha, roles e escopos de pendência.
 RSpec.describe Usuario, type: :model do
   let(:usuario_ativo) { 
     Usuario.create!(
@@ -35,6 +38,7 @@ RSpec.describe Usuario, type: :model do
     end
   end
 
+  # Teste de verificação de role admin.
   describe '#admin?' do
     it 'retorna true se ocupacao for admin' do
       expect(admin.admin?).to be true
@@ -45,6 +49,7 @@ RSpec.describe Usuario, type: :model do
     end
   end
 
+  # Teste de autenticação customizada.
   describe '.authenticate' do
     context 'Caminho Feliz' do
       it 'retorna o usuário se as credenciais estiverem corretas' do
@@ -75,6 +80,7 @@ RSpec.describe Usuario, type: :model do
     end
   end
 
+  # Teste de validação de senha atual.
   describe '#validate_current_password' do
     
     it 'adiciona erro se current_password estiver incorreto' do
@@ -99,6 +105,7 @@ RSpec.describe Usuario, type: :model do
     end
   end
 
+  # Teste de recuperação de pendências.
   describe '#pendencias' do
     let(:template) { Template.create!(name: 'T1', id_criador: usuario_ativo.id, titulo: 'T', participantes: 'todos') }
     let(:materia) { Materia.create!(codigo: 'M', nome: 'N') }

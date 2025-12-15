@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de modelo para Resposta.
+#
+# Cobre associações, validações e escopos de participação.
 RSpec.describe Resposta, type: :model do
   let(:aluno) { Usuario.create!(nome: 'Aluno', email: 'a@a.com', usuario: 'aluno', password: 'p', ocupacao: :discente, status: true, matricula: '1234') }
   let(:docente) { Usuario.create!(nome: 'Doc', email: 'd@d.com', usuario: 'doc', password: 'p', ocupacao: :docente, status: true, matricula: '5678') }
@@ -10,26 +13,31 @@ RSpec.describe Resposta, type: :model do
 
   subject { described_class.new(formulario: formulario, participante: aluno) }
 
+  # Teste de validação básica.
   it 'is valid with valid attributes' do
     expect(subject).to be_valid
   end
 
+  # Teste de associação com formulário.
   it 'belongs to a formulario' do
     subject.formulario = nil
     expect(subject).to_not be_valid
   end
 
+  # Teste de associação com participante.
   it 'belongs to a participante' do
     subject.participante = nil
     expect(subject).to_not be_valid
   end
 
+  # Teste de unicidade de participação.
   it 'validates uniqueness of participante per formulario' do
     subject.save!
     duplicate = described_class.new(formulario: formulario, participante: aluno)
     expect(duplicate).to_not be_valid
   end
 
+  # Teste de método auxiliar de status.
   describe '#respondido?' do
     it 'returns true if data_submissao is present' do
       subject.data_submissao = Time.now

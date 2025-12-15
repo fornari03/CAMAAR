@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de modelo para Matricula.
+#
+# Cobre associações básicas.
 RSpec.describe Matricula, type: :model do
   describe 'associations' do
     it 'belongs to usuario' do
