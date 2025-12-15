@@ -1,93 +1,20 @@
 Dado('que o sigaa contém o usuário {string} \({string}) com e-mail {string}') do |nome, matricula, email|
-  codigo_materia = "CIC0097"
-  codigo_turma = "TA"
-
-  unless @fake_classes.any? { |c| c["code"] == codigo_materia }
-    @fake_classes << {
-      "name" => "Matéria Mock",
-      "code" => codigo_materia,
-      "classCode" => codigo_turma,
-      "class" => {
-        "classCode" => codigo_turma,
-        "semester" => "2024.1",
-        "time" => "35T23"
-      }
-    }
-  end
-
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
-
-  unless turma_mock
-    turma_mock = {
-      "code" => codigo_materia,
-      "classCode" => codigo_turma,
-      "semester" => "2024.1",
-      "dicente" => [],
-      "docente" => { 
-        "nome" => "Prof Mock", 
-        "usuario" => "99999", 
-        "email" => "prof@mock.com",
-        "ocupacao" => "docente"
-      }
-    }
-    @fake_members << turma_mock
-  end
-
-  turma_mock["dicente"].reject! { |d| d["matricula"] == matricula }
+  # 1. Configura a turma padrão (CIC0097/TA)
+  turma_mock = setup_sigaa_context
   
-  turma_mock["dicente"] << {
-    "nome" => nome,
-    "matricula" => matricula,
-    "usuario" => matricula,
-    "email" => email,
-    "ocupacao" => "dicente"
-  }
+  # 2. Adiciona o aluno com o e-mail informado
+  upsert_sigaa_student(turma_mock, nome, matricula, email)
 end
 
 Dado('que o sigaa contém o usuário {string} \({string})') do |nome, matricula|
-  codigo_materia = "CIC0097"
-  codigo_turma = "TA"
-
-  unless @fake_classes.any? { |c| c["code"] == codigo_materia }
-    @fake_classes << {
-      "name" => "Matéria Mock",
-      "code" => codigo_materia,
-      "classCode" => codigo_turma,
-      "class" => {
-        "classCode" => codigo_turma,
-        "semester" => "2024.1",
-        "time" => "35T23"
-      }
-    }
-  end
-
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
-
-  unless turma_mock
-    turma_mock = {
-      "code" => codigo_materia,
-      "classCode" => codigo_turma,
-      "semester" => "2024.1",
-      "dicente" => [],
-      "docente" => { 
-        "nome" => "Prof Mock", 
-        "usuario" => "99999", 
-        "email" => "prof@mock.com",
-        "ocupacao" => "docente"
-      }
-    }
-    @fake_members << turma_mock
-  end
-
-  turma_mock["dicente"].reject! { |d| d["matricula"] == matricula }
+  # 1. Configura a turma padrão
+  turma_mock = setup_sigaa_context
   
-  turma_mock["dicente"] << {
-    "nome" => nome,
-    "matricula" => matricula,
-    "usuario" => matricula,
-    "email" => "#{matricula}@temp.com", 
-    "ocupacao" => "dicente"
-  }
+  # 2. Gera um e-mail temporário
+  email_temp = "#{matricula}@temp.com"
+  
+  # 3. Adiciona o aluno
+  upsert_sigaa_student(turma_mock, nome, matricula, email_temp)
 end
 
 Dado('que o sistema possui o usuário {string} \({string}) cadastrado \(seja pendente ou ativo)') do |nome, matricula|
@@ -111,18 +38,12 @@ Dado('o usuário {string} não possui um endereço de e-mail') do |matricula|
   end
 end
 
-Então('o usuário {string} \({string}) deve ser criado no sistema com o status {string}') do |nome, matricula, status_esperado|
-  user = Usuario.find_by(matricula: matricula)
-  
-  if status_esperado == "ativo"
-    status_esperado = "true"
-  else
-    status_esperado = "false"
-  end
+Então('o usuário {string} \({string}) deve ser criado no sistema com o status {string}') do |nome, matricula, status_texto|
+  # 1. Converte a string "ativo"/"inativo" para booleano real
+  status_booleano = (status_texto == "ativo")
 
-  expect(user).to be_present
-  expect(user.nome).to eq(nome)
-  expect(user.status.to_s).to eq(status_esperado)
+  # 2. Delega a verificação para o helper
+  verify_user_creation_data(matricula, nome, status_booleano)
 end
 
 Então('nenhum novo e-mail de {string} deve ser enviado para {string}') do |assunto, email_destinatario|

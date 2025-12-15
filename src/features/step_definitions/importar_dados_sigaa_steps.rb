@@ -29,37 +29,14 @@ Dado('que o sigaa contém a turma {string} da matéria {string} \({string})') do
 end
 
 Dado('esta turma contém o participante {string} \({string})') do |nome, matricula|
-  last_class = @fake_classes.last
-  codigo_materia = last_class["code"]
-  codigo_turma   = last_class["class"]["classCode"]
+  # 1. Identifica qual matéria/turma estamos manipulando (pega a última criada)
+  contexto = resolve_current_class_context
 
-  turma_member_data = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
+  # 2. Busca ou cria o registro de membros para essa turma
+  member_record = find_or_create_member_record(contexto[:code], contexto[:class_code])
 
-  unless turma_member_data
-    turma_member_data = {
-      "code" => codigo_materia,
-      "classCode" => codigo_turma,
-      "semester" => "2024.1",
-      "dicente" => [],
-      "docente" => {
-        "nome" => "Professor Mock",
-        "usuario" => "99999",
-        "email" => "prof@mock.com",
-        "ocupacao" => "docente"
-      }
-    }
-    @fake_members << turma_member_data
-  end
-
-  turma_member_data["dicente"].reject! { |d| d["matricula"] == matricula }
-  turma_member_data["dicente"] << {
-    "nome" => nome,
-    "matricula" => matricula,
-    "usuario" => matricula,
-    "email" => "#{matricula}@aluno.unb.br",
-    "ocupacao" => "dicente"
-  }
-
+  # 3. Adiciona o aluno ao registro
+  add_student_to_member_record(member_record, nome, matricula)
 end
 
 Então('a turma {string} da matéria {string} \({string}) deve ser cadastrada no sistema') do |codigo_turma, nome_materia, codigo_materia|
@@ -77,13 +54,11 @@ Então('o usuário {string} \({string}) deve ser cadastrado no sistema') do |nom
 end
 
 Então('o usuário {string} deve estar matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
-  user = Usuario.find_by(matricula: matricula)
-  materia = Materia.find_by(codigo: codigo_materia)
-  turma = Turma.find_by(codigo: codigo_turma, materia: materia)
+  verify_enrollment_consistency(matricula, codigo_turma, codigo_materia)
+end
 
-  expect(user).to be_present
-  expect(turma).to be_present
-  expect(user.turmas).to include(turma)
+Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
+  verify_enrollment_consistency(matricula, codigo_turma, codigo_materia)
 end
 
 Então('eu devo ver a mensagem de sucesso {string}') do |mensagem|
@@ -91,23 +66,8 @@ Então('eu devo ver a mensagem de sucesso {string}') do |mensagem|
 end
 
 Quando('eu solicito a importação clicando em {string}') do |botao|
-  @quantidade_inicial_turmas = Turma.count 
-  @quantidade_inicial_usuarios = Usuario.count
-  allow(File).to receive(:read).and_wrap_original do |original_method, *args|
-    if @simular_erro_arquivo
-      raise Errno::ENOENT 
-    end
-
-    path = args.first.to_s
-    
-    if path.include?('classes.json')
-      @fake_classes.to_json
-    elsif path.include?('class_members.json')
-      @fake_members.to_json
-    else
-      original_method.call(*args)
-    end
-  end
+  capture_initial_database_counts
+  setup_file_system_mocking
   click_button botao
 end
 
@@ -188,57 +148,21 @@ Então('nenhum usuário duplicado deve ser criado') do
 end
 
 Então('os outro botões na página devem ser liberados') do
-  # "Editar Templates" é um button_to, os outros são link_to
-  botao_editar = find_button("Editar Templates")
-  expect(botao_editar).not_to be_disabled
-  expect(botao_editar[:class]).to include("bg-green-500")
-  
-  # Os outros são links
-  ["Enviar Formularios", "Resultados"].each do |texto_link|
-    link = find_link(texto_link)
-    expect(link).to be_present
-    expect(link[:class]).to include("bg-green-500")
-  end
+  verify_edit_button_active
+  verify_navigation_links_active
 end
 
 Dado('a fonte de dados externa indica que o e-mail de {string} agora é {string}') do |matricula, novo_email|
   matricula_str = matricula.to_s
   
-  codigo_materia_padrao = "CIC0097" 
-  codigo_turma_padrao = "TA"
+  # 1. Localiza ou cria a estrutura da turma para este aluno
+  turma_mock = find_or_create_mock_class_for(matricula_str)
 
-  turma_mock = @fake_members.find { |m| m["dicente"].any? { |d| d["matricula"].to_s == matricula_str } }
-  
-  unless turma_mock
-    turma_mock = @fake_members.find { |m| m["code"] == codigo_materia_padrao } || {
-      "code" => codigo_materia_padrao,
-      "classCode" => codigo_turma_padrao,
-      "semester" => "2024.1",
-      "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "mock@email"}
-    }
-    @fake_members << turma_mock unless @fake_members.include?(turma_mock)
-  end
+  # 2. Garante que a definição da matéria existe no arquivo de classes
+  ensure_class_definition_exists(turma_mock["code"])
 
-  unless @fake_classes.any? { |c| c["code"] == turma_mock["code"] }
-    @fake_classes << {
-      "name" => "Matéria Mock",
-      "code" => turma_mock["code"],
-      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode" => "TA"}
-    }
-  end
-
-  @fake_members.each do |t|
-    t["dicente"].reject! { |d| d["matricula"].to_s == matricula_str }
-  end
-
-  turma_mock["dicente"] << {
-    "nome" => "Nome Genérico",
-    "matricula" => matricula_str,
-    "usuario" => matricula_str,
-    "email" => novo_email,
-    "ocupacao" => "dicente"
-  }
+  # 3. Remove registros antigos e adiciona o aluno com o novo e-mail
+  update_mock_student_email(turma_mock, matricula_str, novo_email)
 end
 
 Dado('que o sistema possui a turma {string} da matéria {string} cadastrada') do |codigo_turma, codigo_materia|
@@ -268,73 +192,22 @@ Dado('o usuário {string} ainda não está matriculado na turma {string} da mat�
 end
 
 Dado('a fonte de dados externa indica que {string} está matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
-  matricula_str = matricula.to_s
+  # 1. Garante que a matéria existe em @fake_classes
+  ensure_imported_class_definition(codigo_materia, codigo_turma)
 
-  unless @fake_classes.any? { |c| c["code"] == codigo_materia }
-    @fake_classes << {
-      "name" => "Matéria Importada",
-      "code" => codigo_materia,
-      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode" => codigo_turma }
-    }
-  end
-
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia && m["classCode"] == codigo_turma }
-
-  unless turma_mock
-    turma_mock = {
-      "code" => codigo_materia,
-      "classCode" => codigo_turma,
-      "semester" => "2024.1",
-      "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "mock@email"}
-    }
-
-    turma_mock["dicente"] << {
-    "nome" => "Aluno Importado",
-    "matricula" => matricula_str,
-    "usuario" => matricula_str,
-    "email" => "#{matricula_str}@aluno.unb.br",
-    "ocupacao" => "dicente"
-    }
-
-    @fake_members << turma_mock
-  end
+  # 2. Se a turma não existir em @fake_members, cria ela já com o aluno inserido
+  create_class_with_student_if_missing(codigo_materia, codigo_turma, matricula)
 end
 
 Dado('a fonte de dados externa indica que o nome de {string} agora é {string}') do |matricula, novo_nome|
-  matricula_str = matricula.to_s
-  codigo_materia_padrao = "CIC0097"
-  codigo_turma_padrao = "TA"
+  # 1. Garante que a definição da matéria existe em @fake_classes
+  ensure_class_definition_exists("CIC0097")
 
-  unless @fake_classes.any? { |c| c["code"] == codigo_materia_padrao }
-    @fake_classes << {
-      "name" => "Matéria Mock",
-      "code" => codigo_materia_padrao,
-      "class" => { "semester" => "2024.1", "time" => "35T23", "classCode": "TA"}
-    }
-  end
+  # 2. Busca ou cria a turma padrão (CIC0097 - TA) em @fake_members
+  turma_mock = ensure_default_class_member_exists
 
-  turma_mock = @fake_members.find { |m| m["code"] == codigo_materia_padrao && m["classCode"] == codigo_turma_padrao }
-  unless turma_mock
-    turma_mock = {
-      "code" => codigo_materia_padrao,
-      "classCode" => codigo_turma_padrao,
-      "semester" => "2024.1",
-      "dicente" => [],
-      "docente" => { "nome" => "Prof Mock", "usuario" => "999", "email" => "mock@email"}
-    }
-    @fake_members << turma_mock
-  end
-
-  turma_mock["dicente"].reject! { |d| d["matricula"].to_s == matricula_str }
-
-  turma_mock["dicente"] << {
-    "nome" => novo_nome,
-    "matricula" => matricula_str,
-    "usuario" => matricula_str,
-    "email" => "#{matricula_str}@aluno.unb.br",
-    "ocupacao" => "dicente"
-  }
+  # 3. Atualiza (remove e recria) o registro do aluno com o novo nome
+  upsert_student_with_name(turma_mock, matricula, novo_nome)
 end
 
 Dado('que o sistema possui a matéria {string} cadastrada') do |codigo_materia|
@@ -359,27 +232,17 @@ Dado('a fonte de dados externa indica que o nome da matéria {string} agora é {
 end
 
 Dado('a fonte de dados externa indica que {string} não está mais presente') do |identificador|
-  @fake_classes.reject! { |c| c["code"] == identificador }
-  @fake_members.reject! { |m| m["code"] == identificador }
+  # 1. Remove das listas de classes e membros (caso o ID seja um código de matéria)
+  remove_mock_class_data(identificador)
   
-  @fake_members.each do |turma|
-    turma["dicente"].reject! { |d| d["matricula"].to_s == identificador.to_s }
-  end
+  # 2. Varre as turmas e remove o aluno (caso o ID seja uma matrícula)
+  remove_mock_student_data(identificador)
 end
 
 Então('o e-mail do usuário {string} deve ser atualizado para {string}') do |matricula, novo_email|
   usuario = Usuario.find_by(matricula: matricula)
   expect(usuario).to be_present
   expect(usuario.email).to eq(novo_email)
-end
-
-Então('o usuário {string} deve ser matriculado na turma {string} da matéria {string}') do |matricula, codigo_turma, codigo_materia|
-  user = Usuario.find_by(matricula: matricula)
-  turma = Turma.joins(:materia).find_by(codigo: codigo_turma, materias: { codigo: codigo_materia })
-  
-  expect(user).to be_present
-  expect(turma).to be_present
-  expect(user.turmas).to include(turma)
 end
 
 Então('o nome do usuário {string} deve ser atualizado para {string}') do |matricula, novo_nome|
