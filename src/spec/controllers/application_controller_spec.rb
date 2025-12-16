@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de unidade para ApplicationController.
+#
+# Cobre lógica compartilhada dos controladores, como autenticação.
 RSpec.describe ApplicationController, type: :controller do
   controller do
     before_action :require_login
@@ -11,6 +14,7 @@ RSpec.describe ApplicationController, type: :controller do
 
   let(:usuario) { Usuario.create!(nome: 'User', email: 'user@test.com', usuario: 'user', password: 'password', ocupacao: :discente, status: true, matricula: '123') }
 
+  # Testes de filtro de login.
   describe "Verificação de Login (:require_login)" do
     
     context "quando o usuário NÃO está logado" do

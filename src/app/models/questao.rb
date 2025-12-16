@@ -1,3 +1,5 @@
+# Representa uma questão individual dentro de um template de avaliação.
+# Pode ser do tipo texto ou múltipla escolha.
 class Questao < ApplicationRecord
   self.table_name = "questoes"
   belongs_to :template

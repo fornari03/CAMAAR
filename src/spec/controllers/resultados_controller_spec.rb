@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de unidade para ResultadosController.
+#
+# Cobre visualização de resultados e exportação CSV.
 RSpec.describe ResultadosController, type: :controller do
   let(:admin) { 
     Usuario.create!(
@@ -34,6 +37,7 @@ RSpec.describe ResultadosController, type: :controller do
     session[:usuario_id] = admin.id
   end
 
+  # Teste de listagem.
   describe "GET #index" do
     it "returns http success" do
       get :index
@@ -41,8 +45,10 @@ RSpec.describe ResultadosController, type: :controller do
     end
   end
 
+  # Testes de exibição e exportação (CSV).
   describe "GET #show" do
     
+    # Sucesso com respostas.
     context "quando existem respostas" do
       before do
         aluno = Usuario.create!(
@@ -104,6 +110,7 @@ RSpec.describe ResultadosController, type: :controller do
       end
     end
 
+    # Sem respostas.
     context "quando NÃO existem respostas (Download CSV)" do
       it "redireciona com alerta" do
         get :show, params: { id: formulario.id, format: :csv }
@@ -113,6 +120,7 @@ RSpec.describe ResultadosController, type: :controller do
       end
     end
 
+    # Formulário inexistente.
     context "quando o formulário não é encontrado" do
       it "captura RecordNotFound e redireciona para index de formulários" do
         get :show, params: { id: 999999 }

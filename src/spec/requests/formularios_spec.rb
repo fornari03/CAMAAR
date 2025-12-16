@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de integração para gerenciamento de formulários.
+#
+# Cobre CRUD básico e distribuição de formulários.
 RSpec.describe "Formularios", type: :request do
   let(:admin) { Usuario.create!(nome: 'Admin', email: 'admin@test.com', matricula: '123', usuario: 'admin', password: 'password', ocupacao: :admin, status: true) }
   let(:aluno) { Usuario.create!(nome: 'Aluno', email: 'aluno@test.com', matricula: '456', usuario: 'aluno', password: 'password', ocupacao: :discente, status: true) }
@@ -17,6 +20,7 @@ RSpec.describe "Formularios", type: :request do
     sign_in(admin)
   end
 
+  # Teste de listagem.
   describe "GET /index" do
     it "returns http success" do
       get formularios_path
@@ -24,6 +28,7 @@ RSpec.describe "Formularios", type: :request do
     end
   end
 
+  # Teste de exibição.
   describe "GET /show" do
     it "exibe o formulário corretamente" do
       get formulario_path(formulario_existente)
@@ -32,6 +37,7 @@ RSpec.describe "Formularios", type: :request do
     end
   end
 
+  # Teste de formulário de criação.
   describe "GET /new" do
     it "carrega os dados necessários e retorna sucesso" do
       get new_formulario_path
@@ -43,6 +49,7 @@ RSpec.describe "Formularios", type: :request do
     end
   end
 
+  # Teste de criação/distribuição.
   describe "POST /create" do
     before do
        Matricula.create!(usuario: aluno, turma: turma)
@@ -54,13 +61,14 @@ RSpec.describe "Formularios", type: :request do
           post formularios_path, params: { template_id: template.id, turma_ids: [turma.id] }
         }.to change(Formulario, :count).by(1)
          .and change(Resposta, :count).by(1) 
-
+     
         expect(response).to redirect_to(formularios_path)
         follow_redirect!
         expect(response.body).to include("Formulário distribuído com sucesso")
       end
     end
 
+    # Cenários de validação.
     context "Caminhos de Validação e Erro (Cobre Imagens 1 e 2)" do
       it "fails if no turmas selected" do
         post formularios_path, params: { template_id: template.id }
@@ -89,6 +97,7 @@ RSpec.describe "Formularios", type: :request do
     end
   end
 
+  # Teste de listagem para alunos.
   describe "GET /pendentes" do
     before do
       sign_in(aluno)

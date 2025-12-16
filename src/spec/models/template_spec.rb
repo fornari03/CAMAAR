@@ -1,7 +1,12 @@
 require 'rails_helper'
 
+# Testes de modelo para Template.
+#
+# Cobre escopos de visibilidade.
 RSpec.describe Template, type: :model do
   describe 'scopes' do
+    
+    # Teste para escopo de templates visíveis.
     describe '.all_visible' do
       it 'returns only templates that are not hidden' do
         user = Usuario.create!(nome: 'User', email: 'user@test.com', matricula: '123', usuario: 'user', password: 'password', ocupacao: :admin, status: true)

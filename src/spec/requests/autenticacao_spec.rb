@@ -1,10 +1,14 @@
 require 'rails_helper'
 
+# Testes de integração para autenticação de usuários.
+#
+# Cobre login, logout e cenários de erro de autenticação.
 RSpec.describe "Autenticacao", type: :request do
   let(:password) { 'senha123' }
   let(:aluno) { Usuario.create!(nome: 'Aluno', email: 'aluno@test.com', usuario: 'aluno', password: password, ocupacao: :discente, status: true, matricula: '123') }
   let(:admin) { Usuario.create!(nome: 'Admin', email: 'admin@test.com', usuario: 'admin', password: password, ocupacao: :admin, status: true, matricula: '999') }
 
+  # Teste de acesso à página de login.
   describe "GET /new (Página de Login)" do
     it "retorna sucesso" do
       get login_path 
@@ -12,7 +16,10 @@ RSpec.describe "Autenticacao", type: :request do
     end
   end
 
+  # Teste do processo de login (POST).
   describe "POST /create (Fazer Login)" do
+    
+    # Cenário de sucesso.
     context "Caminho Feliz" do
       it "autentica admin e redireciona para painel" do
         post login_path, params: { email: admin.email, password: password }
@@ -30,6 +37,7 @@ RSpec.describe "Autenticacao", type: :request do
       end
     end
 
+    # Cenário de falha (credenciais inválidas ou erros de sistema).
     context "Quando ocorre AuthenticationError" do
       before do
         allow(Usuario).to receive(:authenticate).and_raise(AuthenticationError, "Usuário ou senha inválidos")
@@ -44,6 +52,7 @@ RSpec.describe "Autenticacao", type: :request do
     end
   end
 
+  # Teste de logout.
   describe "DELETE /destroy (Logout)" do
     it "reseta sessão, remove cookies e redireciona" do
       post login_path, params: { email: aluno.email, password: password }

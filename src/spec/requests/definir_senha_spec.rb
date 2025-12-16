@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de integração para definição inicial de senha.
+#
+# Cobre o fluxo de primeiro acesso via token de convite.
 RSpec.describe "DefinicaoSenha", type: :request do
   let!(:usuario_pendente) { 
     Usuario.create!(
@@ -15,7 +18,10 @@ RSpec.describe "DefinicaoSenha", type: :request do
   
   let(:token) { usuario_pendente.signed_id(purpose: :definir_senha) }
 
+  # Teste de acesso ao formulário de definição.
   describe "GET /definir_senha" do
+    
+    # Cenário de sucesso.
     context "com token válido" do
       it "acessa a página de definição de senha com sucesso" do
         get definir_senha_path(token: token)
@@ -24,6 +30,7 @@ RSpec.describe "DefinicaoSenha", type: :request do
       end
     end
 
+    # Cenários de token inválido/ausente.
     context "sem token na URL" do
       it "redireciona com alerta de token ausente" do
         get definir_senha_path(token: "")
@@ -44,6 +51,7 @@ RSpec.describe "DefinicaoSenha", type: :request do
       end
     end
 
+    # Cenário de usuário já ativo.
     context "quando o usuário já está ativo" do
       before { usuario_pendente.update!(status: true) }
 
@@ -56,6 +64,7 @@ RSpec.describe "DefinicaoSenha", type: :request do
       end
     end
 
+    # Cenário com sessão ativa de outro usuário.
     context "quando um Admin já está logado" do
       let(:admin) { Usuario.create!(nome: "Admin", email: "adm@t.com", usuario: "admin", matricula: "000", ocupacao: :admin, status: true, password: "123", password_confirmation: "123") }
 
@@ -71,7 +80,10 @@ RSpec.describe "DefinicaoSenha", type: :request do
     end
   end
 
+  # Teste de submissão da nova senha.
   describe "PATCH /definir_senha (create)" do
+    
+    # Cenário de sucesso.
     context "Caminho Feliz" do
       it "atualiza a senha, ativa o usuário e redireciona" do
         patch definir_senha_path(token: token), params: {
@@ -90,6 +102,7 @@ RSpec.describe "DefinicaoSenha", type: :request do
       end
     end
 
+    # Cenários de falha.
     context "com token inválido no envio" do
       it "redireciona para login" do
         patch definir_senha_path(token: "token_falso"), params: {

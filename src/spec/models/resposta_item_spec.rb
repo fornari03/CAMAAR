@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de modelo para RespostaItem.
+#
+# Cobre validações de respostas (texto vs múltipla escolha).
 RSpec.describe RespostaItem, type: :model do
   let(:aluno) { Usuario.create!(nome: 'Aluno', email: 'a@a.com', usuario: 'aluno', password: 'p', ocupacao: :discente, status: true, matricula: '1234') }
   let(:docente) { Usuario.create!(nome: 'Doc', email: 'd@d.com', usuario: 'doc', password: 'p', ocupacao: :docente, status: true, matricula: '5678') }
@@ -18,6 +21,7 @@ RSpec.describe RespostaItem, type: :model do
   let(:questao_multipla) { Questao.create!(enunciado: 'Q2', tipo: 1, template: template) }
   let(:opcao) { Opcao.create!(texto_opcao: 'Opt1', questao: questao_multipla) }
 
+  # Teste de validação para resposta em texto.
   it 'validates text answer for text question' do
     item = RespostaItem.new(resposta: resposta, questao: questao_texto, texto_resposta: 'Answer')
     expect(item).to be_valid
@@ -26,6 +30,7 @@ RSpec.describe RespostaItem, type: :model do
     expect(item).to_not be_valid
   end
 
+  # Teste de validação para resposta de múltipla escolha.
   it 'validates option choice for multiple choice question' do
     item = RespostaItem.new(resposta: resposta, questao: questao_multipla, opcao_escolhida: opcao)
     expect(item).to be_valid

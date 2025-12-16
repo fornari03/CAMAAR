@@ -1,3 +1,5 @@
+# Representa a resposta dada para uma única questão em um formulário.
+# Armazena o texto da resposta (para questões discursivas) ou a opção escolhida (para múltipla escolha).
 class RespostaItem < ApplicationRecord
   belongs_to :resposta
   belongs_to :questao
@@ -7,6 +9,16 @@ class RespostaItem < ApplicationRecord
 
   private
 
+  # Valida se a resposta está preenchida corretamente de acordo com o tipo da questão.
+  #
+  # Argumentos:
+  #   - Nenhum
+  #
+  # Retorno:
+  #   - (NilClass): Retorna nil se a validação passar ou se a questão não existir.
+  #
+  # Efeitos Colaterais:
+  #   - Adiciona erro ao modelo se a validação falhar.
   def valida_resposta_conforme_tipo_questao
     return unless questao
 

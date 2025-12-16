@@ -1,11 +1,17 @@
 require 'rails_helper'
 
+# Testes de integração para redefinição de senha (esqueci minha senha).
+#
+# Cobre solicitação de token e alteração de senha.
 RSpec.describe "RedefinicaoSenha", type: :request do
   let!(:usuario) { Usuario.create!(nome: "User", email: "teste@email.com", usuario: "user", matricula: "123", ocupacao: :discente, status: true, password: "oldPass", password_confirmation: "oldPass") }
   
   let!(:usuario_pendente) { Usuario.create!(nome: "Pendente", email: "pendente@email.com", usuario: "pendente", matricula: "456", ocupacao: :discente, status: false, password: "temp", password_confirmation: "temp") }
 
+  # Teste de solicitação de reset (Esqueci Senha).
   describe "POST /esqueci_senha" do
+    
+    # Sucesso.
     context "com e-mail válido e usuário ativo" do
       it "envia e-mail e redireciona para login" do
         expect {
@@ -18,6 +24,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
       end
     end
 
+    # Usuário inativo.
     context "com usuário inativo (status false)" do
       it "impede o reset e avisa que precisa definir a senha primeiro" do
         expect {
@@ -30,6 +37,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
       end
     end
 
+    # Email inexistente.
     context "com e-mail não cadastrado" do
       it "não envia e-mail mas mostra mensagem de sucesso (segurança)" do
         expect {
@@ -42,6 +50,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
       end
     end
 
+    # Validacao.
     context "com campo vazio" do
       it "redireciona para login com erro" do
         post esqueci_senha_path, params: { email: "" }
@@ -53,6 +62,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
     end
   end
 
+  # Teste de acesso à página de edição de senha.
   describe "GET /redefinir_senha/edit" do
     let(:token) { usuario.signed_id(purpose: :redefinir_senha) }
 
@@ -75,6 +85,7 @@ RSpec.describe "RedefinicaoSenha", type: :request do
     end
   end
 
+  # Teste de submissão da nova senha.
   describe "PATCH /redefinir_senha" do
     let(:token) { usuario.signed_id(purpose: :redefinir_senha) }
 

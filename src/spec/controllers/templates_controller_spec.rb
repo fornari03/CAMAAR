@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# Testes de unidade para TemplatesController.
+#
+# Cobre gestão do CRUD de templates.
 RSpec.describe TemplatesController, type: :controller do
   let(:admin) { Usuario.create!(nome: 'Admin', email: 'admin@test.com', matricula: '123', usuario: 'admin', password: 'password', ocupacao: :admin, status: true) }
   let!(:template) { Template.create!(titulo: 'Template Teste', id_criador: admin.id) }
@@ -8,6 +11,7 @@ RSpec.describe TemplatesController, type: :controller do
     session[:usuario_id] = admin.id
   end
 
+  # Teste de listagem.
   describe "GET #index" do
     it "retorna sucesso e carrega templates" do
       get :index
@@ -16,6 +20,7 @@ RSpec.describe TemplatesController, type: :controller do
     end
   end
 
+  # Teste de novo template.
   describe "GET #new" do
     it "instancia um novo template" do
       get :new
@@ -24,6 +29,7 @@ RSpec.describe TemplatesController, type: :controller do
     end
   end
 
+  # Teste de edição.
   describe "GET #edit" do
     it "carrega o template solicitado" do
       get :edit, params: { id: template.id }
@@ -32,6 +38,7 @@ RSpec.describe TemplatesController, type: :controller do
     end
   end
 
+  # Teste de criação.
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'creates a new template and redirects to edit' do
@@ -56,6 +63,7 @@ RSpec.describe TemplatesController, type: :controller do
     end
   end
 
+  # Teste de atualização.
   describe "PATCH #update" do
     context "com atributos válidos" do
       it "atualiza o template e redireciona" do
@@ -81,6 +89,7 @@ RSpec.describe TemplatesController, type: :controller do
     end
   end
 
+  # Teste de exclusão (soft delete).
   describe 'DELETE #destroy' do
     it 'soft deletes the template (sets hidden to true)' do
       expect {
